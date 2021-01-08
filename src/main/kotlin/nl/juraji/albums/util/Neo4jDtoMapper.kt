@@ -1,8 +1,10 @@
 package nl.juraji.albums.util
 
+import nl.juraji.albums.util.Neo4jDtoMapper.MissingPrimaryConstructorException
 import org.neo4j.driver.Record
 import org.neo4j.driver.Value
 import org.neo4j.driver.types.Node
+import java.math.BigDecimal
 import java.time.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
@@ -64,18 +66,13 @@ class Neo4jDtoMapper<T : Any>(dtoClass: KClass<T>) {
         Boolean::class -> value.asBoolean()
         ByteArray::class -> value.asByteArray()
         Double::class -> value.asDouble()
-        Float::class -> value.asFloat()
+        BigDecimal::class -> BigDecimal.valueOf(value.asDouble())
         Int::class -> value.asInt()
         LocalDate::class -> value.asLocalDate()
         LocalDateTime::class -> value.asLocalDateTime()
         LocalTime::class -> value.asLocalTime()
         Long::class -> value.asLong()
-        Number::class -> value.asNumber()
-        Object::class -> value.asObject()
-        OffsetDateTime::class -> value.asOffsetDateTime()
-        OffsetTime::class -> value.asOffsetTime()
         String::class -> value.asString()
-        ZonedDateTime::class -> value.asZonedDateTime()
         else -> throw CanNotMapValueException(value, type)
     }
 
