@@ -1,5 +1,6 @@
 package nl.juraji.albums.query.repositories
 
+import org.intellij.lang.annotations.Language
 import org.neo4j.driver.Driver
 import org.neo4j.driver.Record
 import org.neo4j.driver.summary.ResultSummary
@@ -10,7 +11,7 @@ import reactor.kotlin.core.publisher.toFlux
 import reactor.kotlin.core.publisher.toMono
 
 abstract class Repository(
-    private val driver: Driver
+    private val driver: Driver,
 ) {
 
     private fun read(
@@ -25,7 +26,7 @@ abstract class Repository(
      * @param parameters a [Map] of parameter values used in above string.
      */
     protected fun readSingle(
-        query: String,
+        @Language("Cypher") query: String,
         parameters: Map<String, Any> = emptyMap()
     ): Mono<Record> = read(query, parameters).toMono()
 
@@ -36,7 +37,7 @@ abstract class Repository(
      * @param parameters a [Map] of parameter values used in above string.
      */
     protected fun readMultiple(
-        query: String,
+        @Language("Cypher") query: String,
         parameters: Map<String, Any> = emptyMap()
     ): Flux<Record> = read(query, parameters).toFlux()
 
@@ -47,7 +48,7 @@ abstract class Repository(
      * @param parameters a [Map] of parameter values used in above string.
      */
     protected fun write(
-        query: String,
+        @Language("Cypher") query: String,
         parameters: Map<String, Any>
     ): Mono<ResultSummary> = driver.rxSession().writeTransaction { tx -> tx.run(query, parameters).consume() }.toMono()
 
@@ -58,7 +59,7 @@ abstract class Repository(
      * @param parameters a [Map] of parameter values used in above string.
      */
     protected fun writeAndReturn(
-        query: String,
+        @Language("Cypher") query: String,
         parameters: Map<String, Any>
     ): Mono<Record> = driver.rxSession().writeTransaction { tx -> tx.run(query, parameters).records() }.toMono()
 }

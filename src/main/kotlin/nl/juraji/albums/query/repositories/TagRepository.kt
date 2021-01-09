@@ -9,16 +9,16 @@ import reactor.core.publisher.Mono
 
 @Service
 class TagRepository(driver: Driver) : Repository(driver) {
-    private val mapper: Neo4jDtoMapper<Tag> = Neo4jDtoMapper(Tag::class)
+    private val mapper = Neo4jDtoMapper(Tag::class)
 
     fun findByLabel(label: String): Mono<Tag> = readSingle(
         "MATCH (n:Tag {label: $ label}) RETURN n",
         mapOf("label" to label)
-    ).map(mapper::entityToDto)
+    ).map(mapper::recordToDto)
 
     fun findAll(): Flux<Tag> = readMultiple(
         "MATCH (n:Tag) RETURN n",
-    ).map(mapper::entityToDto)
+    ).map(mapper::recordToDto)
 
     fun save(tag: Tag): Mono<Tag> = writeAndReturn(
         """
@@ -27,5 +27,5 @@ class TagRepository(driver: Driver) : Repository(driver) {
             RETURN n
         """.trimIndent(),
         mapper.dtoToPropertiesMap(tag)
-    ).map(mapper::entityToDto)
+    ).map(mapper::recordToDto)
 }

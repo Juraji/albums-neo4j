@@ -32,9 +32,16 @@ class Neo4jDtoMapper<T : Any>(dtoClass: KClass<T>) {
      * @throws RequiredPropertyNotFoundException When a property, which is required in [T], can not be found in the given [Record].
      * @throws CanNotMapValueException When a value can not be mapped, due to an unsupported type in [T].
      */
-    fun entityToDto(record: Record, label: String = "n"): T {
-        val entity = record.get(label).asEntity()
+    fun recordToDto(record: Record, label: String = "n"): T = entityToDto(record.get(label).asEntity())
 
+    /**
+     * Map an [Entity] to [T].
+     *
+     * @param entity The [Entity] to read.
+     * @throws RequiredPropertyNotFoundException When a property, which is required in [T], can not be found in the given [Record].
+     * @throws CanNotMapValueException When a value can not be mapped, due to an unsupported type in [T].
+     */
+    fun entityToDto(entity: Entity): T {
         val parameterValues = primaryConstructor.parameters
             .map { findNodeValueForParameter(entity, it) }
             .toMap()

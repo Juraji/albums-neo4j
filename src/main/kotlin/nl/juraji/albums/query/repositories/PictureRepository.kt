@@ -13,7 +13,6 @@ import java.time.LocalDateTime
 @Service
 class PictureRepository(driver: Driver) : Repository(driver) {
     private val pictureMapper = Neo4jDtoMapper(Picture::class)
-    private val duplicateMapper = Neo4jDtoMapper(Duplicate::class)
 
     fun save(picture: Picture): Mono<Picture> = writeAndReturn(
         """
@@ -24,45 +23,45 @@ class PictureRepository(driver: Driver) : Repository(driver) {
                 lastModified: $ lastModified
             })
             RETURN n
-        """.trimIndent(),
+        """,
         pictureMapper.dtoToPropertiesMap(picture)
-    ).map(pictureMapper::entityToDto)
+    ).map(pictureMapper::recordToDto)
 
     fun findAll(): Flux<Picture> = readMultiple(
         """
             MATCH (n:Picture)
             RETURN n
             ORDER BY n.location
-        """.trimIndent()
-    ).map(pictureMapper::entityToDto)
+        """
+    ).map(pictureMapper::recordToDto)
 
     fun findByLocation(location: String): Mono<Picture> = readSingle(
         "MATCH (n:Picture {location: $ location}) RETURN n",
         mapOf("location" to location)
-    ).map(pictureMapper::entityToDto)
+    ).map(pictureMapper::recordToDto)
 
     fun findByTag(label: String): Flux<Picture> = readMultiple(
         """
             MATCH (n:Picture)-[:TAGGED_BY]->(:Tag {label: $ label}) 
             RETURN n
             ORDER BY n.location
-        """.trimIndent(),
+        """,
         mapOf("label" to label)
-    ).map(pictureMapper::entityToDto)
+    ).map(pictureMapper::recordToDto)
 
     fun findDuplicatedByForLocation(location: String): Flux<Duplicate> = readMultiple(
         """
             MATCH (:Picture {location: $ location})-[rel:DUPLICATED_BY]-(p:Picture) 
             RETURN rel,p
             ORDER BY rel.similarity DESC
-        """.trimIndent(),
+        """,
         mapOf("location" to location)
     ).map {
         val rel = it.get("rel")
         Duplicate(
             matchedAt = rel.get("matchedAt").asLocalDateTime(),
             similarity = rel.get("similarity").asDouble(),
-            picture = pictureMapper.entityToDto(it, "p")
+            picture = pictureMapper.recordToDto(it, "p")
         )
     }
 
@@ -73,7 +72,7 @@ class PictureRepository(driver: Driver) : Repository(driver) {
             
             WITH p,t
             MERGE (p)-[rel:TAGGED_BY]->(t)
-        """.trimIndent(),
+        """,
         mapOf(
             "pictureLocation" to pictureLocation,
             "tagLabel" to tagLabel,
@@ -82,13 +81,13 @@ class PictureRepository(driver: Driver) : Repository(driver) {
 
     fun removeTaggedByRelation(pictureLocation: String, tagLabel: String): Mono<ResultSummary> = write(
         """
-            MATCH (p:Picture {location: ${'$'} pictureLocation})
-            MATCH (t:Tag {label: ${'$'} tagLabel})
-            
+            MATCH (p:Picture {location: $ pictureLocation})
+            MATCH (t:Tag {label: $ tagLabel})
+
             WITH p,t
             MATCH (p)-[rel:TAGGED_BY]->(t)
             DELETE rel
-        """.trimIndent(),
+        """,
         mapOf(
             "pictureLocation" to pictureLocation,
             "tagLabel" to tagLabel,
@@ -107,7 +106,7 @@ class PictureRepository(driver: Driver) : Repository(driver) {
             
             WITH source,target
             MERGE (source)-[:DUPLICATED_BY {matchedAt: $ matchedAt, similarity: $ similarity}]-(target)
-        """.trimIndent(),
+        """,
         mapOf(
             "sourceLocation" to sourcePictureLocation,
             "targetLocation" to targetPictureLocation,
@@ -127,7 +126,7 @@ class PictureRepository(driver: Driver) : Repository(driver) {
             WITH source,target
             MATCH (source)-[rel:DUPLICATED_BY]->(target)
             DELETE rel
-        """.trimIndent(),
+        """,
         mapOf(
             "sourceLocation" to sourcePictureLocation,
             "targetLocation" to targetPictureLocation,

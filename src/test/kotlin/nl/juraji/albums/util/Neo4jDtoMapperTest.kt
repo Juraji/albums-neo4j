@@ -26,7 +26,7 @@ internal class Neo4jDtoMapperTest {
             session.run("MATCH (n:Dto {identifier: $ id}) RETURN n", mapOf("id" to id)).single()
         }
 
-        val dto = mapper.entityToDto(record1)
+        val dto = mapper.recordToDto(record1)
 
         assertEquals(id, dto.identifier)
         assertEquals(false, dto.boolean)
@@ -46,7 +46,7 @@ internal class Neo4jDtoMapperTest {
             session.run("MATCH (n:Dto {identifier: $ id}) RETURN n", mapOf("id" to id)).single()
         }
 
-        val dto = mapper.entityToDto(record1)
+        val dto = mapper.recordToDto(record1)
 
         assertEquals(id, dto.identifier)
         assertEquals(false, dto.boolean)
@@ -67,7 +67,7 @@ internal class Neo4jDtoMapperTest {
         }
 
         assertThrows(Neo4jDtoMapper.RequiredPropertyNotFoundException::class.java) {
-            mapper.entityToDto(record1)
+            mapper.recordToDto(record1)
         }
     }
 
