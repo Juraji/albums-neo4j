@@ -17,7 +17,7 @@ import java.time.Month
 
 @SpringBootTest
 internal class Neo4jDtoMapperTest {
-    private val mapper = Neo4jDtoMapper(TestDtoObj::class)
+    private val mapper = Neo4jDtoMapper(TestNodeDtoObj::class)
 
     @Test
     internal fun `should convert record to dto class`(@Autowired driver: Driver) {
@@ -26,7 +26,7 @@ internal class Neo4jDtoMapperTest {
             session.run("MATCH (n:Dto {identifier: $ id}) RETURN n", mapOf("id" to id)).single()
         }
 
-        val dto = mapper.recordToDto(record1)
+        val dto = mapper.entityToDto(record1)
 
         assertEquals(id, dto.identifier)
         assertEquals(false, dto.boolean)
@@ -46,7 +46,7 @@ internal class Neo4jDtoMapperTest {
             session.run("MATCH (n:Dto {identifier: $ id}) RETURN n", mapOf("id" to id)).single()
         }
 
-        val dto = mapper.recordToDto(record1)
+        val dto = mapper.entityToDto(record1)
 
         assertEquals(id, dto.identifier)
         assertEquals(false, dto.boolean)
@@ -67,7 +67,7 @@ internal class Neo4jDtoMapperTest {
         }
 
         assertThrows(Neo4jDtoMapper.RequiredPropertyNotFoundException::class.java) {
-            mapper.recordToDto(record1)
+            mapper.entityToDto(record1)
         }
     }
 
@@ -79,7 +79,7 @@ internal class Neo4jDtoMapperTest {
             .withDisabledServer()
             .withFixture(
                 """
-                CREATE (:Dto {
+                CREATE (d1:Dto {
                     identifier: 'complete',
                     boolean: false,
                     double: 1.26,
@@ -90,7 +90,7 @@ internal class Neo4jDtoMapperTest {
                     localTime: localtime('21:59:36.365'),
                     long: 1351556444
                 })
-                CREATE (:Dto {
+                CREATE (d2:Dto {
                     identifier: 'partial',
                     boolean: false,
                     double: 1.26,
@@ -109,7 +109,7 @@ internal class Neo4jDtoMapperTest {
             .build()
     }
 
-    data class TestDtoObj(
+    data class TestNodeDtoObj(
         val identifier: String,
         val boolean: Boolean,
         val double: Double,

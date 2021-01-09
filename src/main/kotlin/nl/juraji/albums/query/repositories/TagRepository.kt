@@ -6,47 +6,26 @@ import org.neo4j.driver.Driver
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.kotlin.core.publisher.toFlux
-import reactor.kotlin.core.publisher.toMono
 
 @Service
-class TagRepository(
-    private val driver: Driver
-) {
+class TagRepository(driver: Driver) : Repository(driver) {
     private val mapper: Neo4jDtoMapper<Tag> = Neo4jDtoMapper(Tag::class)
 
-    fun findByLabel(label: String): Mono<Tag> = driver.rxSession()
-        .readTransaction {
-            it.run(
-                "MATCH (n:Tag {label: \$label}) RETURN n",
-                mapOf("label" to label)
-            ).records()
-        }
-        .toMono()
-        .map(mapper::recordToDto)
+    fun findByLabel(label: String): Mono<Tag> = readSingle(
+        "MATCH (n:Tag {label: $ label}) RETURN n",
+        mapOf("label" to label)
+    ).map(mapper::entityToDto)
 
-    fun findAll(): Flux<Tag> = driver.rxSession()
-        .readTransaction { it.run("MATCH (n:Tag) RETURN n").records() }
-        .toFlux()
-        .map(mapper::recordToDto)
+    fun findAll(): Flux<Tag> = readMultiple(
+        "MATCH (n:Tag) RETURN n",
+    ).map(mapper::entityToDto)
 
-    fun save(tag: Tag): Mono<Tag> {
-        return driver.rxSession()
-            .writeTransaction {
-                it.run(
-                    """
-                    MERGE (n:Tag {
-                        label: ${'$'}label,
-                        color: ${'$'}color
-                    })
-                    """.trimIndent(),
-                    mapOf(
-                        "label" to tag.label,
-                        "color" to tag.color
-                    )
-                ).records()
-            }
-            .toMono()
-            .map(mapper::recordToDto)
-    }
+    fun save(tag: Tag): Mono<Tag> = writeAndReturn(
+        """
+            MERGE (n:Tag {label: $ label, color: $ color})
+            WHERE n.label=$ label
+            RETURN n
+        """.trimIndent(),
+        mapper.dtoToPropertiesMap(tag)
+    ).map(mapper::entityToDto)
 }

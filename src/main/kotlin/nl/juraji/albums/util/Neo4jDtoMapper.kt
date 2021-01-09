@@ -3,9 +3,11 @@ package nl.juraji.albums.util
 import nl.juraji.albums.util.Neo4jDtoMapper.MissingPrimaryConstructorException
 import org.neo4j.driver.Record
 import org.neo4j.driver.Value
-import org.neo4j.driver.types.Node
+import org.neo4j.driver.types.Entity
 import java.math.BigDecimal
-import java.time.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
@@ -26,15 +28,15 @@ class Neo4jDtoMapper<T : Any>(dtoClass: KClass<T>) {
      * Map a [Record] to [T].
      *
      * @param record The [Record] to read from.
-     * @param nodeLabel Optional node label, used in the Cypher query, to identify this node. Defaults to "n".
+     * @param label Optional label, used in the Cypher query, to identify this entity. Defaults to "n".
      * @throws RequiredPropertyNotFoundException When a property, which is required in [T], can not be found in the given [Record].
      * @throws CanNotMapValueException When a value can not be mapped, due to an unsupported type in [T].
      */
-    fun recordToDto(record: Record, nodeLabel: String = "n"): T {
-        val node = record.get(nodeLabel).asNode()
+    fun entityToDto(record: Record, label: String = "n"): T {
+        val entity = record.get(label).asEntity()
 
         val parameterValues = primaryConstructor.parameters
-            .map { findNodeValueForParameter(node, it) }
+            .map { findNodeValueForParameter(entity, it) }
             .toMap()
 
         return primaryConstructor.callBy(parameterValues)
@@ -56,10 +58,10 @@ class Neo4jDtoMapper<T : Any>(dtoClass: KClass<T>) {
         }
         .toMap()
 
-    private fun findNodeValueForParameter(node: Node, parameter: KParameter): Pair<KParameter, *> = when {
-        node.containsKey(parameter.name) -> parameter to getNodeValue(node.get(parameter.name), parameter.type)
+    private fun findNodeValueForParameter(entity: Entity, parameter: KParameter): Pair<KParameter, *> = when {
+        entity.containsKey(parameter.name) -> parameter to getNodeValue(entity.get(parameter.name), parameter.type)
         parameter.type.isMarkedNullable -> parameter to null
-        else -> throw RequiredPropertyNotFoundException(parameter, node)
+        else -> throw RequiredPropertyNotFoundException(parameter, entity)
     }
 
     private fun getNodeValue(value: Value, type: KType): Any = when (type.classifier) {
@@ -81,8 +83,8 @@ class Neo4jDtoMapper<T : Any>(dtoClass: KClass<T>) {
     class MissingPrimaryConstructorException(dtoClass: KClass<*>) :
         DtoMappingException("No primary constructor for ${dtoClass.qualifiedName}!")
 
-    class RequiredPropertyNotFoundException(parameter: KParameter, node: Node) :
-        DtoMappingException("Parameter ${parameter.name} is required, but not found in Node $node")
+    class RequiredPropertyNotFoundException(parameter: KParameter, entity: Entity) :
+        DtoMappingException("Parameter ${parameter.name} is required, but not found in entity $entity")
 
     class CanNotMapValueException(value: Value, type: KType) :
         DtoMappingException("Can not map value $value to ${type.classifier}")
