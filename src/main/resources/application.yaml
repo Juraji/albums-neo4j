@@ -4,4 +4,6 @@ spring:
     authentication:
       username: "neo4j"
       password: "password"
+  webflux:
+    base-path: "/api"
 
