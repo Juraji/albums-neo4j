@@ -18,6 +18,7 @@ repositories {
 dependencies {
     val neo4jSpringBootVersion = "4.1.1.1"
     val neo4jDriverVersion = "4.2.0"
+    val liquigraphVersion = "4.0.2"
 
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -27,6 +28,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("org.neo4j.driver:neo4j-java-driver-spring-boot-starter:$neo4jSpringBootVersion")
     implementation("org.neo4j.driver:neo4j-java-driver:$neo4jDriverVersion")
+    implementation("org.liquigraph:liquigraph-core:$liquigraphVersion")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.neo4j.driver:neo4j-java-driver-test-harness-spring-boot-autoconfigure:$neo4jSpringBootVersion")

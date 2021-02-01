@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<changelog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:noNamespaceSchemaLocation="http://www.liquigraph.org/schema/1.0/liquigraph.xsd">
+    <changeset id="directory-location-index" author="juraji">
+        <query>CREATE INDEX index_picture_location IF NOT EXISTS FOR (p:Picture) ON (p.location)</query>
+    </changeset>
+</changelog>

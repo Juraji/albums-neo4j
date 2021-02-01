@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<changelog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:noNamespaceSchemaLocation="http://www.liquigraph.org/schema/1.0/liquigraph.xsd">
+    <changeset id="unique-directory-location-constraint" author="juraji">
+        <query>CREATE CONSTRAINT unique_directory_location IF NOT EXISTS ON (d:Directory) ASSERT d.location IS UNIQUE</query>
+    </changeset>
+</changelog>
