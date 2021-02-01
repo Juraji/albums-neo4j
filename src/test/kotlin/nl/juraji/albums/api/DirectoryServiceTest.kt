@@ -13,6 +13,7 @@ import nl.juraji.albums.services.FileSystemService
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
 import nl.juraji.albums.util.toPath
+import nl.juraji.reactor.validations.ValidationException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -80,6 +81,21 @@ internal class DirectoryServiceTest {
         verify {
             fileSystemService.exists(directory.location.toPath())
             directoryRepository.save(directory)
+        }
+    }
+
+    @Test
+    internal fun `should not create directory if location not exists in fs`() {
+        val directory = fixture.next<Directory>()
+
+        every { fileSystemService.exists(directory.location.toPath()) } returnsMonoOf false
+
+        StepVerifier.create(directoryService.createDirectory(directory))
+            .expectError(ValidationException::class.java)
+            .verify()
+
+        verify {
+            fileSystemService.exists(directory.location.toPath())
         }
     }
 }
