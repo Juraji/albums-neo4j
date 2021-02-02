@@ -6,20 +6,16 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @RestController
+@RequestMapping("/directories")
 class DirectoryController(
     private val directoryService: DirectoryService
 ) {
 
-    @GetMapping("/directories")
-    fun getDirectories(): Flux<Directory> = directoryService.getDirectories()
+    @GetMapping
+    fun getAllDirectories(): Flux<Directory> = directoryService.getAllDirectories()
 
-    @GetMapping("/directories/{directoryId}")
+    @GetMapping("/{directoryId}")
     fun getDirectory(
-        @PathVariable("directoryId") directoryId: Long
+        @PathVariable("directoryId") directoryId: String
     ): Mono<Directory> = directoryService.getDirectory(directoryId)
-
-    @PostMapping("/directories")
-    fun createDirectory(
-        @RequestBody directory: Directory
-    ): Mono<Directory> = directoryService.createDirectory(directory)
 }

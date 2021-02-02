@@ -1,74 +1,98 @@
 package nl.juraji.albums.api.exceptions
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import nl.juraji.albums.api.dto.ErrorDto
 import nl.juraji.albums.api.dto.FieldValidationErrorDto
 import nl.juraji.albums.api.dto.GenericErrorDto
 import nl.juraji.albums.api.dto.ValidationErrorDto
 import nl.juraji.albums.util.LoggerCompanion
 import nl.juraji.reactor.validations.ValidationException
+import org.springframework.boot.autoconfigure.web.WebProperties
+import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler
+import org.springframework.boot.web.reactive.error.ErrorAttributes
+import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
-import org.springframework.core.io.buffer.DataBuffer
-import org.springframework.http.HttpHeaders
+import org.springframework.core.codec.DecodingException
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.http.codec.ServerCodecConfigurer
 import org.springframework.validation.FieldError
-import org.springframework.web.bind.MethodArgumentNotValidException
-import org.springframework.web.server.ServerWebExchange
-import org.springframework.web.server.WebExceptionHandler
+import org.springframework.web.bind.support.WebExchangeBindException
+import org.springframework.web.reactive.function.BodyInserters
+import org.springframework.web.reactive.function.server.*
 import reactor.core.publisher.Mono
 
-@Order(-2)
+
 @Configuration
-class ControllerExceptionHandler(
-    private val objectMapper: ObjectMapper,
-) : WebExceptionHandler {
+@Order(-2)
+@Suppress("LeakingThis")
+class GlobalErrorWebExceptionHandler(
+    errorAttributes: ErrorAttributes,
+    resources: WebProperties.Resources,
+    applicationContext: ApplicationContext,
+    serverCodecConfigurer: ServerCodecConfigurer
+) : AbstractErrorWebExceptionHandler(errorAttributes, resources, applicationContext) {
 
-    override fun handle(exchange: ServerWebExchange, e: Throwable): Mono<Void> {
-        val (status, dtoBody) = when (e) {
-            is MethodArgumentNotValidException -> handleMethodArgumentNotValidException(e)
-            is ValidationException -> handleValidationException(e)
-            else -> handleOther(e)
-        }
-
-        exchange.response.statusCode = status
-
-        return if (exchange.request.headers.accept.contains(MediaType.APPLICATION_JSON)) {
-            val body: Mono<DataBuffer> = Mono
-                .just(dtoBody)
-                .map { objectMapper.writeValueAsBytes(it) }
-                .map { exchange.response.bufferFactory().wrap(it) }
-
-            exchange.response.headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            exchange.response.writeWith(body)
-        } else {
-            exchange.response.setComplete()
-        }
+    init {
+        setMessageWriters(serverCodecConfigurer.writers)
     }
 
-    private fun handleValidationException(e: ValidationException): Pair<HttpStatus, ErrorDto> {
-        return HttpStatus.BAD_REQUEST to ValidationErrorDto(e.localizedMessage)
+    override fun getRoutingFunction(errorAttributes: ErrorAttributes?): RouterFunction<ServerResponse> {
+        return RouterFunctions.route(RequestPredicates.all(), this::renderErrorResponse)
     }
 
-    private fun handleMethodArgumentNotValidException(e: MethodArgumentNotValidException): Pair<HttpStatus, ErrorDto> {
-        val errors = e.bindingResult.allErrors
+    private fun renderErrorResponse(request: ServerRequest): Mono<ServerResponse> {
+        val requestId = request.exchange().request.id
+
+        val dtoBody: ErrorDto = when (val error = getError(request)) {
+            is WebExchangeBindException -> handleWebExchangeBindException(error, requestId)
+            is ValidationException -> handleValidationException(error, requestId)
+            else -> handleOther(error, requestId)
+        }
+
+        return ServerResponse.status(dtoBody.status)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(BodyInserters.fromProducer(Mono.just(dtoBody), ErrorDto::class.java))
+    }
+
+    private fun handleWebExchangeBindException(error: WebExchangeBindException, requestId: String): ErrorDto {
+        val errors = error.bindingResult.allErrors
             .map { (it as FieldError).field to it.defaultMessage!! }
             .toMap()
 
-        val errorDto = FieldValidationErrorDto(
+        return FieldValidationErrorDto(
             message = "Validatiefout",
+            status = HttpStatus.BAD_REQUEST.value(),
+            requestId = requestId,
             fieldErrors = errors
         )
-
-        return HttpStatus.BAD_REQUEST to errorDto
     }
 
-    private fun handleOther(e: Throwable): Pair<HttpStatus, ErrorDto> {
-        logger.error("An error occurred during handling of a request", e)
-
-        return HttpStatus.INTERNAL_SERVER_ERROR to GenericErrorDto("Er is een onbekende fout opgetreden")
+    private fun handleDecodingException(error: DecodingException, requestId: String): ErrorDto {
+        return ValidationErrorDto(
+            message = error.localizedMessage,
+            status = HttpStatus.BAD_REQUEST.value(),
+            requestId = requestId
+        )
     }
 
-    companion object : LoggerCompanion(ControllerExceptionHandler::class)
+    private fun handleValidationException(error: ValidationException, requestId: String): ErrorDto {
+        return ValidationErrorDto(
+            message = error.localizedMessage,
+            status = HttpStatus.BAD_REQUEST.value(),
+            requestId = requestId,
+        )
+    }
+
+    private fun handleOther(error: Throwable?, requestId: String): ErrorDto {
+        logger.error("An error occurred during handling of a request", error)
+
+        return GenericErrorDto(
+            message = "Er is een onbekende fout opgetreden",
+            requestId = requestId,
+            status = HttpStatus.INTERNAL_SERVER_ERROR.value()
+        )
+    }
+
+    companion object : LoggerCompanion(GlobalErrorWebExceptionHandler::class)
 }
