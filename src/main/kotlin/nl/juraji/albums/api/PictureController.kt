@@ -6,7 +6,6 @@ import nl.juraji.albums.api.dto.TagDto
 import nl.juraji.albums.api.dto.toPictureDto
 import nl.juraji.albums.model.Picture
 import nl.juraji.albums.model.PictureDescription
-import nl.juraji.albums.model.Tag
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -33,6 +32,12 @@ class PictureController(
         .addPicture(picture.location, picture.name)
         .map(Picture::toPictureDto)
 
+    @DeleteMapping("/{pictureId}")
+    fun deletePicture(
+        @PathVariable pictureId: String,
+        @RequestParam("deleteFile", required = false) deleteFile: Boolean?
+    ): Mono<Unit> = pictureService.deletePicture(pictureId, deleteFile)
+
     @PostMapping("/{pictureId}/tags")
     fun tagPictureBy(
         @PathVariable("pictureId") pictureId: String,
@@ -40,4 +45,10 @@ class PictureController(
     ): Mono<PictureDto> = pictureService
         .tagPictureBy(pictureId, tag.id)
         .map(Picture::toPictureDto)
+
+    @DeleteMapping("/{pictureId}/tags/{tagId}")
+    fun removeTagFromPicture(
+        @PathVariable pictureId: String,
+        @PathVariable tagId: String
+    ): Mono<Unit> = pictureService.removeTagFromPicture(pictureId, tagId)
 }

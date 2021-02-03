@@ -11,7 +11,10 @@ import reactor.core.publisher.Mono
 @Repository
 interface DirectoryRepository : ReactiveNeo4jRepository<Directory, String> {
     fun findByLocation(location: String): Mono<Directory>
+
     fun findDescriptionById(id: String): Mono<DirectoryDescription>
+
+    // language=cypher
     @Query("MATCH (d:Directory) RETURN d")
     fun findAllDescriptions(): Flux<DirectoryDescription>
 }

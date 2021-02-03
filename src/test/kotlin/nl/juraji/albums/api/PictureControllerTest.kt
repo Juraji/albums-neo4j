@@ -12,9 +12,9 @@ import nl.juraji.albums.api.dto.toPictureDto
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.model.Picture
 import nl.juraji.albums.model.PictureDescription
-import nl.juraji.albums.model.Tag
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
+import nl.juraji.albums.util.uriBuilder
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
@@ -90,6 +90,22 @@ internal class PictureControllerTest {
     }
 
     @Test
+    internal fun `should delete picture`() {
+        val pictureId = fixture.nextString()
+
+        every { pictureService.deletePicture(pictureId, false) } returnsMonoOf Unit
+
+        webTestClient
+            .delete()
+            .uriBuilder {
+                path("/pictures/$pictureId")
+                queryParam("deleteFile", false)
+            }
+            .exchange()
+            .expectStatus().isOk
+    }
+
+    @Test
     internal fun `should add tag to picture`() {
         val picture = fixture.next<Picture>()
         val postedTag = fixture.next<TagDto>()
@@ -107,5 +123,19 @@ internal class PictureControllerTest {
             .isEqualTo(expected)
 
         verify { pictureService.tagPictureBy(picture.id!!, postedTag.id) }
+    }
+
+    @Test
+    internal fun `should remove tag from picture`() {
+        val pictureId = fixture.nextString()
+        val tagId = fixture.nextString()
+
+        every { pictureService.removeTagFromPicture(pictureId, tagId) } returnsMonoOf Unit
+
+        webTestClient
+            .delete()
+            .uri("/pictures/$pictureId/tags/$tagId")
+            .exchange()
+            .expectStatus().isOk
     }
 }

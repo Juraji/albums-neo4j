@@ -1,6 +1,9 @@
 package nl.juraji.albums.api
 
-import nl.juraji.albums.model.*
+import nl.juraji.albums.model.Directory
+import nl.juraji.albums.model.FileType
+import nl.juraji.albums.model.Picture
+import nl.juraji.albums.model.PictureDescription
 import nl.juraji.albums.model.relationships.DirectoryContainsPicture
 import nl.juraji.albums.model.relationships.PictureTaggedByTag
 import nl.juraji.albums.repositories.DirectoryRepository
@@ -9,8 +12,8 @@ import nl.juraji.albums.repositories.TagRepository
 import nl.juraji.albums.services.FileOperations
 import nl.juraji.albums.util.toLocalDateTime
 import nl.juraji.albums.util.toPath
+import nl.juraji.albums.util.toUnit
 import nl.juraji.reactor.validations.ValidationException
-import nl.juraji.reactor.validations.validate
 import nl.juraji.reactor.validations.validateAsync
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
@@ -63,6 +66,16 @@ class PictureService(
             )
         }
 
+    fun deletePicture(pictureId: String, deleteFile: Boolean? = false): Mono<Unit> =
+        if (deleteFile == false) pictureRepository
+            .deleteById(pictureId)
+            .toUnit()
+        else pictureRepository
+            .findDescriptionById(pictureId)
+            .doOnNext { fileOperations.deleteIfExists(it.location.toPath()).subscribe() }
+            .flatMap { pictureRepository.deleteById(it.id) }
+            .toUnit()
+
     fun tagPictureBy(pictureId: String, tagId: String): Mono<Picture> = Mono
         .zip(
             pictureRepository.findById(pictureId),
@@ -74,6 +87,9 @@ class PictureService(
             picture.copy(tags = picture.tags + relationship)
         }
         .flatMap(pictureRepository::save)
+
+    fun removeTagFromPicture(pictureId: String, tagId: String): Mono<Unit> =
+        pictureRepository.removePictureTaggedByTag(pictureId, tagId).toUnit()
 
     private fun doAddPictureToDirectory(picture: Picture) {
         val parentLocation = fileOperations.getParentPathStr(picture.location)

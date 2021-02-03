@@ -17,12 +17,10 @@ import nl.juraji.albums.repositories.DirectoryRepository
 import nl.juraji.albums.repositories.PictureRepository
 import nl.juraji.albums.repositories.TagRepository
 import nl.juraji.albums.services.FileOperations
-import nl.juraji.albums.util.returnsArgumentAsMono
-import nl.juraji.albums.util.returnsEmptyMono
-import nl.juraji.albums.util.returnsFluxOf
-import nl.juraji.albums.util.returnsMonoOf
+import nl.juraji.albums.util.*
 import nl.juraji.reactor.validations.ValidationException
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import reactor.kotlin.test.verifyError
@@ -139,6 +137,32 @@ internal class PictureServiceTest {
     }
 
     @Test
+    internal fun `should delete picture`() {
+        val picture = fixture.next<PictureDescription>()
+
+        every { pictureRepository.deleteById(picture.id) }.returnsVoidMono()
+
+        StepVerifier.create(pictureService.deletePicture(picture.id))
+            .verifyComplete()
+
+        verify { fileOperations.deleteIfExists(any()) wasNot Called }
+    }
+
+    @Test
+    internal fun `should delete picture and from disk`() {
+        val picture = fixture.next<PictureDescription>()
+
+        every { pictureRepository.findDescriptionById(picture.id) } returnsMonoOf picture
+        every { pictureRepository.deleteById(picture.id) }.returnsVoidMono()
+        every { fileOperations.deleteIfExists(any()) } returnsMonoOf true
+
+        StepVerifier.create(pictureService.deletePicture(picture.id, true))
+            .verifyComplete()
+
+        verify { fileOperations.deleteIfExists(picture.location.toPath()) }
+    }
+
+    @Test
     internal fun `should add tag to picture`() {
         val tag = fixture.next<Tag>()
         val picture = fixture.next<Picture>()
@@ -152,6 +176,19 @@ internal class PictureServiceTest {
             .expectNext(picture)
             .verifyComplete()
 
-        assertEquals(tag, savedPicture.captured.tags[0].tag)
+        assertEquals(1, savedPicture.captured.tags.count { it.tag == tag })
+    }
+
+    @Test
+    internal fun `should remove tag from picture`() {
+        val pictureId = fixture.nextString()
+        val tagId = fixture.nextString()
+
+        every { pictureRepository.removePictureTaggedByTag(pictureId, tagId) }.returnsVoidMono()
+
+        StepVerifier.create(pictureService.removeTagFromPicture(pictureId, tagId))
+            .verifyComplete()
+
+        verify { pictureRepository.removePictureTaggedByTag(pictureId, tagId) }
     }
 }

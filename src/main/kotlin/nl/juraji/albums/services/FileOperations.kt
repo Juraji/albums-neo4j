@@ -35,6 +35,9 @@ class FileOperations {
         Files.readAttributes(path, BasicFileAttributes::class.java)
     }
 
+    fun deleteIfExists(path: Path) = deferTo(scheduler) {
+        Files.deleteIfExists(path)
+    }
     fun getParentPathStr(path: String): String = path.substringBeforeLast(File.separatorChar)
 
     companion object : LoggerCompanion(FileOperations::class)
