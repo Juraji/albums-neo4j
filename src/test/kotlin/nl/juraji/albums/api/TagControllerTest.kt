@@ -4,6 +4,9 @@ import com.marcellogalhardo.fixture.Fixture
 import com.marcellogalhardo.fixture.next
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import nl.juraji.albums.api.dto.NewTagDto
+import nl.juraji.albums.api.dto.TagDto
+import nl.juraji.albums.api.dto.toTagDto
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.model.Tag
 import nl.juraji.albums.util.returnsFluxOf
@@ -34,9 +37,10 @@ internal class TagControllerTest {
 
     @Test
     internal fun `should fetch all tags`() {
-        val expected: List<Tag> = listOf(fixture.next(), fixture.next(), fixture.next(), fixture.next())
+        val tag: Tag = fixture.next()
+        val expected = tag.toTagDto()
 
-        every { tagService.getAllTags() } returnsFluxOf expected
+        every { tagService.getAllTags() } returnsFluxOf tag
 
         webTestClient
             .get()
@@ -44,23 +48,25 @@ internal class TagControllerTest {
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk
-            .expectBodyList(Tag::class.java)
-            .contains(*expected.toTypedArray())
+            .expectBodyList(TagDto::class.java)
+            .contains(expected)
     }
 
     @Test
     internal fun `should create new tag`() {
-        val expected = fixture.next<Tag>()
-        val postedTag = expected.copy(id = null)
+        val postedTag = fixture.next<NewTagDto>()
+        val tag = fixture.next<Tag>()
+        val expected = tag.toTagDto()
 
-        every { tagService.createTag(postedTag) } returnsMonoOf expected
+        every { tagService.createTag(postedTag.label, postedTag.color) } returnsMonoOf tag
 
         webTestClient
             .post()
             .uri("/tags")
-            .body(Mono.just(postedTag), Tag::class.java)
+            .body(Mono.just(postedTag), NewTagDto::class.java)
             .exchange()
-            .expectBody<Tag>()
+            .expectStatus().isOk
+            .expectBody<TagDto>()
             .isEqualTo(expected)
     }
 

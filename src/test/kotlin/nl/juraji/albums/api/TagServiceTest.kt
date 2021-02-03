@@ -46,7 +46,7 @@ internal class TagServiceTest {
         every { tagRepository.existsByLabel(tag.label) } returnsMonoOf false
         every { tagRepository.save(tag) } returnsMonoOf tag
 
-        StepVerifier.create(tagService.createTag(tag))
+        StepVerifier.create(tagService.createTag(tag.label, tag.color))
             .expectNext(tag)
             .verifyComplete()
 
@@ -59,7 +59,7 @@ internal class TagServiceTest {
 
         every { tagRepository.existsByLabel(tag.label) } returnsMonoOf true
 
-        StepVerifier.create(tagService.createTag(tag))
+        StepVerifier.create(tagService.createTag(tag.label, tag.color))
             .verifyError<ValidationException>()
 
         verify { tagRepository.save(tag) wasNot Called }

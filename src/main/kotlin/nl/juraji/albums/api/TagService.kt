@@ -14,14 +14,11 @@ class TagService(
 ) {
     fun getAllTags(): Flux<Tag> = tagRepository.findAll()
 
-    fun createTag(tag: Tag): Mono<Tag> = Mono.just(tag)
+    fun createTag(label: String, color: String): Mono<Tag> = Mono.just(label)
         .validateAsync {
-            synchronous {
-                isTrue(it.id == null) { "Id should be null for new entities" }
-            }
-
-            isFalse(tagRepository.existsByLabel(it.label)) { "Tag with label ${tag.label} already exists" }
+            isFalse(tagRepository.existsByLabel(it)) { "Tag with label $it already exists" }
         }
+        .map { Tag(label = it, color = color) }
         .flatMap(tagRepository::save)
 
     fun deleteTag(tagId: String): Mono<Unit> = tagRepository.deleteById(tagId).toUnit()

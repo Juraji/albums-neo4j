@@ -29,6 +29,7 @@ dependencies {
     implementation("org.liquigraph:liquigraph-core:4.0.2")
     implementation("com.github.Juraji:reactor-validations:master-SNAPSHOT")
 
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.neo4j.driver:neo4j-java-driver-test-harness-spring-boot-autoconfigure:4.1.1.1")
     testImplementation("org.neo4j.test:neo4j-harness:4.2.0") {

@@ -11,9 +11,11 @@ import io.mockk.verify
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.model.Directory
 import nl.juraji.albums.model.Picture
+import nl.juraji.albums.model.PictureDescription
 import nl.juraji.albums.model.Tag
 import nl.juraji.albums.repositories.DirectoryRepository
 import nl.juraji.albums.repositories.PictureRepository
+import nl.juraji.albums.repositories.TagRepository
 import nl.juraji.albums.services.FileOperations
 import nl.juraji.albums.util.returnsArgumentAsMono
 import nl.juraji.albums.util.returnsEmptyMono
@@ -25,16 +27,36 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import reactor.kotlin.test.verifyError
 import reactor.test.StepVerifier
+import java.nio.file.attribute.BasicFileAttributes
+import java.nio.file.attribute.FileTime
 
 @ExtendWith(MockKExtension::class)
 internal class PictureServiceTest {
     private val fixture = TestFixtureConfiguration.testFixture()
+        .also {
+            it.register(BasicFileAttributes::class) { f ->
+                object : BasicFileAttributes {
+                    override fun lastModifiedTime(): FileTime = FileTime.from(f.next())
+                    override fun lastAccessTime(): FileTime = FileTime.from(f.next())
+                    override fun creationTime(): FileTime = FileTime.from(f.next())
+                    override fun isRegularFile(): Boolean = f.nextBoolean()
+                    override fun isDirectory(): Boolean = f.nextBoolean()
+                    override fun isSymbolicLink(): Boolean = f.nextBoolean()
+                    override fun isOther(): Boolean = f.nextBoolean()
+                    override fun size(): Long = f.nextLong()
+                    override fun fileKey(): Any = f.nextString()
+                }
+            }
+        }
 
     @MockK
     private lateinit var pictureRepository: PictureRepository
 
     @MockK
     private lateinit var directoryRepository: DirectoryRepository
+
+    @MockK
+    private lateinit var tagRepository: TagRepository
 
     @MockK
     private lateinit var fileOperations: FileOperations
@@ -44,9 +66,9 @@ internal class PictureServiceTest {
 
     @Test
     internal fun `should get all pictures`() {
-        val picture = fixture.next<Picture>()
+        val picture = fixture.next<PictureDescription>()
 
-        every { pictureRepository.findAll() } returnsFluxOf picture
+        every { pictureRepository.findAllDescriptions() } returnsFluxOf picture
 
         StepVerifier.create(pictureService.getAllPictures())
             .expectNext(picture)
@@ -55,50 +77,51 @@ internal class PictureServiceTest {
 
     @Test
     internal fun `should get picture by id`() {
-        val picture = fixture.next<Picture>()
+        val picture = fixture.next<PictureDescription>()
 
-        every { pictureRepository.findById(picture.id!!) } returnsMonoOf picture
+        every { pictureRepository.findDescriptionById(picture.id) } returnsMonoOf picture
 
-        StepVerifier.create(pictureService.getPicture(picture.id!!))
+        StepVerifier.create(pictureService.getPicture(picture.id))
             .expectNext(picture)
             .verifyComplete()
     }
 
     @Test
     internal fun `should add picture`() {
-        val expected = fixture.next<Picture>()
-        val newPicture = expected.copy(id = null)
         val savedDirectory = slot<Directory>()
+        val savedPicture = slot<Picture>()
 
         every { fileOperations.exists(any()) } returnsMonoOf true
         every { fileOperations.getParentPathStr(any()) } returns "mock_path"
+        every { fileOperations.readContentType(any()) } returnsMonoOf "image/jpeg"
+        every { fileOperations.readAttributes(any()) } returnsMonoOf fixture.next()
         every { directoryRepository.findByLocation(any()) }.returnsEmptyMono()
         every { directoryRepository.save(capture(savedDirectory)) }.returnsArgumentAsMono()
-        every { pictureRepository.existsByLocation(newPicture.location) } returnsMonoOf false
-        every { pictureRepository.save(newPicture) } returnsMonoOf expected
+        every { pictureRepository.existsByLocation("location") } returnsMonoOf false
+        every { pictureRepository.save(capture(savedPicture)) }.returnsArgumentAsMono()
 
-        StepVerifier.create(pictureService.addPicture(newPicture))
-            .expectNext(expected)
+        StepVerifier.create(pictureService.addPicture("location", "name"))
+            .expectNextCount(1)
             .verifyComplete()
 
         // Verify side-effect of adding to directory
         verify {
-            fileOperations.getParentPathStr(newPicture.location)
+            fileOperations.getParentPathStr("location")
             directoryRepository.findByLocation("mock_path")
             directoryRepository.save(any())
         }
 
-        assertEquals(expected, savedDirectory.captured.pictures[0].picture)
+        assertEquals(savedPicture.captured, savedDirectory.captured.pictures[0].picture)
+        assertEquals("location", savedPicture.captured.location)
+        assertEquals("name", savedPicture.captured.name)
     }
 
     @Test
     internal fun `should not add picture when file not exists`() {
-        val newPicture = fixture.next<Picture>().copy(id = null)
-
         every { fileOperations.exists(any()) } returnsMonoOf false
         every { pictureRepository.existsByLocation(any()) } returnsMonoOf false
 
-        StepVerifier.create(pictureService.addPicture(newPicture))
+        StepVerifier.create(pictureService.addPicture("location", "name"))
             .verifyError<ValidationException>()
 
         verify { pictureRepository.save(any()) wasNot Called }
@@ -106,12 +129,10 @@ internal class PictureServiceTest {
 
     @Test
     internal fun `should not add picture when location already in db`() {
-        val newPicture = fixture.next<Picture>().copy(id = null)
-
         every { fileOperations.exists(any()) } returnsMonoOf true
         every { pictureRepository.existsByLocation(any()) } returnsMonoOf true
 
-        StepVerifier.create(pictureService.addPicture(newPicture))
+        StepVerifier.create(pictureService.addPicture("location", "name"))
             .verifyError<ValidationException>()
 
         verify { pictureRepository.save(any()) wasNot Called }
@@ -124,9 +145,10 @@ internal class PictureServiceTest {
         val savedPicture = slot<Picture>()
 
         every { pictureRepository.findById(picture.id!!) } returnsMonoOf picture
+        every { tagRepository.findById(tag.id!!) } returnsMonoOf tag
         every { pictureRepository.save(capture(savedPicture)) } returnsMonoOf picture
 
-        StepVerifier.create(pictureService.tagPictureBy(picture.id!!, tag))
+        StepVerifier.create(pictureService.tagPictureBy(picture.id!!, tag.id!!))
             .expectNext(picture)
             .verifyComplete()
 

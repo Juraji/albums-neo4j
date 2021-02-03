@@ -4,8 +4,10 @@ import com.marcellogalhardo.fixture.Fixture
 import com.marcellogalhardo.fixture.next
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import nl.juraji.albums.api.dto.DirectoryDto
+import nl.juraji.albums.api.dto.toDirectoryDto
 import nl.juraji.albums.configurations.TestFixtureConfiguration
-import nl.juraji.albums.model.Directory
+import nl.juraji.albums.model.DirectoryDescription
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
 import org.junit.jupiter.api.Test
@@ -34,9 +36,10 @@ internal class DirectoryControllerTest {
 
     @Test
     internal fun `get directories`() {
-        val expected = fixture.next<Directory>()
+        val directory = fixture.next<DirectoryDescription>()
+        val expected = directory.toDirectoryDto()
 
-        every { directoryService.getAllDirectories() } returnsFluxOf expected
+        every { directoryService.getAllDirectories() } returnsFluxOf directory
 
         webTestClient
             .get()
@@ -44,15 +47,16 @@ internal class DirectoryControllerTest {
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk
-            .expectBodyList<Directory>()
+            .expectBodyList<DirectoryDto>()
             .contains(expected)
     }
 
     @Test
     internal fun `get directory by id`() {
-        val expected = fixture.next<Directory>()
+        val directory = fixture.next<DirectoryDescription>()
+        val expected = directory.toDirectoryDto()
 
-        every { directoryService.getDirectory(expected.id!!) } returnsMonoOf expected
+        every { directoryService.getDirectory(expected.id) } returnsMonoOf directory
 
         webTestClient
             .get()
@@ -60,7 +64,7 @@ internal class DirectoryControllerTest {
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk
-            .expectBody<Directory>()
+            .expectBody<DirectoryDto>()
             .isEqualTo(expected)
     }
 }

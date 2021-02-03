@@ -1,7 +1,12 @@
 package nl.juraji.albums.api
 
-import nl.juraji.albums.model.Directory
-import org.springframework.web.bind.annotation.*
+import nl.juraji.albums.api.dto.DirectoryDto
+import nl.juraji.albums.api.dto.toDirectoryDto
+import nl.juraji.albums.model.DirectoryDescription
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
@@ -12,10 +17,14 @@ class DirectoryController(
 ) {
 
     @GetMapping
-    fun getAllDirectories(): Flux<Directory> = directoryService.getAllDirectories()
+    fun getAllDirectories(): Flux<DirectoryDto> = directoryService
+        .getAllDirectories()
+        .map(DirectoryDescription::toDirectoryDto)
 
     @GetMapping("/{directoryId}")
     fun getDirectory(
         @PathVariable("directoryId") directoryId: String
-    ): Mono<Directory> = directoryService.getDirectory(directoryId)
+    ): Mono<DirectoryDto> = directoryService
+        .getDirectory(directoryId)
+        .map(DirectoryDescription::toDirectoryDto)
 }

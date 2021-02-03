@@ -1,5 +1,8 @@
 package nl.juraji.albums.api
 
+import nl.juraji.albums.api.dto.NewTagDto
+import nl.juraji.albums.api.dto.TagDto
+import nl.juraji.albums.api.dto.toTagDto
 import nl.juraji.albums.model.Tag
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
@@ -13,12 +16,16 @@ class TagController(
 ) {
 
     @GetMapping
-    fun getAllTags(): Flux<Tag> = tagService.getAllTags()
+    fun getAllTags(): Flux<TagDto> = tagService
+        .getAllTags()
+        .map(Tag::toTagDto)
 
     @PostMapping
     fun createTag(
-        @Valid @RequestBody tag: Tag
-    ): Mono<Tag> = tagService.createTag(tag)
+        @Valid @RequestBody tag: NewTagDto
+    ): Mono<TagDto> = tagService
+        .createTag(tag.label, tag.color)
+        .map(Tag::toTagDto)
 
     @DeleteMapping("/{tagId}")
     fun deleteTag(
