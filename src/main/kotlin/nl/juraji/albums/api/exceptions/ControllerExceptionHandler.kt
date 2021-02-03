@@ -20,6 +20,7 @@ import org.springframework.validation.FieldError
 import org.springframework.web.bind.support.WebExchangeBindException
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.server.*
+import org.springframework.web.server.ResponseStatusException
 import reactor.core.publisher.Mono
 
 
@@ -47,6 +48,7 @@ class GlobalErrorWebExceptionHandler(
         val dtoBody: ErrorDto = when (val error = getError(request)) {
             is WebExchangeBindException -> handleWebExchangeBindException(error, requestId)
             is ValidationException -> handleValidationException(error, requestId)
+            is ResponseStatusException -> handleResponseStatusException(error, requestId)
             else -> handleOther(error, requestId)
         }
 
@@ -62,25 +64,25 @@ class GlobalErrorWebExceptionHandler(
 
         return FieldValidationErrorDto(
             message = "Validatiefout",
-            status = HttpStatus.BAD_REQUEST.value(),
+            status = HttpStatus.BAD_REQUEST,
             requestId = requestId,
             fieldErrors = errors
-        )
-    }
-
-    private fun handleDecodingException(error: DecodingException, requestId: String): ErrorDto {
-        return ValidationErrorDto(
-            message = error.localizedMessage,
-            status = HttpStatus.BAD_REQUEST.value(),
-            requestId = requestId
         )
     }
 
     private fun handleValidationException(error: ValidationException, requestId: String): ErrorDto {
         return ValidationErrorDto(
             message = error.localizedMessage,
-            status = HttpStatus.BAD_REQUEST.value(),
+            status = HttpStatus.BAD_REQUEST,
             requestId = requestId,
+        )
+    }
+
+    private fun handleResponseStatusException(error: ResponseStatusException, requestId: String): ErrorDto {
+        return GenericErrorDto(
+            message = error.mostSpecificCause.localizedMessage,
+            status = error.status,
+            requestId = requestId
         )
     }
 
@@ -90,7 +92,7 @@ class GlobalErrorWebExceptionHandler(
         return GenericErrorDto(
             message = "Er is een onbekende fout opgetreden",
             requestId = requestId,
-            status = HttpStatus.INTERNAL_SERVER_ERROR.value()
+            status = HttpStatus.INTERNAL_SERVER_ERROR
         )
     }
 
