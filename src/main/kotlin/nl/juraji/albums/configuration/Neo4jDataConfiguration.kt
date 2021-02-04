@@ -10,7 +10,7 @@ import org.springframework.data.neo4j.repository.config.EnableReactiveNeo4jRepos
 import org.springframework.transaction.TransactionManager
 
 @Configuration
-@EnableReactiveNeo4jRepositories("nl.juraji.albums.repositories")
+@EnableReactiveNeo4jRepositories("nl.juraji.albums.domain")
 class Neo4jDataConfiguration {
 
     @Bean

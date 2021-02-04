@@ -38,7 +38,9 @@ class FileOperations {
     fun deleteIfExists(path: Path) = deferTo(scheduler) {
         Files.deleteIfExists(path)
     }
-    fun getParentPathStr(path: String): String = path.substringBeforeLast(File.separatorChar)
+
+    fun getParentPathStr(path: String, separator: Char = File.separatorChar): String =
+        path.substringBeforeLast(separator)
 
     companion object : LoggerCompanion(FileOperations::class)
 }
