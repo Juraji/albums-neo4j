@@ -4,8 +4,9 @@ import nl.juraji.albums.api.dto.NewPictureDto
 import nl.juraji.albums.api.dto.PictureDto
 import nl.juraji.albums.api.dto.TagDto
 import nl.juraji.albums.api.dto.toPictureDto
-import nl.juraji.albums.model.Picture
-import nl.juraji.albums.model.PictureDescription
+import nl.juraji.albums.domain.PictureService
+import nl.juraji.albums.domain.pictures.Picture
+import nl.juraji.albums.domain.pictures.PictureDescription
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono

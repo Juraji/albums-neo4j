@@ -1,4 +1,4 @@
-package nl.juraji.albums.api
+package nl.juraji.albums.domain
 
 import com.marcellogalhardo.fixture.next
 import io.mockk.Called
@@ -8,8 +8,9 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import nl.juraji.albums.configurations.TestFixtureConfiguration
-import nl.juraji.albums.model.Tag
-import nl.juraji.albums.repositories.TagRepository
+import nl.juraji.albums.domain.TagService
+import nl.juraji.albums.domain.tags.Tag
+import nl.juraji.albums.domain.tags.TagRepository
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
 import nl.juraji.albums.util.returnsVoidMono

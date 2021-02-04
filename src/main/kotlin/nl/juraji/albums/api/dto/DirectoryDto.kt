@@ -1,7 +1,7 @@
 package nl.juraji.albums.api.dto
 
-import nl.juraji.albums.model.Directory
-import nl.juraji.albums.model.DirectoryDescription
+import nl.juraji.albums.domain.directories.Directory
+import nl.juraji.albums.domain.directories.DirectoryDescription
 import nl.juraji.albums.util.validators.ValidFileSystemPath
 import javax.validation.constraints.NotBlank
 

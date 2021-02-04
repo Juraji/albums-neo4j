@@ -1,6 +1,5 @@
-package nl.juraji.albums.repositories
+package nl.juraji.albums.domain.tags
 
-import nl.juraji.albums.model.Tag
 import org.springframework.data.neo4j.repository.ReactiveNeo4jRepository
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Mono

@@ -1,4 +1,4 @@
-package nl.juraji.albums.api
+package nl.juraji.albums.domain
 
 import com.marcellogalhardo.fixture.next
 import io.mockk.Called
@@ -9,18 +9,16 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.slot
 import io.mockk.verify
 import nl.juraji.albums.configurations.TestFixtureConfiguration
-import nl.juraji.albums.model.Directory
-import nl.juraji.albums.model.Picture
-import nl.juraji.albums.model.PictureDescription
-import nl.juraji.albums.model.Tag
-import nl.juraji.albums.repositories.DirectoryRepository
-import nl.juraji.albums.repositories.PictureRepository
-import nl.juraji.albums.repositories.TagRepository
-import nl.juraji.albums.services.FileOperations
+import nl.juraji.albums.domain.directories.Directory
+import nl.juraji.albums.domain.pictures.Picture
+import nl.juraji.albums.domain.pictures.PictureDescription
+import nl.juraji.albums.domain.tags.Tag
+import nl.juraji.albums.domain.directories.DirectoryRepository
+import nl.juraji.albums.domain.pictures.PictureRepository
+import nl.juraji.albums.domain.tags.TagRepository
 import nl.juraji.albums.util.*
 import nl.juraji.reactor.validations.ValidationException
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import reactor.kotlin.test.verifyError

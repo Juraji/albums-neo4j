@@ -10,8 +10,9 @@ import nl.juraji.albums.api.dto.PictureDto
 import nl.juraji.albums.api.dto.TagDto
 import nl.juraji.albums.api.dto.toPictureDto
 import nl.juraji.albums.configurations.TestFixtureConfiguration
-import nl.juraji.albums.model.Picture
-import nl.juraji.albums.model.PictureDescription
+import nl.juraji.albums.domain.PictureService
+import nl.juraji.albums.domain.pictures.Picture
+import nl.juraji.albums.domain.pictures.PictureDescription
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
 import nl.juraji.albums.util.uriBuilder

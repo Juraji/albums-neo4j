@@ -1,7 +1,5 @@
-package nl.juraji.albums.repositories
+package nl.juraji.albums.domain.pictures
 
-import nl.juraji.albums.model.Picture
-import nl.juraji.albums.model.PictureDescription
 import org.springframework.data.neo4j.repository.ReactiveNeo4jRepository
 import org.springframework.data.neo4j.repository.query.Query
 import org.springframework.stereotype.Repository

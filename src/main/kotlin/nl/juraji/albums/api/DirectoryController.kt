@@ -2,7 +2,8 @@ package nl.juraji.albums.api
 
 import nl.juraji.albums.api.dto.DirectoryDto
 import nl.juraji.albums.api.dto.toDirectoryDto
-import nl.juraji.albums.model.DirectoryDescription
+import nl.juraji.albums.domain.DirectoryService
+import nl.juraji.albums.domain.directories.DirectoryDescription
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping

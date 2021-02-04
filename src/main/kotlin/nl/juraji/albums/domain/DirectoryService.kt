@@ -1,7 +1,7 @@
-package nl.juraji.albums.api
+package nl.juraji.albums.domain
 
-import nl.juraji.albums.model.DirectoryDescription
-import nl.juraji.albums.repositories.DirectoryRepository
+import nl.juraji.albums.domain.directories.DirectoryDescription
+import nl.juraji.albums.domain.directories.DirectoryRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono

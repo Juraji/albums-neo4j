@@ -7,7 +7,8 @@ import io.mockk.every
 import nl.juraji.albums.api.dto.DirectoryDto
 import nl.juraji.albums.api.dto.toDirectoryDto
 import nl.juraji.albums.configurations.TestFixtureConfiguration
-import nl.juraji.albums.model.DirectoryDescription
+import nl.juraji.albums.domain.DirectoryService
+import nl.juraji.albums.domain.directories.DirectoryDescription
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
 import org.junit.jupiter.api.Test

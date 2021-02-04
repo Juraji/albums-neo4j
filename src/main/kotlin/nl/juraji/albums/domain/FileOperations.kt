@@ -1,4 +1,4 @@
-package nl.juraji.albums.services
+package nl.juraji.albums.domain
 
 import nl.juraji.albums.util.LoggerCompanion
 import nl.juraji.albums.util.deferTo
@@ -19,7 +19,7 @@ class FileOperations {
             Schedulers.DEFAULT_BOUNDED_ELASTIC_SIZE,
             Schedulers.DEFAULT_BOUNDED_ELASTIC_QUEUESIZE,
             "nio-file-operations",
-            60,
+            30,
             true
         )
 

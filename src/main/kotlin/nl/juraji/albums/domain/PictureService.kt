@@ -1,15 +1,14 @@
-package nl.juraji.albums.api
+package nl.juraji.albums.domain
 
-import nl.juraji.albums.model.Directory
-import nl.juraji.albums.model.FileType
-import nl.juraji.albums.model.Picture
-import nl.juraji.albums.model.PictureDescription
-import nl.juraji.albums.model.relationships.DirectoryContainsPicture
-import nl.juraji.albums.model.relationships.PictureTaggedByTag
-import nl.juraji.albums.repositories.DirectoryRepository
-import nl.juraji.albums.repositories.PictureRepository
-import nl.juraji.albums.repositories.TagRepository
-import nl.juraji.albums.services.FileOperations
+import nl.juraji.albums.domain.directories.Directory
+import nl.juraji.albums.domain.pictures.FileType
+import nl.juraji.albums.domain.pictures.Picture
+import nl.juraji.albums.domain.pictures.PictureDescription
+import nl.juraji.albums.domain.relationships.ContainsPicture
+import nl.juraji.albums.domain.relationships.TaggedByTag
+import nl.juraji.albums.domain.directories.DirectoryRepository
+import nl.juraji.albums.domain.pictures.PictureRepository
+import nl.juraji.albums.domain.tags.TagRepository
 import nl.juraji.albums.util.toLocalDateTime
 import nl.juraji.albums.util.toPath
 import nl.juraji.albums.util.toUnit
@@ -82,7 +81,7 @@ class PictureService(
             tagRepository.findById(tagId)
         )
         .map { (picture, tag) ->
-            val relationship = PictureTaggedByTag(tag)
+            val relationship = TaggedByTag(tag)
 
             picture.copy(tags = picture.tags + relationship)
         }
@@ -93,7 +92,7 @@ class PictureService(
 
     private fun doAddPictureToDirectory(picture: Picture) {
         val parentLocation = fileOperations.getParentPathStr(picture.location)
-        val relationship = DirectoryContainsPicture(picture)
+        val relationship = ContainsPicture(picture)
 
         directoryRepository
             .findByLocation(parentLocation)

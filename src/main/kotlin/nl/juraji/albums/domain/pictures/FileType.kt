@@ -1,4 +1,4 @@
-package nl.juraji.albums.model
+package nl.juraji.albums.domain.pictures
 
 import org.springframework.http.MediaType
 

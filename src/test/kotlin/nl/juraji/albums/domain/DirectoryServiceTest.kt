@@ -1,4 +1,4 @@
-package nl.juraji.albums.api
+package nl.juraji.albums.domain
 
 import com.marcellogalhardo.fixture.next
 import io.mockk.every
@@ -7,9 +7,9 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import nl.juraji.albums.configurations.TestFixtureConfiguration
-import nl.juraji.albums.model.Directory
-import nl.juraji.albums.model.DirectoryDescription
-import nl.juraji.albums.repositories.DirectoryRepository
+import nl.juraji.albums.domain.DirectoryService
+import nl.juraji.albums.domain.directories.DirectoryDescription
+import nl.juraji.albums.domain.directories.DirectoryRepository
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
 import org.junit.jupiter.api.Test

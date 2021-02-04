@@ -3,7 +3,8 @@ package nl.juraji.albums.api
 import nl.juraji.albums.api.dto.NewTagDto
 import nl.juraji.albums.api.dto.TagDto
 import nl.juraji.albums.api.dto.toTagDto
-import nl.juraji.albums.model.Tag
+import nl.juraji.albums.domain.TagService
+import nl.juraji.albums.domain.tags.Tag
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono

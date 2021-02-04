@@ -1,6 +1,6 @@
-package nl.juraji.albums.repositories
+package nl.juraji.albums.domain.pictures
 
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.neo4j.driver.AuthTokens
 import org.neo4j.driver.Driver
@@ -41,7 +41,7 @@ class PictureRepositoryTest {
             mapOf("pictureId" to pictureId, "tagId" to tagId)
         )
 
-        assertEquals(0, taggedByRelCount)
+        Assertions.assertEquals(0, taggedByRelCount)
     }
 
     @TestConfiguration

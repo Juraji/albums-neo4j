@@ -1,6 +1,6 @@
 package nl.juraji.albums.api.dto
 
-import nl.juraji.albums.model.Tag
+import nl.juraji.albums.domain.tags.Tag
 import nl.juraji.albums.util.Patterns
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Pattern

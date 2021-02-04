@@ -1,7 +1,7 @@
-package nl.juraji.albums.api
+package nl.juraji.albums.domain
 
-import nl.juraji.albums.model.Tag
-import nl.juraji.albums.repositories.TagRepository
+import nl.juraji.albums.domain.tags.Tag
+import nl.juraji.albums.domain.tags.TagRepository
 import nl.juraji.albums.util.toUnit
 import nl.juraji.reactor.validations.validateAsync
 import org.springframework.stereotype.Service

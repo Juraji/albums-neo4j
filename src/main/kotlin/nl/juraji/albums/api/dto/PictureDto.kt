@@ -1,8 +1,8 @@
 package nl.juraji.albums.api.dto
 
-import nl.juraji.albums.model.FileType
-import nl.juraji.albums.model.Picture
-import nl.juraji.albums.model.PictureDescription
+import nl.juraji.albums.domain.pictures.FileType
+import nl.juraji.albums.domain.pictures.Picture
+import nl.juraji.albums.domain.pictures.PictureDescription
 import nl.juraji.albums.util.validators.ValidFileSystemPath
 import java.time.LocalDateTime
 import javax.validation.constraints.NotBlank
