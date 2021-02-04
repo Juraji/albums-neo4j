@@ -23,5 +23,13 @@ interface PictureRepository : ReactiveNeo4jRepository<Picture, String> {
           WHERE p.id = $ pictureId AND t.id = $ tagId
         DELETE rel
     """, delete = true)
-    fun removePictureTaggedByTag(pictureId: String, tagId: String): Mono<Void>
+    fun removeTaggedByTag(pictureId: String, tagId: String): Mono<Void>
+
+    // language=cypher
+    @Query("""
+        MATCH (p:Picture)-[rel:DUPLICATED_BY]->(t:Picture)
+          WHERE p.id = $ pictureId AND t.id = $ targetId
+        DELETE rel
+    """, delete = true)
+    fun removeDuplicatedBy(pictureId: String, targetId: String): Mono<Void>
 }

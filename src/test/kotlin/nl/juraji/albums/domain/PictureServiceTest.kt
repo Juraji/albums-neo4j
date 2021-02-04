@@ -182,11 +182,11 @@ internal class PictureServiceTest {
         val pictureId = fixture.nextString()
         val tagId = fixture.nextString()
 
-        every { pictureRepository.removePictureTaggedByTag(pictureId, tagId) }.returnsVoidMono()
+        every { pictureRepository.removeTaggedByTag(pictureId, tagId) }.returnsVoidMono()
 
         StepVerifier.create(pictureService.removeTagFromPicture(pictureId, tagId))
             .verifyComplete()
 
-        verify { pictureRepository.removePictureTaggedByTag(pictureId, tagId) }
+        verify { pictureRepository.removeTaggedByTag(pictureId, tagId) }
     }
 }

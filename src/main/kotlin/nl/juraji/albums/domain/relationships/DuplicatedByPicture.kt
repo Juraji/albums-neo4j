@@ -1,17 +1,17 @@
 package nl.juraji.albums.domain.relationships
 
-import nl.juraji.albums.domain.tags.Tag
+import nl.juraji.albums.domain.pictures.Picture
 import org.springframework.data.neo4j.core.schema.RelationshipProperties
 import org.springframework.data.neo4j.core.schema.TargetNode
 import java.time.LocalDateTime
 
 @RelationshipProperties
-data class TaggedByTag(
-    @TargetNode
-    val tag: Tag,
-    val addedOn: LocalDateTime = LocalDateTime.now()
+data class DuplicatedByPicture(
+    @TargetNode val picture: Picture,
+    val matchedOn: LocalDateTime,
+    val similarity: Double
 ) {
     companion object {
-        const val LABEL = "TAGGED_BY"
+        const val LABEL = "DUPLICATED_BY"
     }
 }

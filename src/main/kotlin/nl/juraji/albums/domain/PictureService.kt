@@ -1,13 +1,13 @@
 package nl.juraji.albums.domain
 
 import nl.juraji.albums.domain.directories.Directory
+import nl.juraji.albums.domain.directories.DirectoryRepository
 import nl.juraji.albums.domain.pictures.FileType
 import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.domain.pictures.PictureDescription
+import nl.juraji.albums.domain.pictures.PictureRepository
 import nl.juraji.albums.domain.relationships.ContainsPicture
 import nl.juraji.albums.domain.relationships.TaggedByTag
-import nl.juraji.albums.domain.directories.DirectoryRepository
-import nl.juraji.albums.domain.pictures.PictureRepository
 import nl.juraji.albums.domain.tags.TagRepository
 import nl.juraji.albums.util.toLocalDateTime
 import nl.juraji.albums.util.toPath
@@ -88,7 +88,7 @@ class PictureService(
         .flatMap(pictureRepository::save)
 
     fun removeTagFromPicture(pictureId: String, tagId: String): Mono<Unit> =
-        pictureRepository.removePictureTaggedByTag(pictureId, tagId).toUnit()
+        pictureRepository.removeTaggedByTag(pictureId, tagId).toUnit()
 
     private fun doAddPictureToDirectory(picture: Picture) {
         val parentLocation = fileOperations.getParentPathStr(picture.location)
