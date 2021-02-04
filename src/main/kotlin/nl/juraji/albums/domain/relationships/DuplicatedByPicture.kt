@@ -10,8 +10,4 @@ data class DuplicatedByPicture(
     @TargetNode val picture: Picture,
     val matchedOn: LocalDateTime,
     val similarity: Double
-) {
-    companion object {
-        const val LABEL = "DUPLICATED_BY"
-    }
-}
+)

@@ -32,7 +32,7 @@ internal class PictureDuplicatesControllerTest {
         val pictureId = fixture.nextString()
         val targetId = fixture.nextString()
 
-        every { duplicatesService.removeDuplicateFromPicture(pictureId, targetId) } returnsMonoOf Unit
+        every { duplicatesService.unsetDuplicatePicture(pictureId, targetId) } returnsMonoOf Unit
 
         webTestClient.delete()
             .uri("/pictures/$pictureId/duplicates/$targetId")

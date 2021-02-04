@@ -10,10 +10,9 @@ import io.mockk.slot
 import io.mockk.verify
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.directories.Directory
+import nl.juraji.albums.domain.directories.DirectoryRepository
 import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.domain.pictures.PictureDescription
-import nl.juraji.albums.domain.tags.Tag
-import nl.juraji.albums.domain.directories.DirectoryRepository
 import nl.juraji.albums.domain.pictures.PictureRepository
 import nl.juraji.albums.domain.tags.TagRepository
 import nl.juraji.albums.util.*
@@ -50,9 +49,6 @@ internal class PictureServiceTest {
 
     @MockK
     private lateinit var directoryRepository: DirectoryRepository
-
-    @MockK
-    private lateinit var tagRepository: TagRepository
 
     @MockK
     private lateinit var fileOperations: FileOperations
@@ -107,7 +103,6 @@ internal class PictureServiceTest {
             directoryRepository.save(any())
         }
 
-        assertEquals(savedPicture.captured, savedDirectory.captured.pictures[0].picture)
         assertEquals("location", savedPicture.captured.location)
         assertEquals("name", savedPicture.captured.name)
     }
@@ -162,19 +157,15 @@ internal class PictureServiceTest {
 
     @Test
     internal fun `should add tag to picture`() {
-        val tag = fixture.next<Tag>()
-        val picture = fixture.next<Picture>()
-        val savedPicture = slot<Picture>()
+        val pictureId = fixture.nextString()
+        val tagId = fixture.nextString()
 
-        every { pictureRepository.findById(picture.id!!) } returnsMonoOf picture
-        every { tagRepository.findById(tag.id!!) } returnsMonoOf tag
-        every { pictureRepository.save(capture(savedPicture)) } returnsMonoOf picture
+        every { pictureRepository.addTag(pictureId, tagId) }.returnsVoidMono()
 
-        StepVerifier.create(pictureService.tagPictureBy(picture.id!!, tag.id!!))
-            .expectNext(picture)
+        StepVerifier.create(pictureService.tagPictureBy(pictureId, tagId))
             .verifyComplete()
 
-        assertEquals(1, savedPicture.captured.tags.count { it.tag == tag })
+        verify { pictureRepository.addTag(pictureId, tagId) }
     }
 
     @Test
@@ -182,11 +173,11 @@ internal class PictureServiceTest {
         val pictureId = fixture.nextString()
         val tagId = fixture.nextString()
 
-        every { pictureRepository.removeTaggedByTag(pictureId, tagId) }.returnsVoidMono()
+        every { pictureRepository.removeTag(pictureId, tagId) }.returnsVoidMono()
 
         StepVerifier.create(pictureService.removeTagFromPicture(pictureId, tagId))
             .verifyComplete()
 
-        verify { pictureRepository.removeTaggedByTag(pictureId, tagId) }
+        verify { pictureRepository.removeTag(pictureId, tagId) }
     }
 }

@@ -108,22 +108,18 @@ internal class PictureControllerTest {
 
     @Test
     internal fun `should add tag to picture`() {
-        val picture = fixture.next<Picture>()
-        val postedTag = fixture.next<TagDto>()
-        val expected = picture.toPictureDto()
+        val pictureId = fixture.nextString()
+        val tagId = fixture.nextString()
 
-        every { pictureService.tagPictureBy(picture.id!!, postedTag.id) } returnsMonoOf picture
+        every { pictureService.tagPictureBy(pictureId, tagId) } returnsMonoOf Unit
 
         webTestClient
             .post()
-            .uri("/pictures/${picture.id}/tags")
-            .body(Mono.just(postedTag), TagDto::class.java)
+            .uri("/pictures/${pictureId}/tags/$tagId")
             .exchange()
             .expectStatus().isOk
-            .expectBody<PictureDto>()
-            .isEqualTo(expected)
 
-        verify { pictureService.tagPictureBy(picture.id!!, postedTag.id) }
+        verify { pictureService.tagPictureBy(pictureId, tagId) }
     }
 
     @Test

@@ -6,9 +6,6 @@ import nl.juraji.albums.domain.pictures.FileType
 import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.domain.pictures.PictureDescription
 import nl.juraji.albums.domain.pictures.PictureRepository
-import nl.juraji.albums.domain.relationships.ContainsPicture
-import nl.juraji.albums.domain.relationships.TaggedByTag
-import nl.juraji.albums.domain.tags.TagRepository
 import nl.juraji.albums.util.toLocalDateTime
 import nl.juraji.albums.util.toPath
 import nl.juraji.albums.util.toUnit
@@ -29,7 +26,6 @@ import java.nio.file.Path
 class PictureService(
     private val directoryRepository: DirectoryRepository,
     private val pictureRepository: PictureRepository,
-    private val tagRepository: TagRepository,
     private val fileOperations: FileOperations
 ) {
     private val addToDirectoryScheduler: Scheduler = Schedulers.newSingle("directory-rate-limiter")
@@ -75,30 +71,22 @@ class PictureService(
             .flatMap { pictureRepository.deleteById(it.id) }
             .toUnit()
 
-    fun tagPictureBy(pictureId: String, tagId: String): Mono<Picture> = Mono
-        .zip(
-            pictureRepository.findById(pictureId),
-            tagRepository.findById(tagId)
-        )
-        .map { (picture, tag) ->
-            val relationship = TaggedByTag(tag)
-
-            picture.copy(tags = picture.tags + relationship)
-        }
-        .flatMap(pictureRepository::save)
+    fun tagPictureBy(pictureId: String, tagId: String): Mono<Unit> =
+        pictureRepository.addTag(pictureId, tagId).toUnit()
 
     fun removeTagFromPicture(pictureId: String, tagId: String): Mono<Unit> =
-        pictureRepository.removeTaggedByTag(pictureId, tagId).toUnit()
+        pictureRepository.removeTag(pictureId, tagId).toUnit()
 
     private fun doAddPictureToDirectory(picture: Picture) {
         val parentLocation = fileOperations.getParentPathStr(picture.location)
-        val relationship = ContainsPicture(picture)
 
         directoryRepository
             .findByLocation(parentLocation)
-            .switchIfEmpty { Mono.just(Directory(location = parentLocation)) }
-            .map { it.copy(pictures = it.pictures.plus(relationship)) }
-            .flatMap(directoryRepository::save)
+            .switchIfEmpty { Mono
+                .just(Directory(location = parentLocation))
+                .flatMap(directoryRepository::save)
+            }
+            .flatMap { directoryRepository.addPicture(it.id!!, picture.id!!) }
             .subscribeOn(addToDirectoryScheduler)
             .subscribe()
     }

@@ -17,5 +17,5 @@ class PictureDuplicatesController(
     fun removeDuplicateFromPicture(
         @PathVariable pictureId: String,
         @PathVariable targetId: String
-    ): Mono<Unit> = duplicatesService.removeDuplicateFromPicture(pictureId, targetId)
+    ): Mono<Unit> = duplicatesService.unsetDuplicatePicture(pictureId, targetId)
 }

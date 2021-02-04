@@ -1,5 +1,6 @@
 package nl.juraji.albums.domain.pictures
 
+import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.neo4j.driver.AuthTokens
@@ -13,6 +14,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.data.neo4j.core.Neo4jTemplate
 import reactor.test.StepVerifier
+import java.time.LocalDateTime
 
 @DataNeo4jTest
 class PictureRepositoryTest {
@@ -24,39 +26,40 @@ class PictureRepositoryTest {
     private lateinit var neo4jTemplate: Neo4jTemplate
 
     @Test
-    internal fun `should remove TAGGED_BY relationship for given picture id and tag id`() {
-        StepVerifier.create(pictureRepository.removeTaggedByTag("p1", "t1"))
+    internal fun `should add TAGGED_BY relationship on picture to tag`() {
+        StepVerifier.create(pictureRepository.addTag("p2", "t1"))
             .verifyComplete()
 
-        val taggedByRelCount = neo4jTemplate.count(
-            // language=cypher
-            """
-                MATCH (p:Picture)-[rel:TAGGED_BY]->(t:Tag)
-                  WHERE p.id = $ pictureId AND t.id = $ tagId
-                RETURN count(rel)
-            """.trimIndent(),
-            mapOf("pictureId" to "p1", "tagId" to "t1")
-        )
-
-        Assertions.assertEquals(0, taggedByRelCount)
+        assertCount(1, "MATCH (:Picture {id: 'p2'})-[rel:TAGGED_BY]->(:Tag {id: 't1'}) RETURN count(rel)")
     }
 
     @Test
-    internal fun `should remove DUPLICATED_BY relationship for picture id and target id`() {
+    internal fun `should remove TAGGED_BY relationship from picture and tag`() {
+        StepVerifier.create(pictureRepository.removeTag("p1", "t1"))
+            .verifyComplete()
+
+        assertCount(0, "MATCH (:Picture {id: 'p1'})-[rel:TAGGED_BY]->(:Tag {id: 't1'}) RETURN count(rel)")
+    }
+
+    @Test
+    internal fun `should add DUPLICATED_BY relationship on source and target pictures`() {
+        StepVerifier.create(pictureRepository.addDuplicatedBy("p1", "p3", 0.98, LocalDateTime.now()))
+            .verifyComplete()
+
+        assertCount(1, "MATCH (:Picture {id: 'p1'})-[rel:DUPLICATED_BY]->(:Picture {id: 'p3'}) RETURN count(rel)")
+    }
+
+    @Test
+    internal fun `should remove DUPLICATED_BY relationship from source and target pictures`() {
         StepVerifier.create(pictureRepository.removeDuplicatedBy("p1", "p2"))
             .verifyComplete()
 
-        val taggedByRelCount = neo4jTemplate.count(
-            // language=cypher
-            """
-                MATCH (p1:Picture)-[rel:DUPLICATED_BY]->(p2:Picture)
-                  WHERE p1.id = $ pictureId AND p2.id = $ targetId
-                RETURN count(rel)
-            """.trimIndent(),
-            mapOf("pictureId" to "p1", "targetId" to "p2")
-        )
+        assertCount(0, "MATCH (:Picture {id: 'p1'})-[rel:DUPLICATED_BY]->(:Picture {id: 'p2'}) RETURN count(rel)")
+    }
 
-        Assertions.assertEquals(0, taggedByRelCount)
+    private fun assertCount(expected: Long, @Language("CYPHER") query: String) {
+        val actual = neo4jTemplate.count(query)
+        Assertions.assertEquals(expected, actual)
     }
 
     @TestConfiguration
@@ -90,6 +93,15 @@ class PictureRepositoryTest {
                      lastModified: '2020-05-16T11:00:50',
                      location: 'F:\Desktop\TESTMAP\78Kng.jpg',
                      name: '78Kng.jpg'
+                   })
+
+                   CREATE (p3:Picture {
+                     fileSize: 48863,
+                     fileType: 'TIFF',
+                     id: 'p3',
+                     lastModified: '2020-05-16T11:00:50',
+                     location: 'F:\Desktop\TESTMAP\79th9.jpg',
+                     name: '79th9.jpg'
                    })
 
                    CREATE (t1:Tag {

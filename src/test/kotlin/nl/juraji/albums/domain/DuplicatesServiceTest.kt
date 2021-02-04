@@ -6,6 +6,7 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.slot
+import io.mockk.verify
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.domain.pictures.PictureRepository
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import reactor.test.StepVerifier
+import java.time.LocalDateTime
 
 @ExtendWith(MockKExtension::class)
 internal class DuplicatesServiceTest {
@@ -30,20 +32,17 @@ internal class DuplicatesServiceTest {
 
     @Test
     internal fun `should add DUPLICATED_BY relationship from source to target`() {
-        val source = fixture.next<Picture>()
-        val target = fixture.next<Picture>()
+        val sourceId = fixture.nextString()
+        val targetId = fixture.nextString()
         val similarity = 0.86
-        val savedPicture = slot<Picture>()
+        val matchedOn = LocalDateTime.now()
 
-        every { pictureRepository.findById(any() as String) } returnsMonoOf source andThenMonoOf target
-        every { pictureRepository.save(capture(savedPicture)) }.returnsArgumentAsMono()
+        every { pictureRepository.addDuplicatedBy(sourceId, targetId, similarity, matchedOn) }.returnsVoidMono()
 
-        StepVerifier.create(duplicatesService.markDuplicatePicture(source.id!!, target.id!!, similarity))
-            .expectNextCount(1)
+        StepVerifier.create(duplicatesService.setDuplicatePicture(sourceId, targetId, similarity, matchedOn))
             .verifyComplete()
 
-        assertEquals(source.id, savedPicture.captured.id)
-        assertEquals(1, savedPicture.captured.duplicates.count { it.picture == target })
+        verify { pictureRepository.addDuplicatedBy(sourceId, targetId, similarity, matchedOn) }
     }
 
     @Test
@@ -53,7 +52,9 @@ internal class DuplicatesServiceTest {
 
         every { pictureRepository.removeDuplicatedBy(pictureId, targetId) }.returnsVoidMono()
 
-        StepVerifier.create(duplicatesService.removeDuplicateFromPicture(pictureId, targetId))
+        StepVerifier.create(duplicatesService.unsetDuplicatePicture(pictureId, targetId))
             .verifyComplete()
+
+        verify { pictureRepository.removeDuplicatedBy(pictureId, targetId) }
     }
 }
