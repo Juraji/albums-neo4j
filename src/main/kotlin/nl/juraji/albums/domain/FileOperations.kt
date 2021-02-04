@@ -39,8 +39,5 @@ class FileOperations {
         Files.deleteIfExists(path)
     }
 
-    fun getParentPathStr(path: String, separator: Char = File.separatorChar): String =
-        path.substringBeforeLast(separator)
-
     companion object : LoggerCompanion(FileOperations::class)
 }

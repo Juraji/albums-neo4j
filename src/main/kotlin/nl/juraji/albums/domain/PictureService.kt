@@ -77,13 +77,14 @@ class PictureService(
         pictureRepository.removeTag(pictureId, tagId).toUnit()
 
     private fun doAddPictureToDirectory(picture: Picture) {
-        val parentLocation = fileOperations.getParentPathStr(picture.location)
+        val parentLocation = picture.location.toPath().parent.toString()
 
         directoryRepository
             .findByLocation(parentLocation)
-            .switchIfEmpty { Mono
-                .just(Directory(location = parentLocation))
-                .flatMap(directoryRepository::save)
+            .switchIfEmpty {
+                Mono
+                    .just(Directory(location = parentLocation))
+                    .flatMap(directoryRepository::save)
             }
             .flatMap { directoryRepository.addPicture(it.id!!, picture.id!!) }
             .subscribeOn(addToDirectoryScheduler)

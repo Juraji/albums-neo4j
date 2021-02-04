@@ -2,6 +2,7 @@ package nl.juraji.albums.domain
 
 import com.marcellogalhardo.fixture.next
 import io.mockk.Called
+import io.mockk.InternalPlatformDsl.toStr
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import reactor.kotlin.test.verifyError
 import reactor.test.StepVerifier
+import java.nio.file.Paths
 import java.nio.file.attribute.BasicFileAttributes
 import java.nio.file.attribute.FileTime
 
@@ -82,31 +84,34 @@ internal class PictureServiceTest {
 
     @Test
     internal fun `should add picture`() {
+        val parentLocation = Paths.get("/some/location").toString()
+        val location = Paths.get("/some/location/picture.jpg").toString()
+        val name = "picture.jpg"
+
         val savedDirectory = slot<Directory>()
         val savedPicture = slot<Picture>()
 
         every { fileOperations.exists(any()) } returnsMonoOf true
-        every { fileOperations.getParentPathStr(any()) } returns "mock_path"
         every { fileOperations.readContentType(any()) } returnsMonoOf "image/jpeg"
         every { fileOperations.readAttributes(any()) } returnsMonoOf fixture.next()
         every { directoryRepository.findByLocation(any()) }.returnsEmptyMono()
         every { directoryRepository.save(capture(savedDirectory)) }.returnsArgumentAsMono()
-        every { pictureRepository.existsByLocation("location") } returnsMonoOf false
+        every { pictureRepository.existsByLocation(location) } returnsMonoOf false
         every { pictureRepository.save(capture(savedPicture)) }.returnsArgumentAsMono()
 
-        StepVerifier.create(pictureService.addPicture("location", "name"))
+        StepVerifier.create(pictureService.addPicture(location, name))
             .expectNextCount(1)
             .verifyComplete()
 
         // Verify side-effect of adding to directory
         verify {
-            fileOperations.getParentPathStr("location")
-            directoryRepository.findByLocation("mock_path")
+            directoryRepository.findByLocation(parentLocation)
             directoryRepository.save(any())
         }
 
-        assertEquals("location", savedPicture.captured.location)
-        assertEquals("name", savedPicture.captured.name)
+        assertEquals(parentLocation, savedDirectory.captured.location)
+        assertEquals(location, savedPicture.captured.location)
+        assertEquals(name, savedPicture.captured.name)
     }
 
     @Test
