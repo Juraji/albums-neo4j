@@ -5,8 +5,6 @@ import com.marcellogalhardo.fixture.next
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import nl.juraji.albums.api.dto.NewTagDto
-import nl.juraji.albums.api.dto.TagDto
-import nl.juraji.albums.api.dto.toTagDto
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.TagService
 import nl.juraji.albums.domain.tags.Tag
@@ -20,6 +18,7 @@ import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
+import org.springframework.test.web.reactive.server.expectBodyList
 import reactor.core.publisher.Mono
 
 @WebFluxTest(TagController::class)
@@ -39,7 +38,6 @@ internal class TagControllerTest {
     @Test
     internal fun `should fetch all tags`() {
         val tag: Tag = fixture.next()
-        val expected = tag.toTagDto()
 
         every { tagService.getAllTags() } returnsFluxOf tag
 
@@ -49,15 +47,14 @@ internal class TagControllerTest {
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk
-            .expectBodyList(TagDto::class.java)
-            .contains(expected)
+            .expectBodyList<Tag>()
+            .contains(tag)
     }
 
     @Test
     internal fun `should create new tag`() {
         val postedTag = fixture.next<NewTagDto>()
         val tag = fixture.next<Tag>()
-        val expected = tag.toTagDto()
 
         every { tagService.createTag(postedTag.label, postedTag.color) } returnsMonoOf tag
 
@@ -67,8 +64,8 @@ internal class TagControllerTest {
             .body(Mono.just(postedTag), NewTagDto::class.java)
             .exchange()
             .expectStatus().isOk
-            .expectBody<TagDto>()
-            .isEqualTo(expected)
+            .expectBody<Tag>()
+            .isEqualTo(tag)
     }
 
     @Test

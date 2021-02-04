@@ -4,7 +4,6 @@ import nl.juraji.albums.domain.directories.Directory
 import nl.juraji.albums.domain.directories.DirectoryRepository
 import nl.juraji.albums.domain.pictures.FileType
 import nl.juraji.albums.domain.pictures.Picture
-import nl.juraji.albums.domain.pictures.PictureDescription
 import nl.juraji.albums.domain.pictures.PictureRepository
 import nl.juraji.albums.util.toLocalDateTime
 import nl.juraji.albums.util.toPath
@@ -30,9 +29,9 @@ class PictureService(
 ) {
     private val addToDirectoryScheduler: Scheduler = Schedulers.newSingle("directory-rate-limiter")
 
-    fun getAllPictures(): Flux<PictureDescription> = pictureRepository.findAllDescriptions()
+    fun getAllPictures(): Flux<Picture> = pictureRepository.findAll()
 
-    fun getPicture(pictureId: String): Mono<PictureDescription> = pictureRepository.findDescriptionById(pictureId)
+    fun getPicture(pictureId: String): Mono<Picture> = pictureRepository.findById(pictureId)
 
     fun addPicture(location: String, name: String?): Mono<Picture> = Mono.just(location.toPath())
         .validateAsync { path ->
@@ -66,9 +65,9 @@ class PictureService(
             .deleteById(pictureId)
             .toUnit()
         else pictureRepository
-            .findDescriptionById(pictureId)
+            .findById(pictureId)
             .doOnNext { fileOperations.deleteIfExists(it.location.toPath()).subscribe() }
-            .flatMap { pictureRepository.deleteById(it.id) }
+            .flatMap { pictureRepository.deleteById(it.id!!) }
             .toUnit()
 
     fun tagPictureBy(pictureId: String, tagId: String): Mono<Unit> =

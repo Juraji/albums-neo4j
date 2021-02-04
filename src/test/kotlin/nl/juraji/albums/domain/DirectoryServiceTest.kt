@@ -7,8 +7,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import nl.juraji.albums.configurations.TestFixtureConfiguration
-import nl.juraji.albums.domain.DirectoryService
-import nl.juraji.albums.domain.directories.DirectoryDescription
+import nl.juraji.albums.domain.directories.Directory
 import nl.juraji.albums.domain.directories.DirectoryRepository
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
@@ -28,31 +27,27 @@ internal class DirectoryServiceTest {
 
     @Test
     internal fun `should get directories`() {
-        val expected: List<DirectoryDescription> = listOf(fixture.next(), fixture.next(), fixture.next())
+        val expected: List<Directory> = listOf(fixture.next(), fixture.next(), fixture.next())
 
-        every { directoryRepository.findAllDescriptions() } returnsFluxOf expected
+        every { directoryRepository.findAll() } returnsFluxOf expected
 
         StepVerifier.create(directoryService.getAllDirectories())
             .expectNextSequence(expected)
             .verifyComplete()
 
-        verify {
-            directoryRepository.findAllDescriptions()
-        }
+        verify { directoryRepository.findAll() }
     }
 
     @Test
     internal fun `should get directory by id`() {
-        val expected = fixture.next<DirectoryDescription>()
+        val expected = fixture.next<Directory>()
 
-        every { directoryRepository.findDescriptionById(expected.id) } returnsMonoOf expected
+        every { directoryRepository.findById(expected.id!!) } returnsMonoOf expected
 
-        StepVerifier.create(directoryService.getDirectory(expected.id))
+        StepVerifier.create(directoryService.getDirectory(expected.id!!))
             .expectNext(expected)
             .verifyComplete()
 
-        verify {
-            directoryRepository.findDescriptionById(expected.id)
-        }
+        verify { directoryRepository.findById(expected.id!!) }
     }
 }

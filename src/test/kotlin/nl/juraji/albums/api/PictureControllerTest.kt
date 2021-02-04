@@ -6,13 +6,9 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
 import nl.juraji.albums.api.dto.NewPictureDto
-import nl.juraji.albums.api.dto.PictureDto
-import nl.juraji.albums.api.dto.TagDto
-import nl.juraji.albums.api.dto.toPictureDto
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.PictureService
 import nl.juraji.albums.domain.pictures.Picture
-import nl.juraji.albums.domain.pictures.PictureDescription
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
 import nl.juraji.albums.util.uriBuilder
@@ -41,8 +37,7 @@ internal class PictureControllerTest {
 
     @Test
     internal fun `should get all pictures`() {
-        val picture = fixture.next<PictureDescription>()
-        val expected = picture.toPictureDto()
+        val picture = fixture.next<Picture>()
 
         every { pictureService.getAllPictures() } returnsFluxOf picture
 
@@ -51,31 +46,29 @@ internal class PictureControllerTest {
             .uri("/pictures")
             .exchange()
             .expectStatus().isOk
-            .expectBodyList<PictureDto>()
-            .contains(expected)
+            .expectBodyList<Picture>()
+            .contains(picture)
     }
 
     @Test
     internal fun `should get picture by id`() {
-        val picture = fixture.next<PictureDescription>()
-        val expected = picture.toPictureDto()
+        val picture = fixture.next<Picture>()
 
-        every { pictureService.getPicture(picture.id) } returnsMonoOf picture
+        every { pictureService.getPicture(picture.id!!) } returnsMonoOf picture
 
         webTestClient
             .get()
             .uri("/pictures/${picture.id}")
             .exchange()
             .expectStatus().isOk
-            .expectBody<PictureDto>()
-            .isEqualTo(expected)
+            .expectBody<Picture>()
+            .isEqualTo(picture)
     }
 
     @Test
     internal fun `should add picture`() {
         val postBody = fixture.next<NewPictureDto>()
         val picture = fixture.next<Picture>()
-        val expected = picture.toPictureDto()
 
 
         every { pictureService.addPicture(postBody.location, postBody.name) } returnsMonoOf picture
@@ -86,8 +79,8 @@ internal class PictureControllerTest {
             .body(Mono.just(postBody), Picture::class.java)
             .exchange()
             .expectStatus().isOk
-            .expectBody<PictureDto>()
-            .isEqualTo(expected)
+            .expectBody<Picture>()
+            .isEqualTo(picture)
     }
 
     @Test

@@ -1,12 +1,8 @@
 package nl.juraji.albums.api
 
 import nl.juraji.albums.api.dto.NewPictureDto
-import nl.juraji.albums.api.dto.PictureDto
-import nl.juraji.albums.api.dto.TagDto
-import nl.juraji.albums.api.dto.toPictureDto
 import nl.juraji.albums.domain.PictureService
 import nl.juraji.albums.domain.pictures.Picture
-import nl.juraji.albums.domain.pictures.PictureDescription
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -19,19 +15,17 @@ class PictureController(
 ) {
 
     @GetMapping
-    fun getAllPictures(): Flux<PictureDescription> = pictureService.getAllPictures()
+    fun getAllPictures(): Flux<Picture> = pictureService.getAllPictures()
 
     @GetMapping("/{pictureId}")
     fun getPicture(
         @PathVariable("pictureId") pictureId: String
-    ): Mono<PictureDescription> = pictureService.getPicture(pictureId)
+    ): Mono<Picture> = pictureService.getPicture(pictureId)
 
     @PostMapping
     fun addPicture(
         @Valid @RequestBody picture: NewPictureDto
-    ): Mono<PictureDto> = pictureService
-        .addPicture(picture.location, picture.name)
-        .map(Picture::toPictureDto)
+    ): Mono<Picture> = pictureService.addPicture(picture.location, picture.name)
 
     @DeleteMapping("/{pictureId}")
     fun deletePicture(

@@ -12,9 +12,7 @@ import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.directories.Directory
 import nl.juraji.albums.domain.directories.DirectoryRepository
 import nl.juraji.albums.domain.pictures.Picture
-import nl.juraji.albums.domain.pictures.PictureDescription
 import nl.juraji.albums.domain.pictures.PictureRepository
-import nl.juraji.albums.domain.tags.TagRepository
 import nl.juraji.albums.util.*
 import nl.juraji.reactor.validations.ValidationException
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -58,24 +56,28 @@ internal class PictureServiceTest {
 
     @Test
     internal fun `should get all pictures`() {
-        val picture = fixture.next<PictureDescription>()
+        val picture = fixture.next<Picture>()
 
-        every { pictureRepository.findAllDescriptions() } returnsFluxOf picture
+        every { pictureRepository.findAll() } returnsFluxOf picture
 
         StepVerifier.create(pictureService.getAllPictures())
             .expectNext(picture)
             .verifyComplete()
+
+        verify { pictureRepository.findAll() }
     }
 
     @Test
     internal fun `should get picture by id`() {
-        val picture = fixture.next<PictureDescription>()
+        val picture = fixture.next<Picture>()
 
-        every { pictureRepository.findDescriptionById(picture.id) } returnsMonoOf picture
+        every { pictureRepository.findById(picture.id!!) } returnsMonoOf picture
 
-        StepVerifier.create(pictureService.getPicture(picture.id))
+        StepVerifier.create(pictureService.getPicture(picture.id!!))
             .expectNext(picture)
             .verifyComplete()
+
+        verify { pictureRepository.findById(picture.id!!) }
     }
 
     @Test
@@ -131,28 +133,34 @@ internal class PictureServiceTest {
 
     @Test
     internal fun `should delete picture`() {
-        val picture = fixture.next<PictureDescription>()
+        val picture = fixture.next<Picture>()
 
-        every { pictureRepository.deleteById(picture.id) }.returnsVoidMono()
+        every { pictureRepository.deleteById(picture.id!!) }.returnsVoidMono()
 
-        StepVerifier.create(pictureService.deletePicture(picture.id))
+        StepVerifier.create(pictureService.deletePicture(picture.id!!))
             .verifyComplete()
 
-        verify { fileOperations.deleteIfExists(any()) wasNot Called }
+        verify {
+            pictureRepository.deleteById(picture.id!!)
+            fileOperations.deleteIfExists(any()) wasNot Called
+        }
     }
 
     @Test
     internal fun `should delete picture and from disk`() {
-        val picture = fixture.next<PictureDescription>()
+        val picture = fixture.next<Picture>()
 
-        every { pictureRepository.findDescriptionById(picture.id) } returnsMonoOf picture
-        every { pictureRepository.deleteById(picture.id) }.returnsVoidMono()
+        every { pictureRepository.findById(picture.id!!) } returnsMonoOf picture
+        every { pictureRepository.deleteById(picture.id!!) }.returnsVoidMono()
         every { fileOperations.deleteIfExists(any()) } returnsMonoOf true
 
-        StepVerifier.create(pictureService.deletePicture(picture.id, true))
+        StepVerifier.create(pictureService.deletePicture(picture.id!!, true))
             .verifyComplete()
 
-        verify { fileOperations.deleteIfExists(picture.location.toPath()) }
+        verify {
+            pictureRepository.deleteById(picture.id!!)
+            fileOperations.deleteIfExists(picture.location.toPath())
+        }
     }
 
     @Test

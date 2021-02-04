@@ -4,11 +4,9 @@ import com.marcellogalhardo.fixture.Fixture
 import com.marcellogalhardo.fixture.next
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import nl.juraji.albums.api.dto.DirectoryDto
-import nl.juraji.albums.api.dto.toDirectoryDto
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.DirectoryService
-import nl.juraji.albums.domain.directories.DirectoryDescription
+import nl.juraji.albums.domain.directories.Directory
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
 import org.junit.jupiter.api.Test
@@ -37,8 +35,7 @@ internal class DirectoryControllerTest {
 
     @Test
     internal fun `get directories`() {
-        val directory = fixture.next<DirectoryDescription>()
-        val expected = directory.toDirectoryDto()
+        val directory = fixture.next<Directory>()
 
         every { directoryService.getAllDirectories() } returnsFluxOf directory
 
@@ -48,24 +45,23 @@ internal class DirectoryControllerTest {
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk
-            .expectBodyList<DirectoryDto>()
-            .contains(expected)
+            .expectBodyList<Directory>()
+            .contains(directory)
     }
 
     @Test
     internal fun `get directory by id`() {
-        val directory = fixture.next<DirectoryDescription>()
-        val expected = directory.toDirectoryDto()
+        val directory = fixture.next<Directory>()
 
-        every { directoryService.getDirectory(expected.id) } returnsMonoOf directory
+        every { directoryService.getDirectory(directory.id!!) } returnsMonoOf directory
 
         webTestClient
             .get()
-            .uri("/directories/${expected.id}")
+            .uri("/directories/${directory.id}")
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk
-            .expectBody<DirectoryDto>()
-            .isEqualTo(expected)
+            .expectBody<Directory>()
+            .isEqualTo(directory)
     }
 }

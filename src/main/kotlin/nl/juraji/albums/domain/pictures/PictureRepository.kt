@@ -3,7 +3,6 @@ package nl.juraji.albums.domain.pictures
 import nl.juraji.albums.util.CypherQuery
 import org.springframework.data.neo4j.repository.ReactiveNeo4jRepository
 import org.springframework.stereotype.Repository
-import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.time.LocalDateTime
 
@@ -11,11 +10,6 @@ import java.time.LocalDateTime
 interface PictureRepository : ReactiveNeo4jRepository<Picture, String> {
 
     fun existsByLocation(location: String): Mono<Boolean>
-
-    fun findDescriptionById(id: String): Mono<PictureDescription>
-
-    @CypherQuery("MATCH (p:Picture) RETURN p")
-    fun findAllDescriptions(): Flux<PictureDescription>
 
     @CypherQuery(
         """
