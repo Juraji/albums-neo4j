@@ -2,7 +2,6 @@ package nl.juraji.albums.domain
 
 import com.marcellogalhardo.fixture.next
 import io.mockk.Called
-import io.mockk.InternalPlatformDsl.toStr
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -10,8 +9,6 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.slot
 import io.mockk.verify
 import nl.juraji.albums.configurations.TestFixtureConfiguration
-import nl.juraji.albums.domain.directories.Directory
-import nl.juraji.albums.domain.directories.DirectoryRepository
 import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.domain.pictures.PictureRepository
 import nl.juraji.albums.util.*
@@ -48,7 +45,7 @@ internal class PictureServiceTest {
     private lateinit var pictureRepository: PictureRepository
 
     @MockK
-    private lateinit var directoryRepository: DirectoryRepository
+    private lateinit var directoryService: DirectoryService
 
     @MockK
     private lateinit var fileOperations: FileOperations
@@ -84,18 +81,15 @@ internal class PictureServiceTest {
 
     @Test
     internal fun `should add picture`() {
-        val parentLocation = Paths.get("/some/location").toString()
         val location = Paths.get("/some/location/picture.jpg").toString()
         val name = "picture.jpg"
 
-        val savedDirectory = slot<Directory>()
         val savedPicture = slot<Picture>()
 
         every { fileOperations.exists(any()) } returnsMonoOf true
         every { fileOperations.readContentType(any()) } returnsMonoOf "image/jpeg"
         every { fileOperations.readAttributes(any()) } returnsMonoOf fixture.next()
-        every { directoryRepository.findByLocation(any()) }.returnsEmptyMono()
-        every { directoryRepository.save(capture(savedDirectory)) }.returnsArgumentAsMono()
+        every { directoryService.addPicture(any()) } returnsMonoOf fixture.next()
         every { pictureRepository.existsByLocation(location) } returnsMonoOf false
         every { pictureRepository.save(capture(savedPicture)) }.returnsArgumentAsMono()
 
@@ -105,11 +99,9 @@ internal class PictureServiceTest {
 
         // Verify side-effect of adding to directory
         verify {
-            directoryRepository.findByLocation(parentLocation)
-            directoryRepository.save(any())
+            directoryService.addPicture(savedPicture.captured)
         }
 
-        assertEquals(parentLocation, savedDirectory.captured.location)
         assertEquals(location, savedPicture.captured.location)
         assertEquals(name, savedPicture.captured.name)
     }

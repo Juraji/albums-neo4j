@@ -7,6 +7,7 @@ import reactor.core.publisher.Mono
 
 @Repository
 interface DirectoryRepository : ReactiveNeo4jRepository<Directory, String> {
+
     fun findByLocation(location: String): Mono<Directory>
 
     // language=cypher
@@ -18,4 +19,13 @@ interface DirectoryRepository : ReactiveNeo4jRepository<Directory, String> {
         """
     )
     fun addPicture(directoryId: String, pictureId: String): Mono<Void>
+
+    @CypherQuery(
+        """
+            MERGE (d:Directory {location: $ location})
+            ON CREATE SET d.id = randomUUID()
+            RETURN d
+        """
+    )
+    fun mergeByLocation(location: String): Mono<Directory>
 }

@@ -9,11 +9,15 @@ import io.mockk.verify
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.directories.Directory
 import nl.juraji.albums.domain.directories.DirectoryRepository
+import nl.juraji.albums.domain.pictures.Picture
+import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
+import nl.juraji.albums.util.returnsVoidMono
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import reactor.test.StepVerifier
+import java.nio.file.Paths
 
 @ExtendWith(MockKExtension::class)
 internal class DirectoryServiceTest {
@@ -49,5 +53,25 @@ internal class DirectoryServiceTest {
             .verifyComplete()
 
         verify { directoryRepository.findById(expected.id!!) }
+    }
+
+    @Test
+    internal fun `should add picture to directory`() {
+        val pictureLocationPath = Paths.get("/some/location/picture.jpg")
+        val location = pictureLocationPath.parent.toString()
+        val picture = fixture.next<Picture>().copy(location = pictureLocationPath.toString())
+        val directory = fixture.next<Directory>()
+
+        every { directoryRepository.findByLocation(location) } returnsMonoOf directory
+        every { directoryRepository.addPicture(directory.id!!, picture.id!!) }.returnsVoidMono()
+
+        StepVerifier.create(directoryService.addPicture(picture))
+            .expectNext(directory)
+            .verifyComplete()
+
+        verify {
+            directoryRepository.findByLocation(location)
+            directoryRepository.addPicture(directory.id!!, picture.id!!)
+        }
     }
 }
