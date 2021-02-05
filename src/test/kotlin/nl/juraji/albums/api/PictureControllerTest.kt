@@ -97,6 +97,8 @@ internal class PictureControllerTest {
             }
             .exchange()
             .expectStatus().isOk
+
+        verify { pictureService.deletePicture(pictureId, false) }
     }
 
     @Test
@@ -127,5 +129,7 @@ internal class PictureControllerTest {
             .uri("/pictures/$pictureId/tags/$tagId")
             .exchange()
             .expectStatus().isOk
+
+        verify { pictureService.removeTagFromPicture(pictureId, tagId) }
     }
 }

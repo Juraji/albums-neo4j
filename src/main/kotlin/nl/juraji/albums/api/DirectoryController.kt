@@ -25,4 +25,9 @@ class DirectoryController(
     fun createDirectory(
         @RequestBody newDirectoryDto: NewDirectoryDto
     ): Mono<Directory> = directoryService.createDirectory(newDirectoryDto.location)
+
+    @DeleteMapping("/{directoryId}")
+    fun deleteDirectory(
+        @PathVariable directoryId: String
+    ): Mono<Unit> = directoryService.deleteDirectory(directoryId)
 }

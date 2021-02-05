@@ -4,6 +4,7 @@ import com.marcellogalhardo.fixture.Fixture
 import com.marcellogalhardo.fixture.next
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import io.mockk.verify
 import nl.juraji.albums.api.dto.NewDirectoryDto
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.DirectoryService
@@ -81,5 +82,20 @@ internal class DirectoryControllerTest {
             .expectStatus().isOk
             .expectBody<Directory>()
             .isEqualTo(directory)
+    }
+
+    @Test
+    internal fun `should delete directory`() {
+        val directoryId = fixture.nextString()
+
+        every { directoryService.deleteDirectory(directoryId) } returnsMonoOf Unit
+
+        webTestClient
+            .delete()
+            .uri("/directories")
+            .exchange()
+            .expectStatus().isOk
+
+        verify { directoryService.deleteDirectory(directoryId) }
     }
 }

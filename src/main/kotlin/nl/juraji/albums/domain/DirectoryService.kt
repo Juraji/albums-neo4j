@@ -4,6 +4,7 @@ import nl.juraji.albums.domain.directories.Directory
 import nl.juraji.albums.domain.directories.DirectoryRepository
 import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.util.toPath
+import nl.juraji.albums.util.toUnit
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -28,4 +29,8 @@ class DirectoryService(
 
     fun createDirectory(location: String): Mono<Directory> = directoryRepository
         .save(Directory(location = location))
+
+    fun deleteDirectory(directoryId: String): Mono<Unit> = directoryRepository
+        .deleteById(directoryId)
+        .toUnit()
 }
