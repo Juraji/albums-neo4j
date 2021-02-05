@@ -65,6 +65,7 @@ class TestNeo4jFixtureConfiguration {
                WITH p1,p2,t1
                CREATE (p1)-[:TAGGED_BY]->(t1)
                CREATE (p1)-[:DUPLICATED_BY]->(p2)
+               CREATE (p1)<-[:DUPLICATED_BY]-(p2)
                 """.trimIndent()
         )
         .build()

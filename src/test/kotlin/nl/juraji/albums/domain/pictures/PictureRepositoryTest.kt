@@ -41,10 +41,10 @@ class PictureRepositoryTest: AbstractRepositoryTest() {
     }
 
     @Test
-    internal fun `should remove DUPLICATED_BY relationship from source and target pictures`() {
+    internal fun `should remove DUPLICATED_BY relationship from source and target pictures in both directions`() {
         StepVerifier.create(pictureRepository.removeDuplicatedBy("p1", "p2"))
             .verifyComplete()
 
-        assertCount(0, "MATCH (:Picture {id: 'p1'})-[rel:DUPLICATED_BY]->(:Picture {id: 'p2'}) RETURN count(rel)")
+        assertCount(0, "MATCH (:Picture {id: 'p1'})-[rel:DUPLICATED_BY]-(:Picture {id: 'p2'}) RETURN count(rel)")
     }
 }

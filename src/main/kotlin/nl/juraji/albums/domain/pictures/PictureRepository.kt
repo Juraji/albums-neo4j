@@ -41,7 +41,7 @@ interface PictureRepository : ReactiveNeo4jRepository<Picture, String> {
 
     @CypherQuery(
         """
-            MATCH (p:Picture)-[rel:DUPLICATED_BY]->(t:Picture)
+            MATCH (p:Picture)-[rel:DUPLICATED_BY]-(t:Picture)
               WHERE p.id = $ pictureId AND t.id = $ targetId
             DELETE rel
     """, delete = true
