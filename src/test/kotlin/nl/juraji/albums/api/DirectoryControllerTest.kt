@@ -4,6 +4,7 @@ import com.marcellogalhardo.fixture.Fixture
 import com.marcellogalhardo.fixture.next
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import nl.juraji.albums.api.dto.NewDirectoryDto
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.DirectoryService
 import nl.juraji.albums.domain.directories.Directory
@@ -59,6 +60,23 @@ internal class DirectoryControllerTest {
             .get()
             .uri("/directories/${directory.id}")
             .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus().isOk
+            .expectBody<Directory>()
+            .isEqualTo(directory)
+    }
+
+    @Test
+    internal fun `should create directory`() {
+        val directoryDto = fixture.next<NewDirectoryDto>()
+        val directory = fixture.next<Directory>()
+
+        every { directoryService.createDirectory(directoryDto.location) } returnsMonoOf directory
+
+        webTestClient
+            .post()
+            .uri("/directories")
+            .bodyValue(directoryDto)
             .exchange()
             .expectStatus().isOk
             .expectBody<Directory>()

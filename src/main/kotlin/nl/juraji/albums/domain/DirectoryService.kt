@@ -25,4 +25,7 @@ class DirectoryService(
                     .thenReturn(d)
             }
     }
+
+    fun createDirectory(location: String): Mono<Directory> = directoryRepository
+        .save(Directory(location = location))
 }

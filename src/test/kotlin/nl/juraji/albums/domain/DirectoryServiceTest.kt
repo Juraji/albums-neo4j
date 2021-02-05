@@ -10,7 +10,7 @@ import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.directories.Directory
 import nl.juraji.albums.domain.directories.DirectoryRepository
 import nl.juraji.albums.domain.pictures.Picture
-import nl.juraji.albums.util.returnsEmptyMono
+import nl.juraji.albums.util.returnsArgumentAsMono
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
 import nl.juraji.albums.util.returnsVoidMono
@@ -73,5 +73,18 @@ internal class DirectoryServiceTest {
             directoryRepository.findByLocation(location)
             directoryRepository.addPicture(directory.id!!, picture.id!!)
         }
+    }
+
+    @Test
+    internal fun `should create directory`() {
+        val directory = fixture.next<Directory>().copy(id = null)
+
+        every { directoryRepository.save(directory) }.returnsArgumentAsMono()
+
+        StepVerifier.create(directoryService.createDirectory(directory.location))
+            .expectNext(directory)
+            .verifyComplete()
+
+        verify { directoryRepository.save(directory) }
     }
 }
