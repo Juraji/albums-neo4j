@@ -80,4 +80,19 @@ internal class TagControllerTest {
             .exchange()
             .expectStatus().isOk
     }
+
+    @Test
+    internal fun `should validate NewTagDto on post`() {
+        val tagDto = NewTagDto(
+            label = "",
+            color = "invalid_color"
+        )
+
+        webTestClient
+            .post()
+            .uri("/tags")
+            .bodyValue(tagDto)
+            .exchange()
+            .expectStatus().isBadRequest
+    }
 }

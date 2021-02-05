@@ -6,6 +6,7 @@ import nl.juraji.albums.domain.directories.Directory
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/directories")
@@ -23,7 +24,7 @@ class DirectoryController(
 
     @PostMapping
     fun createDirectory(
-        @RequestBody newDirectoryDto: NewDirectoryDto
+        @Valid @RequestBody newDirectoryDto: NewDirectoryDto
     ): Mono<Directory> = directoryService.createDirectory(newDirectoryDto.location)
 
     @DeleteMapping("/{directoryId}")

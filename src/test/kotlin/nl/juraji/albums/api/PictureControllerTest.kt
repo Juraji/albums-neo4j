@@ -132,4 +132,19 @@ internal class PictureControllerTest {
 
         verify { pictureService.removeTagFromPicture(pictureId, tagId) }
     }
+
+    @Test
+    internal fun `should validate NewPictureDto on post`() {
+        val pictureDto = NewPictureDto(
+            location = "|some invalid path?",
+            name = ""
+        )
+
+        webTestClient
+            .post()
+            .uri("/pictures")
+            .bodyValue(pictureDto)
+            .exchange()
+            .expectStatus().isBadRequest
+    }
 }

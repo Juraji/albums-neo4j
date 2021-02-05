@@ -92,10 +92,22 @@ internal class DirectoryControllerTest {
 
         webTestClient
             .delete()
-            .uri("/directories")
+            .uri("/directories/$directoryId")
             .exchange()
             .expectStatus().isOk
 
         verify { directoryService.deleteDirectory(directoryId) }
+    }
+
+    @Test
+    internal fun `should validate NewDirectoryDto on post`() {
+        val directoryDto = NewDirectoryDto(location = "|some invalid path?")
+
+        webTestClient
+            .post()
+            .uri("/directories")
+            .bodyValue(directoryDto)
+            .exchange()
+            .expectStatus().isBadRequest
     }
 }
