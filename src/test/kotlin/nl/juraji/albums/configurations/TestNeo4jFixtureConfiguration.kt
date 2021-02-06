@@ -56,6 +56,15 @@ class TestNeo4jFixtureConfiguration {
                  name: '79th9.jpg'
                })
 
+               CREATE (p4:Picture {
+                 fileSize: 48863,
+                 fileType: 'TIFF',
+                 id: 'p4',
+                 lastModified: '2020-05-16T11:00:50',
+                 location: 'F:\Desktop\TESTMAP\gODuw.jpg',
+                 name: 'gODuw.jpg'
+               })
+
                CREATE (t1:Tag {
                  id: 't1',
                  label: 'My Tag',
@@ -66,6 +75,8 @@ class TestNeo4jFixtureConfiguration {
                CREATE (p1)-[:TAGGED_BY]->(t1)
                CREATE (p1)-[:DUPLICATED_BY]->(p2)
                CREATE (p1)<-[:DUPLICATED_BY]-(p2)
+               CREATE (p1)-[:DUPLICATED_BY]->(p3)
+               CREATE (p1)<-[:DUPLICATED_BY]-(p3)
                 """.trimIndent()
         )
         .build()

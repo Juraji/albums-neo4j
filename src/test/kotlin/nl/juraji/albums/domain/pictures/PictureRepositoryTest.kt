@@ -15,7 +15,6 @@ class PictureRepositoryTest: AbstractRepositoryTest() {
 
     @Autowired
     private lateinit var pictureRepository: PictureRepository
-
     @Test
     internal fun `should add TAGGED_BY relationship on picture to tag`() {
         StepVerifier.create(pictureRepository.addTag("p2", "t1"))
@@ -34,10 +33,10 @@ class PictureRepositoryTest: AbstractRepositoryTest() {
 
     @Test
     internal fun `should add DUPLICATED_BY relationship on source and target pictures`() {
-        StepVerifier.create(pictureRepository.addDuplicatedBy("p1", "p3", 0.98, LocalDateTime.now()))
+        StepVerifier.create(pictureRepository.addDuplicatedBy("p1", "p4", 0.98, LocalDateTime.now()))
             .verifyComplete()
 
-        assertCount(1, "MATCH (:Picture {id: 'p1'})-[rel:DUPLICATED_BY]->(:Picture {id: 'p3'}) RETURN count(rel)")
+        assertCount(1, "MATCH (:Picture {id: 'p1'})-[rel:DUPLICATED_BY]->(:Picture {id: 'p4'}) RETURN count(rel)")
     }
 
     @Test
