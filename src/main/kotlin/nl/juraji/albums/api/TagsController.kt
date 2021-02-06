@@ -10,7 +10,7 @@ import javax.validation.Valid
 
 @RestController
 @RequestMapping("/tags")
-class TagController(
+class TagsController(
     private val tagService: TagService
 ) {
 

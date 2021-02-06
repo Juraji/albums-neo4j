@@ -22,10 +22,10 @@ import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.test.web.reactive.server.expectBodyList
 import reactor.core.publisher.Mono
 
-@WebFluxTest(PictureController::class)
+@WebFluxTest(PicturesController::class)
 @AutoConfigureWebTestClient
 @Import(TestFixtureConfiguration::class)
-internal class PictureControllerTest {
+internal class PicturesControllerTest {
     @MockkBean
     private lateinit var pictureService: PictureService
 

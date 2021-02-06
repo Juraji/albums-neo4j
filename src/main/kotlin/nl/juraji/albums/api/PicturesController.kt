@@ -10,7 +10,7 @@ import javax.validation.Valid
 
 @RestController
 @RequestMapping("/pictures")
-class PictureController(
+class PicturesController(
     private val pictureService: PictureService
 ) {
 

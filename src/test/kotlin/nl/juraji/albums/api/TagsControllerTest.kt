@@ -21,10 +21,10 @@ import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.test.web.reactive.server.expectBodyList
 import reactor.core.publisher.Mono
 
-@WebFluxTest(TagController::class)
+@WebFluxTest(TagsController::class)
 @AutoConfigureWebTestClient
 @Import(TestFixtureConfiguration::class)
-internal class TagControllerTest {
+internal class TagsControllerTest {
 
     @MockkBean
     private lateinit var tagService: TagService

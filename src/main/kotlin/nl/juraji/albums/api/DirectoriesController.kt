@@ -10,7 +10,7 @@ import javax.validation.Valid
 
 @RestController
 @RequestMapping("/directories")
-class DirectoryController(
+class DirectoriesController(
     private val directoryService: DirectoryService
 ) {
 

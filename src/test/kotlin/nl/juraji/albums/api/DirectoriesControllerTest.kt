@@ -22,10 +22,10 @@ import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.test.web.reactive.server.expectBodyList
 
 
-@WebFluxTest(DirectoryController::class)
+@WebFluxTest(DirectoriesController::class)
 @AutoConfigureWebTestClient
 @Import(TestFixtureConfiguration::class)
-internal class DirectoryControllerTest {
+internal class DirectoriesControllerTest {
     @MockkBean
     private lateinit var directoryService: DirectoryService
 
