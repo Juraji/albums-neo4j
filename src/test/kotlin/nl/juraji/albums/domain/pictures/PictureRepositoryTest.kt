@@ -15,6 +15,7 @@ class PictureRepositoryTest: AbstractRepositoryTest() {
 
     @Autowired
     private lateinit var pictureRepository: PictureRepository
+
     @Test
     internal fun `should add TAGGED_BY relationship on picture to tag`() {
         StepVerifier.create(pictureRepository.addTag("p2", "t1"))
