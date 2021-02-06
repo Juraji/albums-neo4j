@@ -9,6 +9,7 @@ import nl.juraji.albums.api.dto.NewPictureDto
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.PictureService
 import nl.juraji.albums.domain.pictures.Picture
+import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
 import nl.juraji.albums.util.uriBuilder
@@ -87,7 +88,7 @@ internal class PicturesControllerTest {
     internal fun `should delete picture`() {
         val pictureId = fixture.nextString()
 
-        every { pictureService.deletePicture(pictureId, false) } returnsMonoOf Unit
+        every { pictureService.deletePicture(pictureId, false) }.returnsEmptyMono()
 
         webTestClient
             .delete()
@@ -106,7 +107,7 @@ internal class PicturesControllerTest {
         val pictureId = fixture.nextString()
         val tagId = fixture.nextString()
 
-        every { pictureService.tagPictureBy(pictureId, tagId) } returnsMonoOf Unit
+        every { pictureService.tagPictureBy(pictureId, tagId) }.returnsEmptyMono()
 
         webTestClient
             .post()
@@ -122,7 +123,7 @@ internal class PicturesControllerTest {
         val pictureId = fixture.nextString()
         val tagId = fixture.nextString()
 
-        every { pictureService.removeTagFromPicture(pictureId, tagId) } returnsMonoOf Unit
+        every { pictureService.removeTagFromPicture(pictureId, tagId) }.returnsEmptyMono()
 
         webTestClient
             .delete()

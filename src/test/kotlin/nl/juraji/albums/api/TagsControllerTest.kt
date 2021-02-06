@@ -8,6 +8,7 @@ import nl.juraji.albums.api.dto.NewTagDto
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.TagService
 import nl.juraji.albums.domain.tags.Tag
+import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
 import org.junit.jupiter.api.Test
@@ -72,7 +73,7 @@ internal class TagsControllerTest {
     internal fun `should delete tag`() {
         val tagId = fixture.nextString()
 
-        every { tagService.deleteTag(tagId) } returnsMonoOf Unit
+        every { tagService.deleteTag(tagId) }.returnsEmptyMono()
 
         webTestClient
             .delete()

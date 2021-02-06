@@ -9,6 +9,7 @@ import nl.juraji.albums.api.dto.NewDirectoryDto
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.DirectoryService
 import nl.juraji.albums.domain.directories.Directory
+import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
 import org.junit.jupiter.api.Test
@@ -88,7 +89,7 @@ internal class DirectoriesControllerTest {
     internal fun `should delete directory`() {
         val directoryId = fixture.nextString()
 
-        every { directoryService.deleteDirectory(directoryId) } returnsMonoOf Unit
+        every { directoryService.deleteDirectory(directoryId) }.returnsEmptyMono()
 
         webTestClient
             .delete()

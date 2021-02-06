@@ -18,10 +18,10 @@ class PictureRepositoryTest: AbstractRepositoryTest() {
 
     @Test
     internal fun `should add TAGGED_BY relationship on picture to tag`() {
-        StepVerifier.create(pictureRepository.addTag("p2", "t1"))
+        StepVerifier.create(pictureRepository.addTag("p4", "t1"))
             .verifyComplete()
 
-        assertCount(1, "MATCH (:Picture {id: 'p2'})-[rel:TAGGED_BY]->(:Tag {id: 't1'}) RETURN count(rel)")
+        assertCount(1, "MATCH (:Picture {id: 'p4'})-[rel:TAGGED_BY]->(:Tag {id: 't1'}) RETURN count(rel)")
     }
 
     @Test
@@ -30,21 +30,5 @@ class PictureRepositoryTest: AbstractRepositoryTest() {
             .verifyComplete()
 
         assertCount(0, "MATCH (:Picture {id: 'p1'})-[rel:TAGGED_BY]->(:Tag {id: 't1'}) RETURN count(rel)")
-    }
-
-    @Test
-    internal fun `should add DUPLICATED_BY relationship on source and target pictures`() {
-        StepVerifier.create(pictureRepository.addDuplicatedBy("p1", "p4", 0.98, LocalDateTime.now()))
-            .verifyComplete()
-
-        assertCount(1, "MATCH (:Picture {id: 'p1'})-[rel:DUPLICATED_BY]->(:Picture {id: 'p4'}) RETURN count(rel)")
-    }
-
-    @Test
-    internal fun `should remove DUPLICATED_BY relationship from source and target pictures in both directions`() {
-        StepVerifier.create(pictureRepository.removeDuplicatedBy("p1", "p2"))
-            .verifyComplete()
-
-        assertCount(0, "MATCH (:Picture {id: 'p1'})-[rel:DUPLICATED_BY]-(:Picture {id: 'p2'}) RETURN count(rel)")
     }
 }

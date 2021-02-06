@@ -1,38 +1,40 @@
 package nl.juraji.albums.domain.relationships
 
 import nl.juraji.albums.configurations.TestNeo4jFixtureConfiguration
-import nl.juraji.albums.domain.pictures.FileType
-import nl.juraji.albums.domain.pictures.Picture
+import nl.juraji.albums.util.AbstractRepositoryTest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
 import org.springframework.context.annotation.Import
 import reactor.test.StepVerifier
-import java.time.LocalDateTime
 
 @DataNeo4jTest
 @Import(TestNeo4jFixtureConfiguration::class, DuplicatedByRepository::class)
-internal class DuplicatedByRepositoryTest {
+internal class DuplicatedByRepositoryReadsTest : AbstractRepositoryTest() {
     @Autowired
     private lateinit var duplicatedByRepository: DuplicatedByRepository
 
     @Test
     internal fun `should find duplicates in both directions`() {
-        val p2 = DuplicatedBy(
-            matchedOn = LocalDateTime.parse("2020-05-16T11:00:50"),
-            similarity = 0.86,
-            target = Picture(
-                id = "p2",
-                location = "F:\\Desktop\\TESTMAP\\78Kng.jpg",
-                name = "78Kng.jpg",
-                fileSize = 916566,
-                fileType = FileType.BMP,
-                lastModified = LocalDateTime.parse("2020-05-16T11:00:50"),
-            )
-        )
+        val recorder = mutableListOf<DuplicatedBy>()
 
         StepVerifier.create(duplicatedByRepository.findByPictureId("p1"))
-            .expectNext(p2)
+            .recordWith { recorder }
+            .expectNextCount(2)
             .verifyComplete()
+
+        recorder.forEach { println(it) }
+    }
+
+    @Test
+    internal fun `should find all distinct duplicated by`() {
+        val recorder = mutableListOf<DuplicatedByWithSource>()
+
+        StepVerifier.create(duplicatedByRepository.findAllDistinctDuplicatedBy())
+            .recordWith { recorder }
+            .expectNextCount(4)
+            .verifyComplete()
+
+        recorder.forEach { println(it) }
     }
 }

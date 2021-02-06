@@ -17,9 +17,9 @@ class DirectoryRepositoryTest: AbstractRepositoryTest() {
 
     @Test
     internal fun `should add CONTAINS relationship on directory to picture`() {
-        StepVerifier.create(directoryRepository.addPicture("d1", "p1"))
+        StepVerifier.create(directoryRepository.addPicture("d1", "p4"))
             .verifyComplete()
 
-        assertCount(1, "MATCH (:Directory {id: 'd1'})-[rel:CONTAINS]->(:Picture {id: 'p1'}) RETURN count(rel)")
+        assertCount(1, "MATCH (:Directory {id: 'd1'})-[rel:CONTAINS]->(:Picture {id: 'p4'}) RETURN count(rel)")
     }
 }
