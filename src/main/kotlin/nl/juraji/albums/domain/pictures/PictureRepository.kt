@@ -1,7 +1,7 @@
 package nl.juraji.albums.domain.pictures
 
-import nl.juraji.albums.util.CypherQuery
 import org.springframework.data.neo4j.repository.ReactiveNeo4jRepository
+import org.springframework.data.neo4j.repository.query.Query
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Mono
 import java.time.LocalDateTime
@@ -11,7 +11,7 @@ interface PictureRepository : ReactiveNeo4jRepository<Picture, String> {
 
     fun existsByLocation(location: String): Mono<Boolean>
 
-    @CypherQuery(
+    @Query(
         """
             MATCH (p:Picture) WHERE p.id = $ pictureId 
             MATCH (t:Tag) WHERE t.id = $ tagId
@@ -20,7 +20,7 @@ interface PictureRepository : ReactiveNeo4jRepository<Picture, String> {
     )
     fun addTag(pictureId: String, tagId: String): Mono<Void>
 
-    @CypherQuery(
+    @Query(
         """
             MATCH (p:Picture)-[rel:TAGGED_BY]->(t:Tag)
               WHERE p.id = $ pictureId AND t.id = $ tagId
@@ -30,7 +30,7 @@ interface PictureRepository : ReactiveNeo4jRepository<Picture, String> {
     )
     fun removeTag(pictureId: String, tagId: String): Mono<Void>
 
-    @CypherQuery(
+    @Query(
         """
             MATCH (s:Picture) WHERE s.id = $ sourceId 
             MATCH (t:Picture) WHERE t.id = $ targetId
@@ -39,7 +39,7 @@ interface PictureRepository : ReactiveNeo4jRepository<Picture, String> {
     )
     fun addDuplicatedBy(sourceId: String, targetId: String, similarity: Double, matchedOn: LocalDateTime): Mono<Void>
 
-    @CypherQuery(
+    @Query(
         """
             MATCH (p:Picture)-[rel:DUPLICATED_BY]-(t:Picture)
               WHERE p.id = $ pictureId AND t.id = $ targetId
