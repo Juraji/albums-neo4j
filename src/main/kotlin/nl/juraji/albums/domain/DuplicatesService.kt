@@ -1,15 +1,22 @@
 package nl.juraji.albums.domain
 
 import nl.juraji.albums.domain.pictures.PictureRepository
+import nl.juraji.albums.domain.relationships.DuplicatedBy
+import nl.juraji.albums.domain.relationships.DuplicatedByRepository
 import nl.juraji.albums.util.toUnit
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.time.LocalDateTime
 
 @Service
 class DuplicatesService(
-    private val pictureRepository: PictureRepository
+    private val pictureRepository: PictureRepository,
+    private val duplicatedByRepository: DuplicatedByRepository
 ) {
+
+    fun findDuplicatedByByPictureId(pictureId: String): Flux<DuplicatedBy> =
+        duplicatedByRepository.findByPictureId(pictureId)
 
     fun setDuplicatePicture(
         sourceId: String,

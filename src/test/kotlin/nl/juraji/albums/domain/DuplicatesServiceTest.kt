@@ -5,16 +5,13 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import io.mockk.slot
 import io.mockk.verify
 import nl.juraji.albums.configurations.TestFixtureConfiguration
-import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.domain.pictures.PictureRepository
-import nl.juraji.albums.util.andThenMonoOf
-import nl.juraji.albums.util.returnsArgumentAsMono
-import nl.juraji.albums.util.returnsMonoOf
+import nl.juraji.albums.domain.relationships.DuplicatedBy
+import nl.juraji.albums.domain.relationships.DuplicatedByRepository
+import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsVoidMono
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import reactor.test.StepVerifier
@@ -27,8 +24,25 @@ internal class DuplicatesServiceTest {
     @MockK
     private lateinit var pictureRepository: PictureRepository
 
+    @MockK
+    private lateinit var duplicatedByRepository: DuplicatedByRepository
+
     @InjectMockKs
     private lateinit var duplicatesService: DuplicatesService
+
+    @Test
+    internal fun `should find DUPLICATED_BY by picture id`() {
+        val pictureId = fixture.nextString()
+        val duplicates: List<DuplicatedBy> = fixture.next()
+
+        every { duplicatedByRepository.findByPictureId(pictureId) } returnsFluxOf duplicates
+
+        StepVerifier.create(duplicatesService.findDuplicatedByByPictureId(pictureId))
+            .expectNext(*duplicates.toTypedArray())
+            .verifyComplete()
+
+        verify { duplicatedByRepository.findByPictureId(pictureId) }
+    }
 
     @Test
     internal fun `should add DUPLICATED_BY relationship from source to target`() {

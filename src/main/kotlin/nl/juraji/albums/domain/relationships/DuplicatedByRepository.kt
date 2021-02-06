@@ -15,7 +15,7 @@ class DuplicatedByRepository(
         .query(
             """
                 MATCH (:Picture {id: $ pictureId})-[root:DUPLICATED_BY]-(picture:Picture)
-                RETURN DISTINCT root{.matchedOn, .similarity}, picture
+                RETURN DISTINCT root{.matchedOn, .similarity}, target
             """
         )
         .bind(pictureId).to("pictureId")

@@ -21,7 +21,7 @@ internal class DuplicatedByRepositoryTest {
         val p2 = DuplicatedBy(
             matchedOn = LocalDateTime.parse("2020-05-16T11:00:50"),
             similarity = 0.86,
-            picture = Picture(
+            target = Picture(
                 id = "p2",
                 location = "F:\\Desktop\\TESTMAP\\78Kng.jpg",
                 name = "78Kng.jpg",

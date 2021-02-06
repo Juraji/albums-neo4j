@@ -1,10 +1,9 @@
 package nl.juraji.albums.api
 
 import nl.juraji.albums.domain.DuplicatesService
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import nl.juraji.albums.domain.relationships.DuplicatedBy
+import org.springframework.web.bind.annotation.*
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @RestController
@@ -12,6 +11,11 @@ import reactor.core.publisher.Mono
 class PictureDuplicatesController(
     private val duplicatesService: DuplicatesService
 ) {
+
+    @GetMapping
+    fun getDuplicatedByPicture(
+        @PathVariable pictureId: String
+    ): Flux<DuplicatedBy> = duplicatesService.findDuplicatedByByPictureId(pictureId)
 
     @DeleteMapping("/{targetId}")
     fun removeDuplicateFromPicture(
