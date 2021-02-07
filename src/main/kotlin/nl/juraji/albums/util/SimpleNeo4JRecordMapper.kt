@@ -58,12 +58,9 @@ open class SimpleNeo4JRecordMapper {
         Int::class -> ({ it as Int })
         Long::class -> ({ it as Long })
         String::class -> ({ it as String })
-        LocalDateTime::class -> ({ LocalDateTime.parse(it as String) })
-        LocalDate::class -> ({ LocalDate.parse(it as String) })
-        LocalTime::class -> ({ LocalTime.parse(it as String) })
-        OffsetDateTime::class -> ({ OffsetDateTime.parse(it as String) })
-        OffsetTime::class -> ({ OffsetTime.parse(it as String) })
-        ZonedDateTime::class -> ({ ZonedDateTime.parse(it as String) })
+        LocalDateTime::class -> ({ it as LocalDateTime })
+        LocalDate::class -> ({ it as LocalDate })
+        LocalTime::class -> ({ it as LocalTime })
         else -> when {
             // Special case for JVM Enums
             (type.classifier as KClass<*>).isSubclassOf(Enum::class) -> ({
