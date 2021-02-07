@@ -14,17 +14,17 @@ interface DirectoryRepository : ReactiveNeo4jRepository<Directory, String> {
         """
             MATCH (d:Directory) WHERE d.id = $ directoryId
             MATCH (p:Picture) WHERE p.id = $ pictureId
-            CREATE (d)-[:CONTAINS]->(p)
+            MERGE (d)-[:CONTAINS]->(p)
         """
     )
     fun addPicture(directoryId: String, pictureId: String): Mono<Void>
 
     @Query(
         """
-            MERGE (d:Directory {location: $ location})
-            ON CREATE SET d.id = randomUUID()
-            RETURN d
+            MATCH (p:Directory) WHERE p.id = $ parentId
+            MATCH (d:Directory) WHERE d.id = $ directoryId
+            MERGE (p)-[:PARENT_OF]->(d)
         """
     )
-    fun mergeByLocation(location: String): Mono<Directory>
+    fun addChild(parentId: String, directoryId: String): Mono<Void>
 }

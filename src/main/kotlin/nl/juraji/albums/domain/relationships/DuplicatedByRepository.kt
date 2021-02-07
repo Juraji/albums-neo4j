@@ -5,7 +5,6 @@ import nl.juraji.albums.util.toUnit
 import org.springframework.data.neo4j.core.ReactiveNeo4jClient
 import org.springframework.data.neo4j.core.fetchAs
 import org.springframework.stereotype.Repository
-import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.time.LocalDateTime

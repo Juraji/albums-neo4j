@@ -6,9 +6,12 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
 import org.springframework.context.annotation.Import
+import org.springframework.transaction.annotation.Propagation
+import org.springframework.transaction.annotation.Transactional
 import reactor.test.StepVerifier
 
 @DataNeo4jTest
+@Transactional(propagation = Propagation.NEVER)
 @Import(TestNeo4jFixtureConfiguration::class, DuplicatedByRepository::class)
 internal class DuplicatedByRepositoryReadsTest : AbstractRepositoryTest() {
     @Autowired

@@ -1,12 +1,9 @@
 package nl.juraji.albums.configurations
 
 import nl.juraji.albums.util.LoggerCompanion
-import org.neo4j.configuration.GraphDatabaseSettings
-import org.neo4j.configuration.SettingImpl
 import org.neo4j.driver.AuthTokens
 import org.neo4j.driver.Driver
 import org.neo4j.driver.GraphDatabase
-import org.neo4j.graphdb.config.Setting
 import org.neo4j.harness.Neo4j
 import org.neo4j.harness.Neo4jBuilders
 import org.springframework.boot.test.context.TestConfiguration
