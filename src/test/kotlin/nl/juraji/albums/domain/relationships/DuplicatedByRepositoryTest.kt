@@ -2,16 +2,11 @@ package nl.juraji.albums.domain.relationships
 
 import nl.juraji.albums.configurations.TestNeo4jFixtureConfiguration
 import nl.juraji.albums.util.AbstractRepositoryTest
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
 import org.springframework.context.annotation.Import
-import org.springframework.transaction.annotation.Isolation
-import org.springframework.transaction.annotation.Propagation
-import org.springframework.transaction.annotation.Transactional
 import reactor.test.StepVerifier
-import java.time.LocalDateTime
 
 @DataNeo4jTest
 @Import(TestNeo4jFixtureConfiguration::class, DuplicatedByRepository::class)
