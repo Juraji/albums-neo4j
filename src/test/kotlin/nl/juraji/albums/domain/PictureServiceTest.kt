@@ -18,27 +18,10 @@ import org.springframework.context.ApplicationEventPublisher
 import reactor.kotlin.test.verifyError
 import reactor.test.StepVerifier
 import java.nio.file.Paths
-import java.nio.file.attribute.BasicFileAttributes
-import java.nio.file.attribute.FileTime
 
 @ExtendWith(MockKExtension::class)
 internal class PictureServiceTest {
     private val fixture = TestFixtureConfiguration.testFixture()
-        .also {
-            it.register(BasicFileAttributes::class) { f ->
-                object : BasicFileAttributes {
-                    override fun lastModifiedTime(): FileTime = FileTime.from(f.next())
-                    override fun lastAccessTime(): FileTime = FileTime.from(f.next())
-                    override fun creationTime(): FileTime = FileTime.from(f.next())
-                    override fun isRegularFile(): Boolean = f.nextBoolean()
-                    override fun isDirectory(): Boolean = f.nextBoolean()
-                    override fun isSymbolicLink(): Boolean = f.nextBoolean()
-                    override fun isOther(): Boolean = f.nextBoolean()
-                    override fun size(): Long = f.nextLong()
-                    override fun fileKey(): Any = f.nextString()
-                }
-            }
-        }
 
     @MockK
     private lateinit var pictureRepository: PictureRepository

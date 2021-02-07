@@ -13,8 +13,5 @@ enum class FileType(val contentType: String, val typeName: String, val mediaType
     companion object {
         fun of(contentType: String): FileType? = values()
             .firstOrNull { pType -> pType.contentType == contentType }
-
-        fun of(mediaType: MediaType): FileType? = values()
-            .firstOrNull { pType -> pType.mediaType == mediaType }
     }
 }

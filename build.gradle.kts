@@ -28,6 +28,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("org.liquigraph:liquigraph-core:4.0.2")
     implementation("com.github.Juraji:reactor-validations:master-SNAPSHOT")
+    implementation("com.sksamuel.scrimage:scrimage-core:4.0.16")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
