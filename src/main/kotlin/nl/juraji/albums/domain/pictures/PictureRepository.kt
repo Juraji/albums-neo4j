@@ -32,9 +32,9 @@ interface PictureRepository : ReactiveNeo4jRepository<Picture, String> {
 
     @Query(
         """
-            MATCH (s:Picture) WHERE s.id = ${'$'} sourceId 
-            MATCH (t:Picture) WHERE t.id = ${'$'} targetId
-            CREATE (s)-[:DUPLICATED_BY {matchedOn: ${'$'} matchedOn, similarity: ${'$'} similarity}]->(t)
+            MATCH (s:Picture) WHERE s.id = $ sourceId 
+            MATCH (t:Picture) WHERE t.id = $ targetId
+            CREATE (s)-[:DUPLICATED_BY {matchedOn: $ matchedOn, similarity: $ similarity}]->(t)
         """
     )
     fun addDuplicatedBy(sourceId: String, targetId: String, similarity: Double, matchedOn: LocalDateTime): Mono<Unit>

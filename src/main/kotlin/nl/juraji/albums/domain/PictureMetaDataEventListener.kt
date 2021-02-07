@@ -1,10 +1,13 @@
 package nl.juraji.albums.domain
 
+import com.sksamuel.scrimage.ImmutableImage
+import com.sksamuel.scrimage.Position
+import com.sksamuel.scrimage.ScaleMethod
+import com.sksamuel.scrimage.filter.GrayscaleFilter
+import nl.juraji.albums.configuration.DuplicateScannerConfiguration
 import nl.juraji.albums.domain.directories.DirectoryRepository
 import nl.juraji.albums.domain.events.ReactiveEventListenerService
-import nl.juraji.albums.domain.pictures.FileType
-import nl.juraji.albums.domain.pictures.PictureCreatedEvent
-import nl.juraji.albums.domain.pictures.PictureRepository
+import nl.juraji.albums.domain.pictures.*
 import nl.juraji.albums.util.toLocalDateTime
 import nl.juraji.albums.util.toPath
 import nl.juraji.reactor.validations.ValidationException
@@ -16,13 +19,17 @@ import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.core.util.function.component1
 import reactor.kotlin.core.util.function.component2
 import reactor.kotlin.core.util.function.component3
+import java.awt.Color
 import java.awt.Dimension
+import java.util.*
 
 @Component
 class PictureMetaDataEventListener(
     private val fileOperations: FileOperations,
     private val directoryRepository: DirectoryRepository,
-    private val pictureRepository: PictureRepository
+    private val pictureRepository: PictureRepository,
+    private val hashDataRepository: HashDataRepository,
+    private val configuration: DuplicateScannerConfiguration
 ) : ReactiveEventListenerService() {
 
     @EventListener
@@ -59,6 +66,35 @@ class PictureMetaDataEventListener(
 
     @EventListener
     fun generatePictureImageHash(event: PictureCreatedEvent) = handleAsMono {
-        Mono.empty()
+        fileOperations.loadImage(event.picture.location.toPath())
+            .flatMap { generateHashBytes(it) }
+            .flatMap { hashDataRepository.save(HashData(hash = it)) }
+            .flatMap { hashDataRepository.setPictureHashData(event.picture.id!!, it.id!!) }
     }
+
+    private fun generateHashBytes(image: ImmutableImage): Mono<String> = Mono.just(image)
+        .map { img ->
+            img
+                .autocrop(Color.WHITE).autocrop(Color.BLACK)
+                .cover(
+                    configuration.hashSampleSize,
+                    configuration.hashSampleSize,
+                    ScaleMethod.Lanczos3,
+                    Position.Center
+                )
+                .filter(GrayscaleFilter())
+        }
+        .map { sample ->
+            val pixels = sample.pixels().map { it.average() }.toTypedArray()
+            val offsetPixels = pixels.copyOfRange(1, pixels.lastIndex)
+
+            val bytes = pixels.foldIndexed(BitSet(configuration.hashSize)) { idx, acc, pix ->
+                if (idx < offsetPixels.size) {
+                    acc.set(idx, pix > offsetPixels[idx])
+                }
+                acc
+            }.toByteArray()
+
+            Base64.getEncoder().encodeToString(bytes)
+        }
 }

@@ -11,14 +11,18 @@ CREATE(p3:Picture {fileSize: 48863, fileType: 'TIFF', id: 'p3', lastModified: lo
 CREATE(p4:Picture {fileSize: 48863, fileType: 'TIFF', id: 'p4', lastModified: localdatetime('2020-05-16T11:00:50'),
                    location: 'F:\Desktop\TestMap\gODuw.jpg', name: 'gODuw.jpg', width: 521, height: 270})
 
+CREATE (hd1:HashData {id: 'hd1', hash: '//3333///ffff//9Aw=='})
+CREATE (hd2:HashData {id: 'hd2', hash: '//3333///ffff//9Aw=='})
+
 CREATE (t1:Tag {id: 't1', label: 'Tag 1', color: '#00ff00'})
 CREATE (t2:Tag {id: 't2', label: 'Tag 2', color: '#0000ff'})
 
-WITH d1, d2, p1, p2, p3, p4, t1, t2
 MERGE (d1)-[:PARENT_OF]->(d2)
 MERGE (d2)-[:CONTAINS]->(p1)
 MERGE (d2)-[:CONTAINS]->(p2)
 MERGE (d2)-[:CONTAINS]->(p3)
+
+MERGE (p1)-[:DESCRIBED_BY]->(hd1)
 
 MERGE (p1)-[:TAGGED_BY]->(t1)
 MERGE (p2)-[:TAGGED_BY]->(t1)
