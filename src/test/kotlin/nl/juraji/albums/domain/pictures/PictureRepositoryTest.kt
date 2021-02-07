@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 
 @DataNeo4jTest
 @Import(TestNeo4jFixtureConfiguration::class)
-class PictureRepositoryTest: AbstractRepositoryTest() {
+class PictureRepositoryTest : AbstractRepositoryTest() {
 
     @Autowired
     private lateinit var pictureRepository: PictureRepository
