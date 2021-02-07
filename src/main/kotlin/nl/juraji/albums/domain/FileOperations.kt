@@ -1,5 +1,6 @@
 package nl.juraji.albums.domain
 
+import com.sksamuel.scrimage.ImmutableImage
 import nl.juraji.albums.util.LoggerCompanion
 import nl.juraji.albums.util.deferTo
 import org.springframework.stereotype.Service
@@ -40,8 +41,8 @@ class FileOperations {
         Files.deleteIfExists(path)
     }
 
-    fun readImage(path: Path): Mono<BufferedImage> = deferTo(scheduler) {
-        ImageIO.read(path.toFile())
+    fun loadImage(path: Path): Mono<ImmutableImage> = deferTo(scheduler) {
+        ImmutableImage.loader().fromPath(path)
     }
 
     companion object : LoggerCompanion(FileOperations::class)

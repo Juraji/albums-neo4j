@@ -1,6 +1,7 @@
 package nl.juraji.albums.domain
 
 import com.marcellogalhardo.fixture.next
+import com.sksamuel.scrimage.ImmutableImage
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -17,7 +18,6 @@ import nl.juraji.albums.util.returnsMonoOf
 import nl.juraji.albums.util.returnsVoidMono
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import java.awt.image.BufferedImage
 import java.nio.file.Paths
 import java.nio.file.attribute.BasicFileAttributes
 
@@ -59,10 +59,10 @@ internal class PictureMetaDataEventListenerTest {
     @Test
     internal fun `should update picture meta data`() {
         val fileAttributes: BasicFileAttributes = fixture.next()
-        val testPicture = BufferedImage(100, 200, BufferedImage.TYPE_INT_ARGB)
+        val testPicture = ImmutableImage.create(100, 200)
 
         every { fileOperations.readAttributes(picturePath) } returnsMonoOf fileAttributes
-        every { fileOperations.readImage(picturePath) } returnsMonoOf testPicture
+        every { fileOperations.loadImage(picturePath) } returnsMonoOf testPicture
         every { fileOperations.readContentType(picturePath) } returnsMonoOf "image/jpeg"
         every { pictureRepository.save(any()) }.returnsArgumentAsMono()
 
@@ -70,7 +70,7 @@ internal class PictureMetaDataEventListenerTest {
 
         verify {
             fileOperations.readAttributes(picturePath)
-            fileOperations.readImage(picturePath)
+            fileOperations.loadImage(picturePath)
             fileOperations.readContentType(picturePath)
             pictureRepository.save(any())
         }

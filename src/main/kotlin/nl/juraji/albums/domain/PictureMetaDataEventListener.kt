@@ -37,7 +37,7 @@ class PictureMetaDataEventListener(
         val path = event.picture.location.toPath()
 
         val fileAttributesMono = fileOperations.readAttributes(path)
-        val imageDimensionsMono = fileOperations.readImage(path)
+        val imageDimensionsMono = fileOperations.loadImage(path)
             .map { Dimension(it.width, it.height) }
         val fileTypeMono = fileOperations
             .readContentType(path)
