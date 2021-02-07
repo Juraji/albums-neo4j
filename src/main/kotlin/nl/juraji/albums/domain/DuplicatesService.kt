@@ -12,6 +12,7 @@ import java.time.LocalDateTime
 
 @Service
 class DuplicatesService(
+    private val pictureRepository: PictureRepository,
     private val duplicatedByRepository: DuplicatedByRepository
 ) {
 
@@ -26,10 +27,10 @@ class DuplicatesService(
         targetId: String,
         similarity: Double,
         matchedOn: LocalDateTime = LocalDateTime.now()
-    ): Mono<Unit> = duplicatedByRepository.addDuplicatedBy(sourceId, targetId, similarity, matchedOn)
+    ): Mono<Unit> = pictureRepository.addDuplicatedBy(sourceId, targetId, similarity, matchedOn)
 
     fun unsetDuplicatePicture(
         pictureId: String,
         targetId: String
-    ): Mono<Unit> = duplicatedByRepository.removeDuplicatedBy(pictureId, targetId)
+    ): Mono<Unit> = pictureRepository.removeDuplicatedBy(pictureId, targetId)
 }
