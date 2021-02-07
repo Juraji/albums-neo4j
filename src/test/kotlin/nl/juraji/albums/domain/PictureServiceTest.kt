@@ -8,6 +8,7 @@ import io.mockk.junit5.MockKExtension
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.domain.pictures.PictureCreatedEvent
+import nl.juraji.albums.domain.pictures.PictureDeletedEvent
 import nl.juraji.albums.domain.pictures.PictureRepository
 import nl.juraji.albums.util.*
 import nl.juraji.reactor.validations.ValidationException
@@ -113,31 +114,16 @@ internal class PictureServiceTest {
     internal fun `should delete picture`() {
         val picture = fixture.next<Picture>()
 
-        every { pictureRepository.deleteById(picture.id!!) }.returnsVoidMono()
-
-        StepVerifier.create(pictureService.deletePicture(picture.id!!))
-            .verifyComplete()
-
-        verify {
-            pictureRepository.deleteById(picture.id!!)
-            fileOperations.deleteIfExists(any()) wasNot Called
-        }
-    }
-
-    @Test
-    internal fun `should delete picture and from disk`() {
-        val picture = fixture.next<Picture>()
-
         every { pictureRepository.findById(picture.id!!) } returnsMonoOf picture
-        every { pictureRepository.deleteById(picture.id!!) }.returnsVoidMono()
-        every { fileOperations.deleteIfExists(any()) } returnsMonoOf true
+        every { pictureRepository.delete(picture) }.returnsVoidMono()
+        every { applicationEventPublisher.publishEvent(any<PictureDeletedEvent>()) } just runs
 
         StepVerifier.create(pictureService.deletePicture(picture.id!!, true))
             .verifyComplete()
 
         verify {
-            pictureRepository.deleteById(picture.id!!)
-            fileOperations.deleteIfExists(picture.location.toPath())
+            pictureRepository.delete(picture)
+            applicationEventPublisher.publishEvent(any<PictureDeletedEvent>())
         }
     }
 

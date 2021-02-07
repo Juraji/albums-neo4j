@@ -5,7 +5,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.time.Duration
 
-abstract class ReactiveEventListenerService {
+abstract class ReactiveEventListener {
 
     fun handleAsMono(operation: () -> Mono<out Any>) {
         operation.invoke().runCatching { block(HANDLE_TIMEOUT) }
@@ -18,7 +18,7 @@ abstract class ReactiveEventListenerService {
             .onFailure { e -> logger.error("Error during handling of Flux EventListener", e) }
     }
 
-    companion object : LoggerCompanion(ReactiveEventListenerService::class) {
+    companion object : LoggerCompanion(ReactiveEventListener::class) {
         val HANDLE_TIMEOUT: Duration = Duration.ofMinutes(5)
     }
 }

@@ -6,7 +6,7 @@ import com.sksamuel.scrimage.ScaleMethod
 import com.sksamuel.scrimage.filter.GrayscaleFilter
 import nl.juraji.albums.configuration.DuplicateScannerConfiguration
 import nl.juraji.albums.domain.directories.DirectoryRepository
-import nl.juraji.albums.domain.events.ReactiveEventListenerService
+import nl.juraji.albums.domain.events.ReactiveEventListener
 import nl.juraji.albums.domain.pictures.*
 import nl.juraji.albums.util.toLocalDateTime
 import nl.juraji.albums.util.toPath
@@ -30,7 +30,7 @@ class PictureMetaDataEventListener(
     private val pictureRepository: PictureRepository,
     private val hashDataRepository: HashDataRepository,
     private val configuration: DuplicateScannerConfiguration
-) : ReactiveEventListenerService() {
+) : ReactiveEventListener() {
 
     @EventListener
     fun addPictureToDirectory(event: PictureCreatedEvent) = handleAsMono {

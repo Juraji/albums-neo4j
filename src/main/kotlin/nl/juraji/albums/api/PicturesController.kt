@@ -31,7 +31,7 @@ class PicturesController(
     fun deletePicture(
         @PathVariable pictureId: String,
         @RequestParam("deleteFile", required = false) deleteFile: Boolean?
-    ): Mono<Unit> = pictureService.deletePicture(pictureId, deleteFile)
+    ): Mono<Unit> = pictureService.deletePicture(pictureId, deleteFile ?: false)
 
     @PostMapping("/{pictureId}/tags/{tagId}")
     fun tagPictureBy(

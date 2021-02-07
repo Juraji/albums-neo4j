@@ -2,6 +2,7 @@ package nl.juraji.albums.domain
 
 import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.domain.pictures.PictureCreatedEvent
+import nl.juraji.albums.domain.pictures.PictureDeletedEvent
 import nl.juraji.albums.domain.pictures.PictureRepository
 import nl.juraji.albums.util.toPath
 import nl.juraji.albums.util.toUnit
@@ -31,15 +32,11 @@ class PictureService(
         .flatMap(pictureRepository::save)
         .doOnNext { applicationEventPublisher.publishEvent(PictureCreatedEvent(this, it)) }
 
-    fun deletePicture(pictureId: String, deleteFile: Boolean? = false): Mono<Unit> =
-        if (deleteFile == false) pictureRepository
-            .deleteById(pictureId)
-            .toUnit()
-        else pictureRepository
-            .findById(pictureId)
-            .doOnNext { fileOperations.deleteIfExists(it.location.toPath()).subscribe() }
-            .flatMap { pictureRepository.deleteById(it.id!!) }
-            .toUnit()
+    fun deletePicture(pictureId: String, doDeleteFile: Boolean): Mono<Unit> = pictureRepository
+        .findById(pictureId)
+        .flatMap { pictureRepository.delete(it).thenReturn(it) }
+        .doOnNext { applicationEventPublisher.publishEvent(PictureDeletedEvent(this, it, doDeleteFile)) }
+        .toUnit()
 
     fun tagPictureBy(pictureId: String, tagId: String): Mono<Unit> =
         pictureRepository.addTag(pictureId, tagId).toUnit()
