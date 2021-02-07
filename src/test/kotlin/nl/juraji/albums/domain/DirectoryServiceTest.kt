@@ -10,7 +10,6 @@ import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.directories.Directory
 import nl.juraji.albums.domain.directories.DirectoryRepository
 import nl.juraji.albums.domain.pictures.Picture
-import nl.juraji.albums.util.returnsArgumentAsMono
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
 import nl.juraji.albums.util.returnsVoidMono
@@ -77,14 +76,21 @@ internal class DirectoryServiceTest {
 
     @Test
     internal fun `should create directory`() {
-        val directory = fixture.next<Directory>().copy(id = null)
+        val parent = fixture.next<Directory>().copy(location = Paths.get("/some").toString())
+        val postedDirectory = fixture.next<Directory>().copy(id = null, location = Paths.get("/some/location").toString())
+        val expected = postedDirectory.copy(id = fixture.nextString())
 
-        every { directoryRepository.save(directory) }.returnsArgumentAsMono()
+        every { directoryRepository.findByLocation(any()) } returnsMonoOf parent
+        every { directoryRepository.save(postedDirectory) } returnsMonoOf expected
 
-        StepVerifier.create(directoryService.createDirectory(directory.location))
-            .expectNext(directory)
+        StepVerifier.create(directoryService.createDirectory(postedDirectory.location))
+            .expectNext(expected)
             .verifyComplete()
 
-        verify { directoryRepository.save(directory) }
+        verify {
+            directoryRepository.save(postedDirectory)
+            directoryRepository.findByLocation(parent.location)
+            directoryRepository.addChild(parent.id!!, expected.id!!)
+        }
     }
 }

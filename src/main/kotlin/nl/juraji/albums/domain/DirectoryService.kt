@@ -29,6 +29,12 @@ class DirectoryService(
 
     fun createDirectory(location: String): Mono<Directory> = directoryRepository
         .save(Directory(location = location))
+        .doOnNext { createdDir ->
+            val parentLocation = createdDir.location.toPath().parent.toString()
+            directoryRepository.findByLocation(parentLocation)
+                .flatMap { parent -> directoryRepository.addChild(parent.id!!, createdDir.id!!) }
+                .subscribe()
+        }
 
     fun deleteDirectory(directoryId: String): Mono<Unit> = directoryRepository
         .deleteById(directoryId)
