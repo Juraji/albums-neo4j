@@ -12,7 +12,9 @@ data class Picture(
     val id: String? = null,
     val location: String,
     val name: String,
-    val fileSize: Long? = null,
+    val width: Int = 0,
+    val height: Int = 0,
+    val fileSize: Long = 0,
     val fileType: FileType? = null,
     val lastModified: LocalDateTime? = null
 )

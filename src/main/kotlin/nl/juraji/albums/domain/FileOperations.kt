@@ -6,11 +6,12 @@ import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Scheduler
 import reactor.core.scheduler.Schedulers
-import java.io.File
+import java.awt.image.BufferedImage
 import java.nio.file.Files
 import java.nio.file.LinkOption
 import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributes
+import javax.imageio.ImageIO
 
 @Service
 class FileOperations {
@@ -37,6 +38,10 @@ class FileOperations {
 
     fun deleteIfExists(path: Path) = deferTo(scheduler) {
         Files.deleteIfExists(path)
+    }
+
+    fun readImage(path: Path): Mono<BufferedImage> = deferTo(scheduler) {
+        ImageIO.read(path.toFile())
     }
 
     companion object : LoggerCompanion(FileOperations::class)

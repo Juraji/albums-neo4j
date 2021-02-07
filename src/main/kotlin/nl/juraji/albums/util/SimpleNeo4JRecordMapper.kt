@@ -1,7 +1,9 @@
 package nl.juraji.albums.util
 
 import org.neo4j.driver.Record
-import java.time.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
@@ -55,7 +57,7 @@ open class SimpleNeo4JRecordMapper {
         ByteArray::class -> ({ it as ByteArray })
         Double::class -> ({ it as Double })
         Float::class -> ({ it as Float })
-        Int::class -> ({ it as Int })
+        Int::class -> ({ if (it is Int) it else (it as Long).toInt() })
         Long::class -> ({ it as Long })
         String::class -> ({ it as String })
         LocalDateTime::class -> ({ it as LocalDateTime })

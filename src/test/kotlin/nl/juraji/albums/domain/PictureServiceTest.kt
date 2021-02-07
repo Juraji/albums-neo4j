@@ -1,21 +1,20 @@
 package nl.juraji.albums.domain
 
 import com.marcellogalhardo.fixture.next
-import io.mockk.Called
-import io.mockk.every
+import io.mockk.*
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import io.mockk.slot
-import io.mockk.verify
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.pictures.Picture
+import nl.juraji.albums.domain.pictures.PictureCreatedEvent
 import nl.juraji.albums.domain.pictures.PictureRepository
 import nl.juraji.albums.util.*
 import nl.juraji.reactor.validations.ValidationException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.context.ApplicationEventPublisher
 import reactor.kotlin.test.verifyError
 import reactor.test.StepVerifier
 import java.nio.file.Paths
@@ -45,7 +44,7 @@ internal class PictureServiceTest {
     private lateinit var pictureRepository: PictureRepository
 
     @MockK
-    private lateinit var directoryService: DirectoryService
+    private lateinit var applicationEventPublisher: ApplicationEventPublisher
 
     @MockK
     private lateinit var fileOperations: FileOperations
@@ -87,19 +86,18 @@ internal class PictureServiceTest {
         val savedPicture = slot<Picture>()
 
         every { fileOperations.exists(any()) } returnsMonoOf true
-        every { fileOperations.readContentType(any()) } returnsMonoOf "image/jpeg"
-        every { fileOperations.readAttributes(any()) } returnsMonoOf fixture.next()
-        every { directoryService.addPicture(any()) } returnsMonoOf fixture.next()
         every { pictureRepository.existsByLocation(location) } returnsMonoOf false
         every { pictureRepository.save(capture(savedPicture)) }.returnsArgumentAsMono()
+        every { applicationEventPublisher.publishEvent(any<PictureCreatedEvent>()) } just runs
 
         StepVerifier.create(pictureService.addPicture(location, name))
             .expectNextCount(1)
             .verifyComplete()
 
-        // Verify side-effect of adding to directory
         verify {
-            directoryService.addPicture(savedPicture.captured)
+            fileOperations.exists(any())
+            pictureRepository.existsByLocation(location)
+            applicationEventPublisher.publishEvent(match<PictureCreatedEvent> { it.picture == savedPicture.captured })
         }
 
         assertEquals(location, savedPicture.captured.location)

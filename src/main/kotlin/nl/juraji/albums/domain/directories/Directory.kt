@@ -10,4 +10,5 @@ data class Directory(
     @Id @GeneratedValue(UUIDStringGenerator::class)
     val id: String? = null,
     val location: String,
+    val name: String
 )
