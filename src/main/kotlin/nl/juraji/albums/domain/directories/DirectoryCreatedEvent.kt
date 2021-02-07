@@ -1,8 +1,8 @@
 package nl.juraji.albums.domain.directories
 
-import org.springframework.context.ApplicationEvent
+import nl.juraji.albums.domain.events.AlbumEvent
 
 class DirectoryCreatedEvent(
     source: Any,
     val directory: Directory
-) : ApplicationEvent(source)
+) : AlbumEvent(source)

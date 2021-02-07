@@ -1,11 +1,11 @@
-package nl.juraji.albums.domain
+package nl.juraji.albums.domain.events
 
 import nl.juraji.albums.util.LoggerCompanion
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.time.Duration
 
-abstract class EventListenerService {
+abstract class ReactiveEventListenerService {
 
     fun handleAsMono(operation: () -> Mono<out Any>) {
         operation.invoke().runCatching { block(HANDLE_TIMEOUT) }
@@ -18,7 +18,7 @@ abstract class EventListenerService {
             .onFailure { e -> logger.error("Error during handling of Flux EventListener", e) }
     }
 
-    companion object : LoggerCompanion(EventListenerService::class) {
+    companion object : LoggerCompanion(ReactiveEventListenerService::class) {
         val HANDLE_TIMEOUT: Duration = Duration.ofMinutes(5)
     }
 }

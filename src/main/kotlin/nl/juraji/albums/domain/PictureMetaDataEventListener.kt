@@ -1,6 +1,7 @@
 package nl.juraji.albums.domain
 
 import nl.juraji.albums.domain.directories.DirectoryRepository
+import nl.juraji.albums.domain.events.ReactiveEventListenerService
 import nl.juraji.albums.domain.pictures.FileType
 import nl.juraji.albums.domain.pictures.PictureCreatedEvent
 import nl.juraji.albums.domain.pictures.PictureRepository
@@ -22,7 +23,7 @@ class PictureMetaDataEventListener(
     private val fileOperations: FileOperations,
     private val directoryRepository: DirectoryRepository,
     private val pictureRepository: PictureRepository
-) : EventListenerService() {
+) : ReactiveEventListenerService() {
 
     @EventListener
     fun addPictureToDirectory(event: PictureCreatedEvent) = handleAsMono {

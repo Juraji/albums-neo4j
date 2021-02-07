@@ -2,6 +2,7 @@ package nl.juraji.albums.domain
 
 import nl.juraji.albums.domain.directories.DirectoryCreatedEvent
 import nl.juraji.albums.domain.directories.DirectoryRepository
+import nl.juraji.albums.domain.events.ReactiveEventListenerService
 import nl.juraji.albums.util.toPath
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Component
 @Component
 class DirectoryCreatedEventListener(
     private val directoryRepository: DirectoryRepository,
-) : EventListenerService() {
+) : ReactiveEventListenerService() {
 
     @EventListener
     fun linkToParentDirectory(event: DirectoryCreatedEvent) = handleAsMono {
