@@ -16,14 +16,9 @@ internal class DuplicatedByRepositoryTest : AbstractRepositoryTest() {
 
     @Test
     internal fun `should find duplicates in both directions`() {
-        val recorder = mutableListOf<DuplicatedBy>()
-
         StepVerifier.create(duplicatedByRepository.findByPictureId("p1"))
-            .recordWith { recorder }
             .expectNextCount(2)
             .verifyComplete()
-
-        recorder.forEach { println(it) }
     }
 
     @Test
@@ -31,8 +26,7 @@ internal class DuplicatedByRepositoryTest : AbstractRepositoryTest() {
         val recorder = mutableListOf<DuplicatedByWithSource>()
 
         StepVerifier.create(duplicatedByRepository.findAllDistinctDuplicatedBy())
-            .recordWith { recorder }
-            .expectNextCount(4)
+            .expectNextCount(3)
             .verifyComplete()
 
         recorder.forEach { println(it) }

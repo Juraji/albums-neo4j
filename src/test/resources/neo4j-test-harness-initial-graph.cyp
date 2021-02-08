@@ -29,5 +29,5 @@ MERGE (p2)-[:TAGGED_BY]->(t1)
 MERGE (p2)-[:TAGGED_BY]->(t2)
 
 MERGE (p1)-[:DUPLICATED_BY {matchedOn: localdatetime('2020-05-16T11:00:50'), similarity: 0.86}]->(p2)
-MERGE (p1)<-[:DUPLICATED_BY {matchedOn: localdatetime('2020-05-16T11:00:50'), similarity: 0.86}]-(p2)
-MERGE (p1)-[:DUPLICATED_BY {matchedOn: localdatetime('2020-05-16T11:00:50'), similarity: 0.78}]->(p3)
+MERGE (p3)-[:DUPLICATED_BY {matchedOn: localdatetime('2020-05-16T11:00:50'), similarity: 0.78}]->(p1)
+MERGE (p3)-[:DUPLICATED_BY {matchedOn: localdatetime('2020-05-16T11:00:50'), similarity: 0.78}]->(p4)

@@ -34,6 +34,8 @@ interface PictureRepository : ReactiveNeo4jRepository<Picture, String> {
         """
             MATCH (s:Picture) WHERE s.id = $ sourceId 
             MATCH (t:Picture) WHERE t.id = $ targetId
+            OPTIONAL MATCH (s)-[old_rel:DUPLICATED_BY]-(t)
+            DELETE old_rel
             CREATE (s)-[:DUPLICATED_BY {matchedOn: $ matchedOn, similarity: $ similarity}]->(t)
         """
     )

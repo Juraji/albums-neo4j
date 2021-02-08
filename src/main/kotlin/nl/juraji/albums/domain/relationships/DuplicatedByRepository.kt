@@ -15,7 +15,7 @@ class DuplicatedByRepository(
         .query(
             """
                 MATCH (:Picture {id: $ pictureId})-[root:DUPLICATED_BY]-(target:Picture)
-                RETURN DISTINCT root{.matchedOn, .similarity}, target
+                RETURN root, target
             """
         )
         .bind(pictureId).to("pictureId")
@@ -26,8 +26,8 @@ class DuplicatedByRepository(
     fun findAllDistinctDuplicatedBy(): Flux<DuplicatedByWithSource> = neo4jClient
         .query(
             """
-                MATCH (source:Picture)-[root:DUPLICATED_BY]-(target:Picture)
-                RETURN DISTINCT root{.matchedOn, .similarity}, source, target
+                MATCH (source:Picture)-[root:DUPLICATED_BY]->(target:Picture)
+                RETURN root, source, target
             """
         )
         .fetchAs<DuplicatedByWithSource>().mappedBy { _, rec -> mapToDataClass(rec) }
