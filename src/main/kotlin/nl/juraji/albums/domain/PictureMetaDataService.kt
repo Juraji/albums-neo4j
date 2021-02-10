@@ -7,7 +7,6 @@ import com.sksamuel.scrimage.filter.GrayscaleFilter
 import nl.juraji.albums.configuration.DuplicateScannerConfiguration
 import nl.juraji.albums.domain.pictures.*
 import nl.juraji.albums.util.mapToUnit
-import nl.juraji.albums.util.toLocalDateTime
 import nl.juraji.albums.util.toPath
 import nl.juraji.reactor.validations.ValidationException
 import org.springframework.stereotype.Service
@@ -57,10 +56,9 @@ class PictureMetaDataService(
 
     fun updatePictureHash(pictureId: String): Mono<Unit> = pictureRepository
         .findById(pictureId)
-        .flatMap { fileOperations.loadImage(it.location.toPath()) }
-        .map { generateHash(it) }
-        .flatMap { hashDataRepository.save(HashData(hash = it)) }
-        .flatMap { hashDataRepository.setPictureHashData(pictureId, it.id!!) }
+        .flatMap { p -> fileOperations.loadImage(p.location.toPath()).map { p to it } }
+        .map { (p, img) -> p to generateHash(img) }
+        .flatMap { (p, hash) -> hashDataRepository.save(HashData(hash = hash, picture = p)) }
         .mapToUnit()
 
     private fun generateHash(image: ImmutableImage): String {

@@ -83,8 +83,7 @@ internal class PictureMetaDataServiceTest {
         every { fileOperations.loadImage(picture.location.toPath()) } returnsMonoOf image
         every {
             hashDataRepository.save(match(CapturingSlotMatcher(savedHashData, HashData::class)))
-        } returnsMonoOf HashData("hd1", expectedHash)
-        every { hashDataRepository.setPictureHashData(picture.id!!, "hd1") }.returnsVoidMono()
+        } returnsMonoOf HashData("hd1", expectedHash, picture)
 
         StepVerifier.create(pictureMetaDataService.updatePictureHash(picture.id!!))
             .verifyComplete()
@@ -94,10 +93,10 @@ internal class PictureMetaDataServiceTest {
             pictureRepository.findById(picture.id!!)
             fileOperations.loadImage(picture.location.toPath())
             hashDataRepository.save(any())
-            hashDataRepository.setPictureHashData(picture.id!!, "hd1")
         }
 
         assertTrue(savedHashData.isCaptured)
+        assertEquals(picture, savedHashData.captured.picture)
         assertEquals(expectedHash, savedHashData.captured.hash)
     }
 }
