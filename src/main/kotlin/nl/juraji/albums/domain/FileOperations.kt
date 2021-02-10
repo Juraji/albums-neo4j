@@ -3,16 +3,16 @@ package nl.juraji.albums.domain
 import com.sksamuel.scrimage.ImmutableImage
 import nl.juraji.albums.util.LoggerCompanion
 import nl.juraji.albums.util.deferTo
+import nl.juraji.albums.util.toLocalDateTime
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Scheduler
 import reactor.core.scheduler.Schedulers
-import java.awt.image.BufferedImage
 import java.nio.file.Files
 import java.nio.file.LinkOption
 import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributes
-import javax.imageio.ImageIO
+import java.time.LocalDateTime
 
 @Service
 class FileOperations {
@@ -33,11 +33,20 @@ class FileOperations {
         Files.probeContentType(path)
     }
 
-    fun readAttributes(path: Path): Mono<BasicFileAttributes> = deferTo(scheduler) {
-        Files.readAttributes(path, BasicFileAttributes::class.java)
+    fun readAttributes(path: Path): Mono<FileAttributes> = deferTo(scheduler) {
+        val osAttrs = Files.readAttributes(path, BasicFileAttributes::class.java)
+
+        FileAttributes(
+            size = osAttrs.size(),
+            isDirectory = osAttrs.isDirectory,
+            isRegularFile = osAttrs.isRegularFile,
+            lastModifiedTime = osAttrs.lastModifiedTime().toLocalDateTime(),
+            lastAccessTime = osAttrs.lastAccessTime().toLocalDateTime(),
+            creationTime = osAttrs.creationTime().toLocalDateTime(),
+        )
     }
 
-    fun deleteIfExists(path: Path) = deferTo(scheduler) {
+    fun deleteIfExists(path: Path): Mono<Boolean> = deferTo(scheduler) {
         Files.deleteIfExists(path)
     }
 
@@ -47,3 +56,12 @@ class FileOperations {
 
     companion object : LoggerCompanion(FileOperations::class)
 }
+
+data class FileAttributes(
+    val size: Long,
+    val isDirectory: Boolean,
+    val isRegularFile: Boolean,
+    val lastModifiedTime: LocalDateTime,
+    val lastAccessTime: LocalDateTime,
+    val creationTime: LocalDateTime
+)

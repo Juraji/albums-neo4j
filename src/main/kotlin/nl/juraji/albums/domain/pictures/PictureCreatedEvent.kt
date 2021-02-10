@@ -4,5 +4,6 @@ import nl.juraji.albums.domain.events.AlbumEvent
 
 class PictureCreatedEvent(
     source: Any,
-    val picture: Picture
-) : AlbumEvent(source)
+    pictureId: String,
+    location: String,
+) : PictureEvent(source, pictureId, location)

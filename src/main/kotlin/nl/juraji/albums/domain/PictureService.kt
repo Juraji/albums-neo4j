@@ -4,8 +4,8 @@ import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.domain.pictures.PictureCreatedEvent
 import nl.juraji.albums.domain.pictures.PictureDeletedEvent
 import nl.juraji.albums.domain.pictures.PictureRepository
+import nl.juraji.albums.util.mapToUnit
 import nl.juraji.albums.util.toPath
-import nl.juraji.albums.util.toUnit
 import nl.juraji.reactor.validations.validateAsync
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -30,17 +30,26 @@ class PictureService(
         }
         .map { path -> Picture(location = path.toString(), name = name ?: path.fileName.toString()) }
         .flatMap(pictureRepository::save)
-        .doOnNext { applicationEventPublisher.publishEvent(PictureCreatedEvent(this, it)) }
+        .doOnNext { applicationEventPublisher.publishEvent(PictureCreatedEvent(this, it.id!!, it.location)) }
 
     fun deletePicture(pictureId: String, doDeleteFile: Boolean): Mono<Unit> = pictureRepository
         .findById(pictureId)
         .flatMap { pictureRepository.delete(it).thenReturn(it) }
-        .doOnNext { applicationEventPublisher.publishEvent(PictureDeletedEvent(this, it, doDeleteFile)) }
-        .toUnit()
+        .doOnNext {
+            applicationEventPublisher.publishEvent(
+                PictureDeletedEvent(
+                    this,
+                    it.id!!,
+                    it.location,
+                    doDeleteFile
+                )
+            )
+        }
+        .mapToUnit()
 
     fun tagPictureBy(pictureId: String, tagId: String): Mono<Unit> =
-        pictureRepository.addTag(pictureId, tagId).toUnit()
+        pictureRepository.addTag(pictureId, tagId).mapToUnit()
 
     fun removeTagFromPicture(pictureId: String, tagId: String): Mono<Unit> =
-        pictureRepository.removeTag(pictureId, tagId).toUnit()
+        pictureRepository.removeTag(pictureId, tagId).mapToUnit()
 }

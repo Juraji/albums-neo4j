@@ -1,4 +1,4 @@
-package nl.juraji.albums.domain
+package nl.juraji.albums.eventListeners
 
 import nl.juraji.albums.domain.directories.DirectoryCreatedEvent
 import nl.juraji.albums.domain.directories.DirectoryRepository
@@ -13,14 +13,14 @@ class DirectoryCreatedEventListener(
 ) : ReactiveEventListener() {
 
     @EventListener
-    fun linkToParentDirectory(event: DirectoryCreatedEvent) = handleAsMono {
+    fun linkToParentDirectory(event: DirectoryCreatedEvent) = consumePublisher {
         val parentLocation = event.directory.location.toPath().parent.toString()
         directoryRepository.findByLocation(parentLocation)
             .flatMap { parent -> directoryRepository.addChild(parent.id!!, event.directory.id!!) }
     }
 
     @EventListener
-    fun linkToChildDirectories(event: DirectoryCreatedEvent) = handleAsFlux {
+    fun linkToChildDirectories(event: DirectoryCreatedEvent) = consumePublisher {
         val path = event.directory.location.toPath()
         directoryRepository.findByLocationStartingWith(event.directory.location)
             .filter { it.location.toPath().count() == (path.count() + 1) } // Only to direct children

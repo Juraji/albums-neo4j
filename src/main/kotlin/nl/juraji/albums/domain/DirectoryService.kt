@@ -4,7 +4,7 @@ import nl.juraji.albums.domain.directories.Directory
 import nl.juraji.albums.domain.directories.DirectoryCreatedEvent
 import nl.juraji.albums.domain.directories.DirectoryRepository
 import nl.juraji.albums.util.toPath
-import nl.juraji.albums.util.toUnit
+import nl.juraji.albums.util.mapToUnit
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
@@ -25,5 +25,10 @@ class DirectoryService(
 
     fun deleteDirectory(directoryId: String): Mono<Unit> = directoryRepository
         .deleteById(directoryId)
-        .toUnit()
+        .mapToUnit()
+
+    fun addPictureByLocation(directoryLocation: String, pictureId: String): Mono<Unit> = directoryRepository
+        .findByLocation(directoryLocation)
+        .flatMap { d -> directoryRepository.addPicture(d.id!!, pictureId) }
+        .mapToUnit()
 }

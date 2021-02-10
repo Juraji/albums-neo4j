@@ -1,5 +1,6 @@
-package nl.juraji.albums.domain
+package nl.juraji.albums.eventListeners
 
+import nl.juraji.albums.domain.FileOperations
 import nl.juraji.albums.domain.events.ReactiveEventListener
 import nl.juraji.albums.domain.pictures.PictureDeletedEvent
 import nl.juraji.albums.util.toPath
@@ -12,8 +13,8 @@ class PictureDeletedEventListener(
 ) : ReactiveEventListener() {
 
     @EventListener(condition = "#event.doDeleteFile")
-    fun deletePictureImageFile(event: PictureDeletedEvent) = handleAsMono {
-        fileOperations.deleteIfExists(event.pictureId.location.toPath())
+    fun deletePictureImageFile(event: PictureDeletedEvent) = consumePublisher {
+        fileOperations.deleteIfExists(event.location.toPath())
     }
 
 }

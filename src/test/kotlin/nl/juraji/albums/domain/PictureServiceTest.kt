@@ -10,9 +10,10 @@ import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.domain.pictures.PictureCreatedEvent
 import nl.juraji.albums.domain.pictures.PictureDeletedEvent
 import nl.juraji.albums.domain.pictures.PictureRepository
-import nl.juraji.albums.util.*
+import nl.juraji.albums.util.returnsFluxOf
+import nl.juraji.albums.util.returnsMonoOf
+import nl.juraji.albums.util.returnsVoidMono
 import nl.juraji.reactor.validations.ValidationException
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationEventPublisher
@@ -67,11 +68,11 @@ internal class PictureServiceTest {
         val location = Paths.get("/some/location/picture.jpg").toString()
         val name = "picture.jpg"
 
-        val savedPicture = slot<Picture>()
+        val savedPicture = fixture.next<Picture>()
 
         every { fileOperations.exists(any()) } returnsMonoOf true
         every { pictureRepository.existsByLocation(location) } returnsMonoOf false
-        every { pictureRepository.save(capture(savedPicture)) }.returnsArgumentAsMono()
+        every { pictureRepository.save(any()) } returnsMonoOf savedPicture
         every { applicationEventPublisher.publishEvent(any<PictureCreatedEvent>()) } just runs
 
         StepVerifier.create(pictureService.addPicture(location, name))
@@ -81,11 +82,10 @@ internal class PictureServiceTest {
         verify {
             fileOperations.exists(any())
             pictureRepository.existsByLocation(location)
-            applicationEventPublisher.publishEvent(match<PictureCreatedEvent> { it.picture == savedPicture.captured })
+            applicationEventPublisher.publishEvent(match<PictureCreatedEvent> {
+                it.pictureId == savedPicture.id && it.location == savedPicture.location
+            })
         }
-
-        assertEquals(location, savedPicture.captured.location)
-        assertEquals(name, savedPicture.captured.name)
     }
 
     @Test

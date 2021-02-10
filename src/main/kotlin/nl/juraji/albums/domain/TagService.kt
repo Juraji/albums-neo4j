@@ -2,7 +2,7 @@ package nl.juraji.albums.domain
 
 import nl.juraji.albums.domain.tags.Tag
 import nl.juraji.albums.domain.tags.TagRepository
-import nl.juraji.albums.util.toUnit
+import nl.juraji.albums.util.mapToUnit
 import nl.juraji.reactor.validations.validateAsync
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
@@ -21,5 +21,5 @@ class TagService(
         .map { Tag(label = it, color = color) }
         .flatMap(tagRepository::save)
 
-    fun deleteTag(tagId: String): Mono<Unit> = tagRepository.deleteById(tagId).toUnit()
+    fun deleteTag(tagId: String): Mono<Unit> = tagRepository.deleteById(tagId).mapToUnit()
 }

@@ -1,9 +1,8 @@
 package nl.juraji.albums.domain.pictures
 
-import nl.juraji.albums.domain.events.AlbumEvent
-
 class PictureDeletedEvent(
     source: Any,
-    val pictureId: Picture,
+    pictureId: String,
+    location: String,
     val doDeleteFile: Boolean
-) : AlbumEvent(source)
+) : PictureEvent(source, pictureId, location)

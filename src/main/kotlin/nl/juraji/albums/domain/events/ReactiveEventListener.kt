@@ -1,21 +1,19 @@
 package nl.juraji.albums.domain.events
 
 import nl.juraji.albums.util.LoggerCompanion
+import reactor.core.CorePublisher
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.time.Duration
 
 abstract class ReactiveEventListener {
 
-    fun handleAsMono(operation: () -> Mono<out Any>) {
-        operation.invoke().runCatching { block(HANDLE_TIMEOUT) }
-            .onFailure { e -> logger.error("Error during handling of Mono EventListener", e) }
-
-    }
-
-    fun handleAsFlux(operation: () -> Flux<out Any>) {
-        operation.invoke().runCatching { blockLast(HANDLE_TIMEOUT) }
-            .onFailure { e -> logger.error("Error during handling of Flux EventListener", e) }
+    fun consumePublisher(operation: () -> CorePublisher<out Any>) {
+        when (val publisher = operation.invoke()) {
+            is Mono -> publisher.runCatching { block(HANDLE_TIMEOUT) }
+            is Flux -> publisher.runCatching { blockLast(HANDLE_TIMEOUT) }
+            else -> throw IllegalArgumentException("Can not consume core publisher of $publisher")
+        }.onFailure { e -> logger.error("Error consuming Mono", e) }
     }
 
     companion object : LoggerCompanion(ReactiveEventListener::class) {

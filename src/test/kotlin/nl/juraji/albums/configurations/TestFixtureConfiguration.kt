@@ -1,6 +1,7 @@
 package nl.juraji.albums.configurations
 
 import com.marcellogalhardo.fixture.Fixture
+import com.marcellogalhardo.fixture.FixtureConfigs
 import com.marcellogalhardo.fixture.next
 import com.marcellogalhardo.fixture.register
 import nl.juraji.albums.api.dto.NewTagDto
@@ -18,7 +19,12 @@ import java.time.ZoneId
 class TestFixtureConfiguration {
 
     @Bean
-    fun fixture(): Fixture = Fixture(apply = this.registerDomainFixtures())
+    fun fixture(): Fixture = Fixture(
+        apply = this.registerDomainFixtures(),
+        configs = FixtureConfigs(
+            longRange = 1L..100000L
+        )
+    )
 
     fun registerDomainFixtures(): Fixture.() -> Unit = {
         register { Instant.ofEpochMilli(nextLong()) }
