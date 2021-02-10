@@ -1,5 +1,6 @@
 package nl.juraji.albums.domain
 
+import nl.juraji.albums.domain.directories.DirectoryRepository
 import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.domain.pictures.PictureCreatedEvent
 import nl.juraji.albums.domain.pictures.PictureDeletedEvent
@@ -11,9 +12,12 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.util.function.component1
+import reactor.kotlin.core.util.function.component2
 
 @Service
 class PictureService(
+    private val directoryRepository: DirectoryRepository,
     private val pictureRepository: PictureRepository,
     private val fileOperations: FileOperations,
     private val applicationEventPublisher: ApplicationEventPublisher
@@ -27,8 +31,16 @@ class PictureService(
         .validateAsync { path ->
             isTrue(fileOperations.exists(path)) { "File with path $path does not exist on your system or it is not readable" }
             isFalse(pictureRepository.existsByLocation(path.toString())) { "File with path $path was already added" }
+            isTrue(directoryRepository.existsByLocation(path.parent.toString())) { "No parent directory exists for $path" }
         }
-        .map { path -> Picture(location = path.toString(), name = name ?: path.fileName.toString()) }
+        .zipWhen { directoryRepository.findByLocation(it.parent.toString()) }
+        .map { (path, parentDir) ->
+            Picture(
+                location = path.toString(),
+                name = name ?: path.fileName.toString(),
+                directory = parentDir
+            )
+        }
         .flatMap(pictureRepository::save)
         .doOnNext { applicationEventPublisher.publishEvent(PictureCreatedEvent(this, it.id!!, it.location)) }
 

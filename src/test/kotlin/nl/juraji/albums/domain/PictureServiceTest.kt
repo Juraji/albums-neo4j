@@ -6,10 +6,13 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import nl.juraji.albums.configurations.TestFixtureConfiguration
+import nl.juraji.albums.domain.directories.Directory
+import nl.juraji.albums.domain.directories.DirectoryRepository
 import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.domain.pictures.PictureCreatedEvent
 import nl.juraji.albums.domain.pictures.PictureDeletedEvent
 import nl.juraji.albums.domain.pictures.PictureRepository
+import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
 import nl.juraji.albums.util.returnsVoidMono
@@ -27,6 +30,9 @@ internal class PictureServiceTest {
 
     @MockK
     private lateinit var pictureRepository: PictureRepository
+
+    @MockK
+    private lateinit var directoryRepository: DirectoryRepository
 
     @MockK
     private lateinit var applicationEventPublisher: ApplicationEventPublisher
@@ -68,11 +74,14 @@ internal class PictureServiceTest {
         val location = Paths.get("/some/location/picture.jpg").toString()
         val name = "picture.jpg"
 
-        val savedPicture = fixture.next<Picture>()
+        val directory = fixture.next<Directory>()
+        val savedPicture = fixture.next<Picture>().copy(directory = directory)
 
         every { fileOperations.exists(any()) } returnsMonoOf true
         every { pictureRepository.existsByLocation(location) } returnsMonoOf false
         every { pictureRepository.save(any()) } returnsMonoOf savedPicture
+        every { directoryRepository.existsByLocation(any()) } returnsMonoOf true
+        every { directoryRepository.findByLocation(any()) } returnsMonoOf directory
         every { applicationEventPublisher.publishEvent(any<PictureCreatedEvent>()) } just runs
 
         StepVerifier.create(pictureService.addPicture(location, name))
@@ -92,8 +101,10 @@ internal class PictureServiceTest {
     internal fun `should not add picture when file not exists`() {
         every { fileOperations.exists(any()) } returnsMonoOf false
         every { pictureRepository.existsByLocation(any()) } returnsMonoOf false
+        every { directoryRepository.existsByLocation(any()) } returnsMonoOf true
+        every { directoryRepository.findByLocation(any()) }.returnsEmptyMono()
 
-        StepVerifier.create(pictureService.addPicture("location", "name"))
+        StepVerifier.create(pictureService.addPicture("/some/location", "name"))
             .verifyError<ValidationException>()
 
         verify { pictureRepository.save(any()) wasNot Called }
@@ -103,8 +114,10 @@ internal class PictureServiceTest {
     internal fun `should not add picture when location already in db`() {
         every { fileOperations.exists(any()) } returnsMonoOf true
         every { pictureRepository.existsByLocation(any()) } returnsMonoOf true
+        every { directoryRepository.existsByLocation(any()) } returnsMonoOf true
+        every { directoryRepository.findByLocation(any()) }.returnsEmptyMono()
 
-        StepVerifier.create(pictureService.addPicture("location", "name"))
+        StepVerifier.create(pictureService.addPicture("/some/location", "name"))
             .verifyError<ValidationException>()
 
         verify { pictureRepository.save(any()) wasNot Called }

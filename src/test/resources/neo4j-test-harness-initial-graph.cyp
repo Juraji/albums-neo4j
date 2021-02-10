@@ -18,11 +18,12 @@ CREATE (t1:Tag {id: 't1', label: 'Tag 1', color: '#00ff00'})
 CREATE (t2:Tag {id: 't2', label: 'Tag 2', color: '#0000ff'})
 
 MERGE (d1)-[:PARENT_OF]->(d2)
-MERGE (d2)-[:CONTAINS]->(p1)
-MERGE (d2)-[:CONTAINS]->(p2)
-MERGE (d2)-[:CONTAINS]->(p3)
+MERGE (p1)-[:LOCATED_IN]->(d1)
+MERGE (p2)-[:LOCATED_IN]->(d2)
+MERGE (p3)-[:LOCATED_IN]->(d2)
+MERGE (p4)-[:LOCATED_IN]->(d3)
 
-MERGE (p1)-[:DESCRIBED_BY]->(hd1)
+MERGE (hd1)-[:DESCRIBES]->(p1)
 
 MERGE (p1)-[:TAGGED_BY]->(t1)
 MERGE (p2)-[:TAGGED_BY]->(t1)

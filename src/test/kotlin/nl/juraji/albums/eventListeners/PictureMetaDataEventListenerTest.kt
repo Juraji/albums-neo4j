@@ -35,31 +35,12 @@ internal class PictureMetaDataEventListenerTest {
     private lateinit var pictureMetaDataEventListener: PictureMetaDataEventListener
 
     @Test
-    fun `should add picture to directory`() {
-        val pictureId = fixture.nextString()
-        val location = "/some/location".toPath().toString()
-        val expectedDirLocation = "/some".toPath().toString()
-        val event = PictureCreatedEvent(this, pictureId, location)
-
-        // Mock other listeners in component
-        every { pictureMetaDataEventListener.updatePictureMetaData(any()) } just runs
-        every { pictureMetaDataEventListener.generatePictureImageHash(any()) } just runs
-
-        every { directoryService.addPictureByLocation(any(), any()) } returnsMonoOf Unit
-
-        publisher.publishEvent(event)
-
-        verify { directoryService.addPictureByLocation(expectedDirLocation, pictureId) }
-    }
-
-    @Test
     fun `should update picture meta data`() {
         val pictureId = fixture.nextString()
         val location = "/some/location"
         val event = PictureCreatedEvent(this, pictureId, location)
 
         // Mock other listeners in component
-        every { pictureMetaDataEventListener.addPictureToDirectory(any()) } just runs
         every { pictureMetaDataEventListener.generatePictureImageHash(any()) } just runs
 
         every { pictureMetaDataService.updateMetaData(any()) } returnsMonoOf fixture.next()
@@ -76,7 +57,6 @@ internal class PictureMetaDataEventListenerTest {
         val event = PictureCreatedEvent(this, pictureId, location)
 
         // Mock other listeners in component
-        every { pictureMetaDataEventListener.addPictureToDirectory(any()) } just runs
         every { pictureMetaDataEventListener.updatePictureMetaData(any()) } just runs
 
         every { pictureMetaDataService.updatePictureHash(any()) } returnsMonoOf fixture.next()

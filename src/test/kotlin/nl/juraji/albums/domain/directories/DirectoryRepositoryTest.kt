@@ -16,14 +16,6 @@ class DirectoryRepositoryTest : AbstractRepositoryTest() {
     private lateinit var directoryRepository: DirectoryRepository
 
     @Test
-    internal fun `should add CONTAINS relationship on directory to picture`() {
-        StepVerifier.create(directoryRepository.addPicture("d2", "p4"))
-            .verifyComplete()
-
-        assertYieldsOneRecord("MATCH (:Directory {id: 'd2'})-[rel:CONTAINS]->(:Picture {id: 'p4'}) RETURN rel")
-    }
-
-    @Test
     internal fun `should add PARENT_OF relationship on directory to directory`() {
         StepVerifier.create(directoryRepository.addChild("d1", "d3"))
             .verifyComplete()

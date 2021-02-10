@@ -9,19 +9,11 @@ import reactor.core.publisher.Mono
 @Repository
 interface DirectoryRepository : ReactiveNeo4jRepository<Directory, String> {
 
+    fun existsByLocation(location: String): Mono<Boolean>
+
     fun findByLocation(location: String): Mono<Directory>
 
     fun findByLocationStartingWith(location: String): Flux<Directory>
-
-    @Query(
-        """
-            MATCH (d:Directory) WHERE d.id = $ directoryId
-            MATCH (p:Picture) WHERE p.id = $ pictureId
-            MERGE (d)-[:CONTAINS]->(p)
-        """
-    )
-    fun addPicture(directoryId: String, pictureId: String): Mono<Void>
-
     @Query(
         """
             MATCH (p:Directory) WHERE p.id = $ parentId

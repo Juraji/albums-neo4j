@@ -26,9 +26,4 @@ class DirectoryService(
     fun deleteDirectory(directoryId: String): Mono<Unit> = directoryRepository
         .deleteById(directoryId)
         .mapToUnit()
-
-    fun addPictureByLocation(directoryLocation: String, pictureId: String): Mono<Unit> = directoryRepository
-        .findByLocation(directoryLocation)
-        .flatMap { d -> directoryRepository.addPicture(d.id!!, pictureId) }
-        .mapToUnit()
 }
