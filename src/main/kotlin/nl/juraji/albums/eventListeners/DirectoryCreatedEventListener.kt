@@ -21,9 +21,9 @@ class DirectoryCreatedEventListener(
 
     @EventListener
     fun linkToChildDirectories(event: DirectoryCreatedEvent) = consumePublisher {
-        val path = event.directory.location.toPath()
+        val childPathCount = event.directory.location.toPath().count() + 1
         directoryRepository.findByLocationStartingWith(event.directory.location)
-            .filter { it.location.toPath().count() == (path.count() + 1) } // Only to direct children
+            .filter { it.location.toPath().count() == childPathCount } // Only to direct children
             .flatMap { child -> directoryRepository.addChild(event.directory.id!!, child.id!!) }
     }
 }
