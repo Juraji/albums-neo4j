@@ -5,6 +5,7 @@ import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.domain.pictures.PictureCreatedEvent
 import nl.juraji.albums.domain.pictures.PictureDeletedEvent
 import nl.juraji.albums.domain.pictures.PictureRepository
+import nl.juraji.albums.domain.tags.TagRepository
 import nl.juraji.albums.util.mapToUnit
 import nl.juraji.albums.util.toPath
 import nl.juraji.reactor.validations.validateAsync
@@ -19,6 +20,7 @@ import reactor.kotlin.core.util.function.component2
 class PictureService(
     private val directoryRepository: DirectoryRepository,
     private val pictureRepository: PictureRepository,
+    private val tagRepository: TagRepository,
     private val fileOperations: FileOperations,
     private val applicationEventPublisher: ApplicationEventPublisher
 
@@ -59,9 +61,16 @@ class PictureService(
         }
         .mapToUnit()
 
-    fun tagPictureBy(pictureId: String, tagId: String): Mono<Unit> =
-        pictureRepository.addTag(pictureId, tagId).mapToUnit()
+    fun tagPictureBy(pictureId: String, tagId: String): Mono<Unit> = pictureRepository
+        .findById(pictureId)
+        .zipWith(tagRepository.findById(tagId))
+        .map { (p, tag) -> p.copy(tags = p.tags + tag) }
+        .flatMap(pictureRepository::save)
+        .mapToUnit()
 
-    fun removeTagFromPicture(pictureId: String, tagId: String): Mono<Unit> =
-        pictureRepository.removeTag(pictureId, tagId).mapToUnit()
+    fun removeTagFromPicture(pictureId: String, tagId: String): Mono<Unit> = pictureRepository
+        .findById(pictureId)
+        .map { p -> p.copy(tags = p.tags.filter { t -> t.id != tagId }) }
+        .flatMap(pictureRepository::save)
+        .mapToUnit()
 }
