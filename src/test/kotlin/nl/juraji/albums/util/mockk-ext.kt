@@ -22,9 +22,6 @@ fun <T, B> MockKStubScope<Optional<T>, B>.returnsEmptyOptional(): MockKAdditiona
 fun <T, B> MockKStubScope<Mono<T>, B>.returnsEmptyMono(): MockKAdditionalAnswerScope<Mono<T>, B> =
     this.returns(Mono.empty())
 
-fun <B> MockKStubScope<Mono<Void>, B>.returnsVoidMono(): MockKAdditionalAnswerScope<Mono<Void>, B> =
-    this.returns(Mono.create { it.success(null) })
-
 infix fun <T, B> MockKStubScope<Optional<T>, B>.returnsOptionalOf(value: T?): MockKAdditionalAnswerScope<Optional<T>, B> =
     this.returns(Optional.ofNullable(value))
 

@@ -20,7 +20,6 @@ import reactor.kotlin.core.util.function.component2
 class PictureService(
     private val directoryRepository: DirectoryRepository,
     private val pictureRepository: PictureRepository,
-    private val tagRepository: TagRepository,
     private val fileOperations: FileOperations,
     private val applicationEventPublisher: ApplicationEventPublisher
 

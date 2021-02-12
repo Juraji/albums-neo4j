@@ -1,11 +1,10 @@
-package nl.juraji.albums.domain.relationships
+package nl.juraji.albums.domain.duplicates
 
 import nl.juraji.albums.domain.pictures.Picture
 import java.time.LocalDateTime
 
-data class DuplicatedByWithSource(
+data class DuplicatedBy(
     val matchedOn: LocalDateTime,
-    val similarity: Double,
-    val source: Picture,
+    val similarity: Float,
     val target: Picture,
 )

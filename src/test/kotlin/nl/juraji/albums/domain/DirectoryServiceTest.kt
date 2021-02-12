@@ -12,9 +12,9 @@ import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.directories.Directory
 import nl.juraji.albums.domain.directories.DirectoryCreatedEvent
 import nl.juraji.albums.domain.directories.DirectoryRepository
+import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
-import nl.juraji.albums.util.returnsVoidMono
 import nl.juraji.albums.util.toPath
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -89,7 +89,7 @@ internal class DirectoryServiceTest {
 
         every { directoryRepository.findById(directory.id!!) } returnsMonoOf directory
         every { directoryRepository.findByLocation(any()) } returnsMonoOf parentDirectory
-        every { directoryRepository.addChild(any(), any()) }.returnsVoidMono()
+        every { directoryRepository.addChild(any(), any()) }.returnsEmptyMono()
 
         StepVerifier.create(directoryService.findAndLinkParent(directory.id!!))
             .verifyComplete()
@@ -112,7 +112,7 @@ internal class DirectoryServiceTest {
         every { directoryRepository.findByLocationStartingWith(any()) } returnsFluxOf listOf(
             directory, child1, child2, childOfChild
         )
-        every { directoryRepository.addChild(any(), any()) }.returnsVoidMono()
+        every { directoryRepository.addChild(any(), any()) }.returnsEmptyMono()
 
         StepVerifier.create(directoryService.findAndLinkChildren(directory.id!!))
             .verifyComplete()

@@ -6,7 +6,8 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.DuplicatesService
-import nl.juraji.albums.domain.relationships.DuplicatedByWithSource
+import nl.juraji.albums.domain.duplicates.Duplicate
+import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -30,16 +31,26 @@ internal class DuplicatesControllerTest {
     private lateinit var fixture: Fixture
 
     @Test
-    fun `should get all DUPLICATED_BY relationships (distinct)`() {
-        val duplicates: List<DuplicatedByWithSource> = fixture.next()
+    fun `should get all duplicates`() {
+        val duplicates: List<Duplicate> = fixture.next()
 
-        every { duplicatesService.findAllDistinctDuplicatedBy() } returnsFluxOf duplicates
+        every { duplicatesService.findAllDuplicates() } returnsFluxOf duplicates
 
         webTestClient.get()
             .uri("/duplicates")
             .exchange()
             .expectStatus().isOk
-            .expectBodyList<DuplicatedByWithSource>()
+            .expectBodyList<Duplicate>()
             .contains(*duplicates.toTypedArray())
+    }
+
+    @Test
+    fun `should delete duplicate`() {
+        every { duplicatesService.deleteById("dup1") }.returnsEmptyMono()
+
+        webTestClient.delete()
+            .uri("/duplicates/dup1")
+            .exchange()
+            .expectStatus().isOk
     }
 }

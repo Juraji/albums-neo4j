@@ -10,9 +10,9 @@ import io.mockk.verify
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.tags.Tag
 import nl.juraji.albums.domain.tags.TagRepository
+import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
-import nl.juraji.albums.util.returnsVoidMono
 import nl.juraji.reactor.validations.ValidationException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -69,7 +69,7 @@ internal class TagServiceTest {
     internal fun `should delete tag`() {
         val tagId = fixture.nextString()
 
-        every { tagRepository.deleteById(tagId) }.returnsVoidMono()
+        every { tagRepository.deleteById(tagId) }.returnsEmptyMono()
 
         StepVerifier.create(tagService.deleteTag(tagId))
             .verifyComplete()

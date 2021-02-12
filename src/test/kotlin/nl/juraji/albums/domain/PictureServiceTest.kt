@@ -16,7 +16,6 @@ import nl.juraji.albums.domain.tags.TagRepository
 import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
-import nl.juraji.albums.util.returnsVoidMono
 import nl.juraji.reactor.validations.ValidationException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -34,9 +33,6 @@ internal class PictureServiceTest {
 
     @MockK
     private lateinit var directoryRepository: DirectoryRepository
-
-    @MockK
-    private lateinit var tagRepository: TagRepository
 
     @MockK
     private lateinit var applicationEventPublisher: ApplicationEventPublisher
@@ -132,7 +128,7 @@ internal class PictureServiceTest {
         val picture = fixture.next<Picture>()
 
         every { pictureRepository.findById(picture.id!!) } returnsMonoOf picture
-        every { pictureRepository.delete(picture) }.returnsVoidMono()
+        every { pictureRepository.delete(picture) }.returnsEmptyMono()
         every { applicationEventPublisher.publishEvent(any<PictureDeletedEvent>()) } just runs
 
         StepVerifier.create(pictureService.deletePicture(picture.id!!, true))

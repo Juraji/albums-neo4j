@@ -16,7 +16,6 @@ import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.pictures.*
 import nl.juraji.albums.util.returnsArgumentAsMono
 import nl.juraji.albums.util.returnsMonoOf
-import nl.juraji.albums.util.returnsVoidMono
 import nl.juraji.albums.util.toPath
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue

@@ -6,8 +6,7 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.DuplicatesService
-import nl.juraji.albums.domain.relationships.DuplicatedBy
-import nl.juraji.albums.util.returnsEmptyMono
+import nl.juraji.albums.domain.duplicates.DuplicatedBy
 import nl.juraji.albums.util.returnsFluxOf
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -36,7 +35,7 @@ internal class PictureDuplicatesControllerTest {
         val pictureId = fixture.nextString()
         val duplicates: List<DuplicatedBy> = fixture.next()
 
-        every { duplicatesService.findDuplicatedByByPictureId(pictureId) } returnsFluxOf duplicates
+        every { duplicatesService.findByPictureId(pictureId) } returnsFluxOf duplicates
 
         webTestClient.get()
             .uri("/pictures/$pictureId/duplicates")
@@ -44,18 +43,5 @@ internal class PictureDuplicatesControllerTest {
             .expectStatus().isOk
             .expectBodyList<DuplicatedBy>()
             .contains(*duplicates.toTypedArray())
-    }
-
-    @Test
-    internal fun `should remove duplicate from picture`() {
-        val pictureId = fixture.nextString()
-        val targetId = fixture.nextString()
-
-        every { duplicatesService.unsetDuplicatePicture(pictureId, targetId) }.returnsEmptyMono()
-
-        webTestClient.delete()
-            .uri("/pictures/$pictureId/duplicates/$targetId")
-            .exchange()
-            .expectStatus().isOk
     }
 }

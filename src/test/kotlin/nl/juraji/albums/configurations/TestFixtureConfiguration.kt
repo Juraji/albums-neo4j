@@ -29,26 +29,13 @@ class TestFixtureConfiguration {
     )
 
     fun registerDomainFixtures(): Fixture.() -> Unit = {
-        register { Instant.ofEpochMilli(nextLong()) }
+        register { Instant.ofEpochMilli(nextLong(INSTANT_RANGE)) }
         register { LocalDateTime.ofInstant(next(), ZoneId.systemDefault()) }
         register { Tag(id = nextString(), label = nextString(), color = nextHexColor()) }
         register { NewTagDto(label = nextString(), color = nextHexColor()) }
         register {
             val fts = FileType.values()
             fts[nextInt(fts.size)]
-        }
-        register {
-            Picture(
-                id = nextString(),
-                location = "/some/location/picture.jpg",
-                name = "picture.jpg",
-                width = nextInt(),
-                height = nextInt(),
-                fileSize = nextLong(),
-                fileType = next(),
-                lastModified = next(),
-                directory = next(),
-            )
         }
         register {
             Directory(
@@ -74,6 +61,8 @@ class TestFixtureConfiguration {
 
     companion object {
         fun testFixture(): Fixture = TestFixtureConfiguration().fixture()
+
+        private val INSTANT_RANGE: LongRange = 1577833200000..1609455600000
     }
 }
 

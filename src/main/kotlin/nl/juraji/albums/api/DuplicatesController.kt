@@ -1,11 +1,10 @@
 package nl.juraji.albums.api
 
 import nl.juraji.albums.domain.DuplicatesService
-import nl.juraji.albums.domain.relationships.DuplicatedByWithSource
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import nl.juraji.albums.domain.duplicates.Duplicate
+import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("/duplicates")
@@ -14,5 +13,10 @@ class DuplicatesController(
 ) {
 
     @GetMapping
-    fun getAllDuplicatedBy(): Flux<DuplicatedByWithSource> = duplicatesService.findAllDistinctDuplicatedBy()
+    fun getAllDuplicates(): Flux<Duplicate> = duplicatesService.findAllDuplicates()
+
+    @DeleteMapping("/{duplicateId}")
+    fun deleteDuplicate(
+        @PathVariable duplicateId: String
+    ): Mono<Void> = duplicatesService.deleteById(duplicateId)
 }
