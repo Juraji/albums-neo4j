@@ -37,11 +37,11 @@ class PicturesController(
     fun tagPictureBy(
         @PathVariable("pictureId") pictureId: String,
         @PathVariable tagId: String,
-    ): Mono<Unit> = pictureService.tagPictureBy(pictureId, tagId)
+    ): Mono<Unit> = pictureService.addTag(pictureId, tagId)
 
     @DeleteMapping("/{pictureId}/tags/{tagId}")
     fun removeTagFromPicture(
         @PathVariable pictureId: String,
         @PathVariable tagId: String
-    ): Mono<Unit> = pictureService.removeTagFromPicture(pictureId, tagId)
+    ): Mono<Unit> = pictureService.removeTag(pictureId, tagId)
 }

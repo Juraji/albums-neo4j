@@ -61,16 +61,7 @@ class PictureService(
         }
         .mapToUnit()
 
-    fun tagPictureBy(pictureId: String, tagId: String): Mono<Unit> = pictureRepository
-        .findById(pictureId)
-        .zipWith(tagRepository.findById(tagId))
-        .map { (p, tag) -> p.copy(tags = p.tags + tag) }
-        .flatMap(pictureRepository::save)
-        .mapToUnit()
+    fun addTag(pictureId: String, tagId: String): Mono<Unit> = pictureRepository.addTag(pictureId, tagId)
 
-    fun removeTagFromPicture(pictureId: String, tagId: String): Mono<Unit> = pictureRepository
-        .findById(pictureId)
-        .map { p -> p.copy(tags = p.tags.filter { t -> t.id != tagId }) }
-        .flatMap(pictureRepository::save)
-        .mapToUnit()
+    fun removeTag(pictureId: String, tagId: String): Mono<Unit> = pictureRepository.removeTag(pictureId, tagId)
 }

@@ -107,7 +107,7 @@ internal class PicturesControllerTest {
         val pictureId = fixture.nextString()
         val tagId = fixture.nextString()
 
-        every { pictureService.tagPictureBy(pictureId, tagId) }.returnsEmptyMono()
+        every { pictureService.addTag(pictureId, tagId) }.returnsEmptyMono()
 
         webTestClient
             .post()
@@ -115,7 +115,7 @@ internal class PicturesControllerTest {
             .exchange()
             .expectStatus().isOk
 
-        verify { pictureService.tagPictureBy(pictureId, tagId) }
+        verify { pictureService.addTag(pictureId, tagId) }
     }
 
     @Test
@@ -123,7 +123,7 @@ internal class PicturesControllerTest {
         val pictureId = fixture.nextString()
         val tagId = fixture.nextString()
 
-        every { pictureService.removeTagFromPicture(pictureId, tagId) }.returnsEmptyMono()
+        every { pictureService.removeTag(pictureId, tagId) }.returnsEmptyMono()
 
         webTestClient
             .delete()
@@ -131,7 +131,7 @@ internal class PicturesControllerTest {
             .exchange()
             .expectStatus().isOk
 
-        verify { pictureService.removeTagFromPicture(pictureId, tagId) }
+        verify { pictureService.removeTag(pictureId, tagId) }
     }
 
     @Test

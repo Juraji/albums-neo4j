@@ -12,12 +12,12 @@ import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.domain.pictures.PictureCreatedEvent
 import nl.juraji.albums.domain.pictures.PictureDeletedEvent
 import nl.juraji.albums.domain.pictures.PictureRepository
-import nl.juraji.albums.domain.tags.Tag
 import nl.juraji.albums.domain.tags.TagRepository
-import nl.juraji.albums.util.*
+import nl.juraji.albums.util.returnsEmptyMono
+import nl.juraji.albums.util.returnsFluxOf
+import nl.juraji.albums.util.returnsMonoOf
+import nl.juraji.albums.util.returnsVoidMono
 import nl.juraji.reactor.validations.ValidationException
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationEventPublisher
@@ -146,43 +146,27 @@ internal class PictureServiceTest {
 
     @Test
     internal fun `should add tag to picture`() {
-        val picture = fixture.next<Picture>()
-        val tag = fixture.next<Tag>()
+        val pictureId = fixture.nextString()
+        val tagId = fixture.nextString()
 
-        val savedPicture = slot<Picture>()
+        every { pictureRepository.addTag(any(), any()) }.returnsEmptyMono()
 
-        every { pictureRepository.findById(picture.id!!) } returnsMonoOf picture
-        every { tagRepository.findById(tag.id!!) } returnsMonoOf tag
-        every { pictureRepository.save(capture(savedPicture)) }.returnsArgumentAsMono()
-
-        StepVerifier.create(pictureService.tagPictureBy(picture.id!!, tag.id!!))
+        StepVerifier.create(pictureService.addTag(pictureId, tagId))
             .verifyComplete()
 
-        verify {
-            pictureRepository.findById(picture.id!!)
-            tagRepository.findById(tag.id!!)
-        }
-
-        assertTrue(savedPicture.isCaptured)
-        assertTrue(savedPicture.captured.tags.contains(tag))
+        verify { pictureRepository.addTag(pictureId, tagId) }
     }
 
     @Test
     internal fun `should remove tag from picture`() {
-        val tag = fixture.next<Tag>()
-        val picture = fixture.next<Picture>().copy(tags = listOf(tag))
+        val pictureId = fixture.nextString()
+        val tagId = fixture.nextString()
 
-        val savedPicture = slot<Picture>()
+        every { pictureRepository.removeTag(any(), any()) }.returnsEmptyMono()
 
-        every { pictureRepository.findById(picture.id!!) } returnsMonoOf picture
-        every { pictureRepository.save(capture(savedPicture)) }.returnsArgumentAsMono()
-
-        StepVerifier.create(pictureService.removeTagFromPicture(picture.id!!, tag.id!!))
+        StepVerifier.create(pictureService.removeTag(pictureId, tagId))
             .verifyComplete()
 
-        verify { pictureRepository.findById(picture.id!!) }
-
-        assertTrue(savedPicture.isCaptured, "Should have saved picture")
-        assertFalse(savedPicture.captured.tags.contains(tag), "Saved picture should not have tag")
+        verify { pictureRepository.removeTag(pictureId, tagId) }
     }
 }

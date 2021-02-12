@@ -13,6 +13,23 @@ interface PictureRepository : ReactiveNeo4jRepository<Picture, String> {
 
     @Query(
         """
+        MATCH (p:Picture {id: $ pictureId})
+        MATCH (t:Tag {id: $ tagId})
+        MERGE (p)-[:TAGGED_BY]->(t)
+        """
+    )
+    fun addTag(pictureId: String, tagId: String): Mono<Unit>
+
+    @Query(
+        """
+        MATCH (:Picture {id: $ pictureId})-[rel:TAGGED_BY]->(:Tag {id: $ tagId})
+        DELETE rel
+        """
+    )
+    fun removeTag(pictureId: String, tagId: String): Mono<Unit>
+
+    @Query(
+        """
             MATCH (s:Picture) WHERE s.id = $ sourceId 
             MATCH (t:Picture) WHERE t.id = $ targetId
             OPTIONAL MATCH (s)-[old_rel:DUPLICATED_BY]-(t)
