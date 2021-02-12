@@ -5,7 +5,9 @@ import com.marcellogalhardo.fixture.FixtureConfigs
 import com.marcellogalhardo.fixture.next
 import com.marcellogalhardo.fixture.register
 import nl.juraji.albums.api.dto.NewTagDto
+import nl.juraji.albums.domain.directories.Directory
 import nl.juraji.albums.domain.pictures.FileType
+import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.domain.tags.Tag
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
@@ -29,9 +31,32 @@ class TestFixtureConfiguration {
     fun registerDomainFixtures(): Fixture.() -> Unit = {
         register { Instant.ofEpochMilli(nextLong()) }
         register { LocalDateTime.ofInstant(next(), ZoneId.systemDefault()) }
-        register { FileType.UNKNOWN }
         register { Tag(id = nextString(), label = nextString(), color = nextHexColor()) }
         register { NewTagDto(label = nextString(), color = nextHexColor()) }
+        register {
+            val fts = FileType.values()
+            fts[nextInt(fts.size)]
+        }
+        register {
+            Picture(
+                id = nextString(),
+                location = "/some/location/picture.jpg",
+                name = "picture.jpg",
+                width = nextInt(),
+                height = nextInt(),
+                fileSize = nextLong(),
+                fileType = next(),
+                lastModified = next(),
+                directory = next(),
+            )
+        }
+        register {
+            Directory(
+                id = nextString(),
+                location = "/some/location",
+                name = nextString()
+            )
+        }
         register(BasicFileAttributes::class) {
             object : BasicFileAttributes {
                 override fun lastModifiedTime(): FileTime = FileTime.from(next())

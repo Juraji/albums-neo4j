@@ -14,6 +14,8 @@ import nl.juraji.albums.domain.directories.DirectoryCreatedEvent
 import nl.juraji.albums.domain.directories.DirectoryRepository
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
+import nl.juraji.albums.util.returnsVoidMono
+import nl.juraji.albums.util.toPath
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationEventPublisher
@@ -76,7 +78,49 @@ internal class DirectoryServiceTest {
 
         verify {
             directoryRepository.save(postedDirectory)
-            applicationEventPublisher.publishEvent(match<DirectoryCreatedEvent> { it.directory == expected })
+            applicationEventPublisher.publishEvent(match<DirectoryCreatedEvent> { it.directoryId == expected.id })
+        }
+    }
+
+    @Test
+    internal fun `should find and link parent`() {
+        val directory = fixture.next<Directory>().copy(location = "/some/location".toPath().toString())
+        val parentDirectory = fixture.next<Directory>().copy(location = "/some".toPath().toString())
+
+        every { directoryRepository.findById(directory.id!!) } returnsMonoOf directory
+        every { directoryRepository.findByLocation(any()) } returnsMonoOf parentDirectory
+        every { directoryRepository.addChild(any(), any()) }.returnsVoidMono()
+
+        StepVerifier.create(directoryService.findAndLinkParent(directory.id!!))
+            .verifyComplete()
+
+        verify {
+            directoryRepository.findById(directory.id!!)
+            directoryRepository.findByLocation(parentDirectory.location)
+            directoryRepository.addChild(parentDirectory.id!!, directory.id!!)
+        }
+    }
+
+    @Test
+    internal fun `should find and link children`() {
+        val directory = fixture.next<Directory>().copy(location = "/self".toPath().toString())
+        val child1 = fixture.next<Directory>().copy(location = "/self/child1".toPath().toString())
+        val child2 = fixture.next<Directory>().copy(location = "/self/child2".toPath().toString())
+        val childOfChild = fixture.next<Directory>().copy(location = "/self/child2/child".toPath().toString())
+
+        every { directoryRepository.findById(directory.id!!) } returnsMonoOf directory
+        every { directoryRepository.findByLocationStartingWith(any()) } returnsFluxOf listOf(
+            directory, child1, child2, childOfChild
+        )
+        every { directoryRepository.addChild(any(), any()) }.returnsVoidMono()
+
+        StepVerifier.create(directoryService.findAndLinkChildren(directory.id!!))
+            .verifyComplete()
+
+        verify {
+            directoryRepository.findByLocationStartingWith(directory.location)
+            directoryRepository.addChild(directory.id!!, child1.id!!)
+            directoryRepository.addChild(directory.id!!, child2.id!!)
         }
     }
 }

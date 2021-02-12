@@ -4,5 +4,5 @@ import nl.juraji.albums.domain.events.AlbumEvent
 
 class DirectoryCreatedEvent(
     source: Any,
-    val directory: Directory
+    val directoryId: String,
 ) : AlbumEvent(source)

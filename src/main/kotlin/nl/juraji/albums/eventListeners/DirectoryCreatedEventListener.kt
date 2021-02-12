@@ -1,29 +1,23 @@
 package nl.juraji.albums.eventListeners
 
+import nl.juraji.albums.domain.DirectoryService
 import nl.juraji.albums.domain.directories.DirectoryCreatedEvent
-import nl.juraji.albums.domain.directories.DirectoryRepository
 import nl.juraji.albums.domain.events.ReactiveEventListener
-import nl.juraji.albums.util.toPath
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 
 @Component
 class DirectoryCreatedEventListener(
-    private val directoryRepository: DirectoryRepository,
+    private val directoryService: DirectoryService
 ) : ReactiveEventListener() {
 
     @EventListener
     fun linkToParentDirectory(event: DirectoryCreatedEvent) = consumePublisher {
-        val parentLocation = event.directory.location.toPath().parent.toString()
-        directoryRepository.findByLocation(parentLocation)
-            .flatMap { parent -> directoryRepository.addChild(parent.id!!, event.directory.id!!) }
+        directoryService.findAndLinkParent(event.directoryId)
     }
 
     @EventListener
     fun linkToChildDirectories(event: DirectoryCreatedEvent) = consumePublisher {
-        val childPathCount = event.directory.location.toPath().count() + 1
-        directoryRepository.findByLocationStartingWith(event.directory.location)
-            .filter { it.location.toPath().count() == childPathCount } // Only to direct children
-            .flatMap { child -> directoryRepository.addChild(event.directory.id!!, child.id!!) }
+        directoryService.findAndLinkChildren(event.directoryId)
     }
 }
