@@ -1,13 +1,10 @@
 package nl.juraji.albums.domain
 
 import com.marcellogalhardo.fixture.next
-import io.mockk.every
+import io.mockk.*
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import io.mockk.just
-import io.mockk.runs
-import io.mockk.verify
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.directories.Directory
 import nl.juraji.albums.domain.directories.DirectoryCreatedEvent
@@ -19,12 +16,16 @@ import nl.juraji.albums.util.toPath
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationEventPublisher
+import reactor.kotlin.core.publisher.toMono
 import reactor.test.StepVerifier
 import java.nio.file.Paths
 
 @ExtendWith(MockKExtension::class)
 internal class DirectoryServiceTest {
     private val fixture = TestFixtureConfiguration.testFixture()
+
+    @MockK
+    private lateinit var fileOperations: FileOperations
 
     @MockK
     private lateinit var directoryRepository: DirectoryRepository
@@ -63,12 +64,10 @@ internal class DirectoryServiceTest {
 
     @Test
     internal fun `should create directory`() {
-        val parent = fixture.next<Directory>().copy(location = Paths.get("/some").toString())
         val postedDirectory = fixture.next<Directory>()
             .copy(id = null, location = Paths.get("/some/location").toString(), name = "location")
         val expected = postedDirectory.copy(id = fixture.nextString())
 
-        every { directoryRepository.findByLocation(any()) } returnsMonoOf parent
         every { directoryRepository.save(postedDirectory) } returnsMonoOf expected
         every { applicationEventPublisher.publishEvent(any<DirectoryCreatedEvent>()) } just runs
 
@@ -79,6 +78,47 @@ internal class DirectoryServiceTest {
         verify {
             directoryRepository.save(postedDirectory)
             applicationEventPublisher.publishEvent(match<DirectoryCreatedEvent> { it.directoryId == expected.id })
+        }
+    }
+
+    @Test
+    internal fun `should create directory recursively`() {
+        val rootPath = "/some/location".toPath()
+        val child1Path = "/some/location/child1".toPath()
+        val child2Path = "/some/location/child2".toPath()
+        val child2Sub1Path = "/some/location/child2/sub1".toPath()
+        val existingChildPath = "/some/location/existing-child".toPath()
+        val directoryList = listOf(rootPath, child1Path, child2Path, child2Sub1Path, existingChildPath)
+
+        every { fileOperations.listDirectories(any(), any()) } returnsFluxOf directoryList
+        every { directoryRepository.existsByLocation(any()) } returnsMonoOf false
+        every { directoryRepository.existsByLocation(existingChildPath.toString()) } returnsMonoOf true
+        every { directoryRepository.save(any()) } answers {
+            val s = firstArg<Directory>()
+            s.copy(id = s.name).toMono()
+        }
+        every { applicationEventPublisher.publishEvent(any<DirectoryCreatedEvent>()) } just runs
+
+        StepVerifier.create(directoryService.createDirectory(rootPath.toString(), true))
+            .expectNextMatches { it.location == rootPath.toString() }
+            .verifyComplete()
+
+
+        verify(exactly = 5) { directoryRepository.existsByLocation(any()) }
+        verify(exactly = 0) {
+            directoryRepository.save(match { it.location == existingChildPath.toString() })
+            applicationEventPublisher.publishEvent(match<DirectoryCreatedEvent> { it.directoryId == "existing-child" })
+        }
+        verify {
+            fileOperations.listDirectories(rootPath, true)
+            directoryRepository.save(match { it.location == rootPath.toString() })
+            directoryRepository.save(match { it.location == child1Path.toString() })
+            directoryRepository.save(match { it.location == child2Path.toString() })
+            directoryRepository.save(match { it.location == child2Sub1Path.toString() })
+            applicationEventPublisher.publishEvent(match<DirectoryCreatedEvent> { it.directoryId == "location" })
+            applicationEventPublisher.publishEvent(match<DirectoryCreatedEvent> { it.directoryId == "child1" })
+            applicationEventPublisher.publishEvent(match<DirectoryCreatedEvent> { it.directoryId == "child2" })
+            applicationEventPublisher.publishEvent(match<DirectoryCreatedEvent> { it.directoryId == "sub1" })
         }
     }
 

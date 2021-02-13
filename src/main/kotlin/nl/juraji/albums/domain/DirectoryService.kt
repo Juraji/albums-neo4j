@@ -9,9 +9,11 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.kotlin.extra.bool.not
 
 @Service
 class DirectoryService(
+    private val fileOperations: FileOperations,
     private val directoryRepository: DirectoryRepository,
     private val applicationEventPublisher: ApplicationEventPublisher
 ) {
@@ -19,9 +21,21 @@ class DirectoryService(
 
     fun getDirectory(directoryId: String): Mono<Directory> = directoryRepository.findById(directoryId)
 
-    fun createDirectory(location: String): Mono<Directory> = directoryRepository
-        .save(Directory(location = location, name = location.toPath().fileName.toString()))
-        .doOnNext { applicationEventPublisher.publishEvent(DirectoryCreatedEvent(this, it.id!!)) }
+    fun createDirectory(location: String, recursive: Boolean = false): Mono<Directory> =
+        if (recursive) {
+            fileOperations.listDirectories(location.toPath(), true)
+                .map { Directory(location = it.toString(), name = it.fileName.toString()) }
+                .filterWhen { directoryRepository.existsByLocation(it.location).not() }
+                .flatMap { directoryRepository.save(it) }
+                .doOnNext { applicationEventPublisher.publishEvent(DirectoryCreatedEvent(this, it.id!!)) }
+                .collectList()
+                .filter(MutableList<Directory>::isNotEmpty)
+                .map { it.first() }
+        } else {
+            directoryRepository
+                .save(Directory(location = location, name = location.toPath().fileName.toString()))
+                .doOnNext { applicationEventPublisher.publishEvent(DirectoryCreatedEvent(this, it.id!!)) }
+        }
 
     fun deleteDirectory(directoryId: String): Mono<Unit> = directoryRepository
         .deleteById(directoryId)

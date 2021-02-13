@@ -2,9 +2,11 @@ package nl.juraji.albums.domain
 
 import com.sksamuel.scrimage.ImmutableImage
 import nl.juraji.albums.util.LoggerCompanion
+import nl.juraji.albums.util.deferIterableTo
 import nl.juraji.albums.util.deferTo
 import nl.juraji.albums.util.toLocalDateTime
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Scheduler
 import reactor.core.scheduler.Schedulers
@@ -13,6 +15,7 @@ import java.nio.file.LinkOption
 import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributes
 import java.time.LocalDateTime
+import java.util.stream.Collectors
 
 @Service
 class FileOperations {
@@ -52,6 +55,10 @@ class FileOperations {
 
     fun loadImage(path: Path): Mono<ImmutableImage> = deferTo(scheduler) {
         ImmutableImage.loader().fromPath(path)
+    }
+
+    fun listDirectories(root: Path, b: Boolean): Flux<Path> = deferIterableTo(scheduler) {
+        Files.find(root, Int.MAX_VALUE, { _, attrs -> attrs.isDirectory }).collect(Collectors.toList())
     }
 
     companion object : LoggerCompanion(FileOperations::class)

@@ -24,8 +24,9 @@ class DirectoriesController(
 
     @PostMapping
     fun createDirectory(
+        @RequestParam("recursive", required = false, defaultValue = "false") recursive: Boolean,
         @Valid @RequestBody newDirectoryDto: NewDirectoryDto
-    ): Mono<Directory> = directoryService.createDirectory(newDirectoryDto.location)
+    ): Mono<Directory> = directoryService.createDirectory(newDirectoryDto.location, recursive)
 
     @DeleteMapping("/{directoryId}")
     fun deleteDirectory(
