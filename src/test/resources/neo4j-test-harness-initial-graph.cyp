@@ -17,9 +17,9 @@ CREATE (hd2:HashData {id: 'hd2', hash: '//3333///ffff//9Aw=='})
 CREATE (tag1:Tag {id: 't1', label: 'Tag 1', color: '#00ff00'})
 CREATE (tag2:Tag {id: 't2', label: 'Tag 2', color: '#0000ff'})
 
-CREATE (dup1:Duplicate {matchedOn: localdatetime('2020-05-16T11:00:50'), similarity: 0.86})
-CREATE (dup2:Duplicate {matchedOn: localdatetime('2020-05-16T11:00:50'), similarity: 0.78})
-CREATE (dup3:Duplicate {matchedOn: localdatetime('2020-05-16T11:00:50'), similarity: 0.78})
+CREATE (dup1:Duplicate {id: 'dup1', matchedOn: localdatetime('2020-05-16T11:00:50'), similarity: 0.86})
+CREATE (dup2:Duplicate {id: 'dup2', matchedOn: localdatetime('2020-05-16T11:00:50'), similarity: 0.78})
+CREATE (dup3:Duplicate {id: 'dup3', matchedOn: localdatetime('2020-05-16T11:00:50'), similarity: 0.78})
 
 MERGE (dir1)-[:PARENT_OF]->(dir2)
 MERGE (pic1)-[:LOCATED_IN]->(dir1)

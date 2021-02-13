@@ -30,7 +30,7 @@ class DirectoryService(
         }
 
     fun deleteDirectory(directoryId: String): Mono<Unit> = directoryRepository
-        .deleteById(directoryId)
+        .deleteTreeById(directoryId)
         .mapToUnit()
 
     fun findAndLinkParent(directoryId: String): Mono<Unit> = directoryRepository
