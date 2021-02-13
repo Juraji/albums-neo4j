@@ -9,7 +9,9 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.switchIfEmpty
 import reactor.kotlin.extra.bool.not
+import java.nio.file.Path
 
 @Service
 class DirectoryService(
@@ -21,20 +23,10 @@ class DirectoryService(
 
     fun getDirectory(directoryId: String): Mono<Directory> = directoryRepository.findById(directoryId)
 
-    fun createDirectory(location: String, recursive: Boolean = false): Mono<Directory> =
-        if (recursive) {
-            fileOperations.listDirectories(location.toPath(), true)
-                .map { Directory(location = it.toString(), name = it.fileName.toString()) }
-                .filterWhen { directoryRepository.existsByLocation(it.location).not() }
-                .flatMap { directoryRepository.save(it) }
-                .doOnNext { applicationEventPublisher.publishEvent(DirectoryCreatedEvent(this, it.id!!)) }
-                .collectList()
-                .filter(MutableList<Directory>::isNotEmpty)
-                .map { it.first() }
-        } else {
-            directoryRepository
-                .save(Directory(location = location, name = location.toPath().fileName.toString()))
-                .doOnNext { applicationEventPublisher.publishEvent(DirectoryCreatedEvent(this, it.id!!)) }
+    fun createDirectory(location: String, recursive: Boolean = false): Mono<Directory> = Mono.just(location.toPath())
+        .flatMap {
+            if (recursive) this.addDirectoryRecursive(it)
+            else this.addDirectory(it)
         }
 
     fun deleteDirectory(directoryId: String): Mono<Unit> = directoryRepository
@@ -59,4 +51,21 @@ class DirectoryService(
         }
         .flatMap { directoryRepository.addChild(directoryId, it.id!!) }
         .mapToUnit()
+
+    private fun addDirectory(location: Path) = directoryRepository
+        .findByLocation(location.toString())
+        .switchIfEmpty {
+            directoryRepository.save(Directory(location = location.toString(), name = location.fileName.toString()))
+                .doOnNext { applicationEventPublisher.publishEvent(DirectoryCreatedEvent(this, it.id!!)) }
+        }
+
+    private fun addDirectoryRecursive(location: Path) = fileOperations
+        .listDirectories(location, true)
+        .map { Directory(location = it.toString(), name = it.fileName.toString()) }
+        .filterWhen { directoryRepository.existsByLocation(it.location).not() }
+        .flatMap { directoryRepository.save(it) }
+        .doOnNext { applicationEventPublisher.publishEvent(DirectoryCreatedEvent(this, it.id!!)) }
+        .collectList()
+        .filter(MutableList<Directory>::isNotEmpty)
+        .map { it.first() }
 }

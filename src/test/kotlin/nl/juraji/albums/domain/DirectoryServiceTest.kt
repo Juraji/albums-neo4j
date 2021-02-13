@@ -68,6 +68,7 @@ internal class DirectoryServiceTest {
             .copy(id = null, location = Paths.get("/some/location").toString(), name = "location")
         val expected = postedDirectory.copy(id = fixture.nextString())
 
+        every { directoryRepository.findByLocation(any()) }.returnsEmptyMono()
         every { directoryRepository.save(postedDirectory) } returnsMonoOf expected
         every { applicationEventPublisher.publishEvent(any<DirectoryCreatedEvent>()) } just runs
 
@@ -76,8 +77,26 @@ internal class DirectoryServiceTest {
             .verifyComplete()
 
         verify {
+            directoryRepository.findByLocation(postedDirectory.location.toPath().toString())
             directoryRepository.save(postedDirectory)
             applicationEventPublisher.publishEvent(match<DirectoryCreatedEvent> { it.directoryId == expected.id })
+        }
+    }
+
+    @Test
+    internal fun `should not create directory if already exists`() {
+        val postedDirectory = fixture.next<Directory>()
+            .copy(id = null, location = Paths.get("/some/location").toString(), name = "location")
+        val expected = postedDirectory.copy(id = fixture.nextString())
+
+        every { directoryRepository.findByLocation(any()) } returnsMonoOf expected
+
+        StepVerifier.create(directoryService.createDirectory(postedDirectory.location))
+            .expectNext(expected)
+            .verifyComplete()
+
+        verify {
+            directoryRepository.findByLocation(postedDirectory.location.toPath().toString())
         }
     }
 
