@@ -1,7 +1,8 @@
 package nl.juraji.albums.domain.pictures
 
-class PictureCreatedEvent(
-    source: Any,
-    pictureId: String,
-    location: String,
-) : PictureEvent(source, pictureId, location)
+import nl.juraji.albums.domain.events.AlbumEvent
+
+data class PictureCreatedEvent(
+    val pictureId: String,
+    val location: String,
+) : AlbumEvent

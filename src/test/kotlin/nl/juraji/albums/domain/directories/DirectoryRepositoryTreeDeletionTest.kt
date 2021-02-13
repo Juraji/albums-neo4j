@@ -6,9 +6,11 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
 import org.springframework.context.annotation.Import
+import org.springframework.test.annotation.DirtiesContext
 import reactor.test.StepVerifier
 
 @DataNeo4jTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Import(TestNeo4jFixtureConfiguration::class)
 class DirectoryRepositoryTreeDeletionTest : AbstractRepositoryTest() {
     /**

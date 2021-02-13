@@ -24,9 +24,10 @@ interface DirectoryRepository : ReactiveNeo4jRepository<Directory, String> {
         
         OPTIONAL MATCH (root)-[:PARENT_OF*0..]->(child:Directory)
         OPTIONAL MATCH (rootPic:Picture)-[:LOCATED_IN]->(root)
-        OPTIONAL MATCH (rootPicMeta)-[:DESCRIBES|HAS_SOURCE|HAS_TARGET]->(rootPic)
+        OPTIONAL MATCH (rootPic)<-[:DESCRIBES|HAS_SOURCE|HAS_TARGET]-(rootPicMeta)
+
         OPTIONAL MATCH (childPic:Picture)-[:LOCATED_IN]->(child)
-        OPTIONAL MATCH (childPicMeta)-[:DESCRIBES|HAS_SOURCE|HAS_TARGET]->(childPic)
+        OPTIONAL MATCH (childPic)<-[:DESCRIBES|HAS_SOURCE|HAS_TARGET]-(childPicMeta)
 
         DETACH DELETE root, rootPic, rootPicMeta, child, childPic, childPicMeta
         """

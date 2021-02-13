@@ -28,7 +28,7 @@ internal class PictureDeletedEventListenerTest {
     fun `should delete picture image file`() {
         val pictureId = fixture.nextString()
         val location = "/some/location"
-        val event = PictureDeletedEvent(this, pictureId, location, true)
+        val event = PictureDeletedEvent(pictureId, location, true)
 
         every { fileOperations.deleteIfExists(any()) } returnsMonoOf true
 
@@ -43,7 +43,7 @@ internal class PictureDeletedEventListenerTest {
     fun `should not delete picture image file when doDeleteFile == false`() {
         val pictureId = ""
         val location = "/some/location"
-        val event = PictureDeletedEvent(this, pictureId, location, false)
+        val event = PictureDeletedEvent(pictureId, location, false)
 
         publisher.publishEvent(event)
 

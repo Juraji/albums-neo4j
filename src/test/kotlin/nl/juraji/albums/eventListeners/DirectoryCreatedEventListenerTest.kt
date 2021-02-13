@@ -31,7 +31,7 @@ internal class DirectoryCreatedEventListenerTest {
 
     @Test
     fun `should link to parent directory`() {
-        val event = DirectoryCreatedEvent(this, fixture.nextString())
+        val event = DirectoryCreatedEvent(fixture.nextString())
 
         // Mock other listeners in component
         every { directoryCreatedEventListener.linkToChildDirectories(any()) } just runs
@@ -45,7 +45,7 @@ internal class DirectoryCreatedEventListenerTest {
 
     @Test
     fun `should link to child directories`() {
-        val event = DirectoryCreatedEvent(this, fixture.nextString())
+        val event = DirectoryCreatedEvent(fixture.nextString())
 
         // Mock other listeners in component
         every { directoryCreatedEventListener.linkToParentDirectory(any()) } just runs

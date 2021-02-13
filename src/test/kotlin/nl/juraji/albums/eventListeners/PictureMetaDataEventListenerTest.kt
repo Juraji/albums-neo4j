@@ -8,11 +8,9 @@ import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
 import nl.juraji.albums.configurations.TestFixtureConfiguration
-import nl.juraji.albums.domain.DirectoryService
 import nl.juraji.albums.domain.PictureMetaDataService
 import nl.juraji.albums.domain.pictures.PictureCreatedEvent
 import nl.juraji.albums.util.returnsMonoOf
-import nl.juraji.albums.util.toPath
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -35,7 +33,7 @@ internal class PictureMetaDataEventListenerTest {
     fun `should update picture meta data`() {
         val pictureId = fixture.nextString()
         val location = "/some/location"
-        val event = PictureCreatedEvent(this, pictureId, location)
+        val event = PictureCreatedEvent(pictureId, location)
 
         // Mock other listeners in component
         every { pictureMetaDataEventListener.generatePictureImageHash(any()) } just runs
@@ -51,7 +49,7 @@ internal class PictureMetaDataEventListenerTest {
     fun `should generate picture image hash`() {
         val pictureId = fixture.nextString()
         val location = "/some/location"
-        val event = PictureCreatedEvent(this, pictureId, location)
+        val event = PictureCreatedEvent(pictureId, location)
 
         // Mock other listeners in component
         every { pictureMetaDataEventListener.updatePictureMetaData(any()) } just runs

@@ -2,7 +2,6 @@ package nl.juraji.albums.domain.directories
 
 import nl.juraji.albums.domain.events.AlbumEvent
 
-class DirectoryCreatedEvent(
-    source: Any,
+data class DirectoryCreatedEvent(
     val directoryId: String,
-) : AlbumEvent(source)
+) : AlbumEvent

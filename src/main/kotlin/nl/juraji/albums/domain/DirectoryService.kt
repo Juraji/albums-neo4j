@@ -57,14 +57,14 @@ class DirectoryService(
             isFalse(directoryRepository.existsByLocation(it.toString())) { "Directory with path $location already exists" }
         }
         .flatMap { directoryRepository.save(Directory(location = it.toString(), name = it.fileName.toString())) }
-        .doOnNext { applicationEventPublisher.publishEvent(DirectoryCreatedEvent(this, it.id!!)) }
+        .doOnNext { applicationEventPublisher.publishEvent(DirectoryCreatedEvent(it.id!!)) }
 
     private fun addDirectoryRecursive(location: Path) = fileOperations
         .listDirectories(location, true)
         .map { Directory(location = it.toString(), name = it.fileName.toString()) }
         .filterWhen { directoryRepository.existsByLocation(it.location).not() }
         .flatMap { directoryRepository.save(it) }
-        .doOnNext { applicationEventPublisher.publishEvent(DirectoryCreatedEvent(this, it.id!!)) }
+        .doOnNext { applicationEventPublisher.publishEvent(DirectoryCreatedEvent(it.id!!)) }
         .collectList()
         .filter(MutableList<Directory>::isNotEmpty)
         .map { it.first() }

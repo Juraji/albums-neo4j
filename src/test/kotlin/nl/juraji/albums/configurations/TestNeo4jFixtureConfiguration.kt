@@ -8,11 +8,8 @@ import org.neo4j.harness.Neo4j
 import org.neo4j.harness.Neo4jBuilders
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import org.springframework.test.annotation.DirtiesContext
-import org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
 
 @TestConfiguration
-@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 internal class TestNeo4jFixtureConfiguration {
 
     @Bean
