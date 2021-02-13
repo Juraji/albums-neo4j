@@ -23,7 +23,7 @@ interface DirectoryRepository : ReactiveNeo4jRepository<Directory, String> {
         MATCH (root:Directory  {id: $ id})
         OPTIONAL MATCH t=(root)-[:PARENT_OF*0..]->()<-[:LOCATED_IN*0..]-()<-[:DESCRIBES|HAS_TARGET|HAS_SOURCE*0..]-()
         DETACH DELETE t,root
-        """
+        """, delete = true
     )
     fun deleteTreeById(id: String): Mono<Void>
 }

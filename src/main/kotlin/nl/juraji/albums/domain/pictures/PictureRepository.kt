@@ -27,7 +27,7 @@ interface PictureRepository : ReactiveNeo4jRepository<Picture, String> {
             MATCH (root: Picture {id: $ id})
             OPTIONAL MATCH t=(root)<-[:DESCRIBES|HAS_TARGET|HAS_SOURCE*0..]-()
             DETACH DELETE t,root
-        """
+        """, delete = true
     )
     fun deleteTreeById(id: String): Mono<Void>
 }
