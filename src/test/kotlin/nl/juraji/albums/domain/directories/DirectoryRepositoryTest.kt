@@ -18,6 +18,14 @@ class DirectoryRepositoryTest : AbstractRepositoryTest() {
     private lateinit var directoryRepository: DirectoryRepository
 
     @Test
+    internal fun `should find roots`() {
+        StepVerifier.create(directoryRepository.findRoots())
+            .expectNext(Directory(id = "d1", location = "F:\\Desktop", name = "Desktop"))
+            .expectNext(Directory(id = "d3", location = "F:\\Desktop\\NotLinkedTestMap", name = "NotLinkedTestMap"))
+            .verifyComplete()
+    }
+
+    @Test
     internal fun `should add PARENT_OF relationship on directory to directory`() {
         StepVerifier.create(directoryRepository.addChild("d1", "d3"))
             .verifyComplete()

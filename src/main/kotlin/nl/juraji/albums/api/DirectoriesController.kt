@@ -17,6 +17,9 @@ class DirectoriesController(
     @GetMapping
     fun getAllDirectories(): Flux<Directory> = directoryService.getAllDirectories()
 
+    @GetMapping("/roots")
+    fun getRootDirectories(): Flux<Directory> = directoryService.getRootDirectories()
+
     @GetMapping("/{directoryId}")
     fun getDirectory(
         @PathVariable("directoryId") directoryId: String

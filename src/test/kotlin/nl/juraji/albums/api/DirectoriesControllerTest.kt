@@ -53,6 +53,22 @@ internal class DirectoriesControllerTest {
     }
 
     @Test
+    internal fun `should get root directories`() {
+        val directories: List<Directory> = fixture.next()
+
+        every { directoryService.getRootDirectories() } returnsFluxOf directories
+
+        webTestClient
+            .get()
+            .uri("/directories/roots")
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus().isOk
+            .expectBodyList<Directory>()
+            .contains(*directories.toTypedArray())
+    }
+
+    @Test
     internal fun `get directory by id`() {
         val directory = fixture.next<Directory>()
 

@@ -23,6 +23,8 @@ class DirectoryService(
 
     fun getDirectory(directoryId: String): Mono<Directory> = directoryRepository.findById(directoryId)
 
+    fun getRootDirectories(): Flux<Directory> = directoryRepository.findRoots()
+
     fun createDirectory(location: String, recursive: Boolean = false): Mono<Directory> = Mono.just(location.toPath())
         .flatMap {
             if (recursive) this.addDirectoryRecursive(it)

@@ -17,6 +17,8 @@ import nl.juraji.reactor.validations.ValidationException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.http.MediaType
+import org.springframework.test.web.reactive.server.expectBodyList
 import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.expectError
 import reactor.test.StepVerifier
@@ -49,6 +51,19 @@ internal class DirectoryServiceTest {
             .verifyComplete()
 
         verify { directoryRepository.findAll() }
+    }
+
+    @Test
+    internal fun `should get root directories`() {
+        val directories: List<Directory> = fixture.next()
+
+        every { directoryRepository.findRoots() } returnsFluxOf directories
+
+        StepVerifier.create(directoryService.getRootDirectories())
+            .expectNextSequence(directories)
+            .verifyComplete()
+
+        verify { directoryRepository.findRoots() }
     }
 
     @Test
