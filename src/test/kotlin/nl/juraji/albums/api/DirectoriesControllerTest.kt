@@ -9,6 +9,7 @@ import nl.juraji.albums.api.dto.NewDirectoryDto
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.DirectoryService
 import nl.juraji.albums.domain.directories.Directory
+import nl.juraji.albums.domain.directories.DirectoryProps
 import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
@@ -37,22 +38,6 @@ internal class DirectoriesControllerTest {
     private lateinit var fixture: Fixture
 
     @Test
-    internal fun `get directories`() {
-        val directory = fixture.next<Directory>()
-
-        every { directoryService.getAllDirectories() } returnsFluxOf directory
-
-        webTestClient
-            .get()
-            .uri("/directories")
-            .accept(MediaType.APPLICATION_JSON)
-            .exchange()
-            .expectStatus().isOk
-            .expectBodyList<Directory>()
-            .contains(directory)
-    }
-
-    @Test
     internal fun `should get root directories`() {
         val directories: List<Directory> = fixture.next()
 
@@ -70,7 +55,7 @@ internal class DirectoriesControllerTest {
 
     @Test
     internal fun `get directory by id`() {
-        val directory = fixture.next<Directory>()
+        val directory = fixture.next<DirectoryProps>()
 
         every { directoryService.getDirectory(directory.id!!) } returnsMonoOf directory
 
@@ -80,7 +65,7 @@ internal class DirectoriesControllerTest {
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk
-            .expectBody<Directory>()
+            .expectBody<DirectoryProps>()
             .isEqualTo(directory)
     }
 

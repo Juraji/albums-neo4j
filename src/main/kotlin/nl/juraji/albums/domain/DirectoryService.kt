@@ -2,6 +2,7 @@ package nl.juraji.albums.domain
 
 import nl.juraji.albums.domain.directories.Directory
 import nl.juraji.albums.domain.directories.DirectoryCreatedEvent
+import nl.juraji.albums.domain.directories.DirectoryProps
 import nl.juraji.albums.domain.directories.DirectoryRepository
 import nl.juraji.albums.util.mapToUnit
 import nl.juraji.albums.util.toPath
@@ -19,9 +20,7 @@ class DirectoryService(
     private val directoryRepository: DirectoryRepository,
     private val applicationEventPublisher: ApplicationEventPublisher
 ) {
-    fun getAllDirectories(): Flux<Directory> = directoryRepository.findAll()
-
-    fun getDirectory(directoryId: String): Mono<Directory> = directoryRepository.findById(directoryId)
+    fun getDirectory(directoryId: String): Mono<DirectoryProps> = directoryRepository.findDirectoryPropsById(directoryId)
 
     fun getRootDirectories(): Flux<Directory> = directoryRepository.findRoots()
 
