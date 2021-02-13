@@ -54,11 +54,9 @@ class DirectoryService(
 
     private fun addDirectory(location: Path) = Mono.just(location)
         .validateAsync {
-            isFalse(directoryRepository.existsByLocation(location.toString())) { "Directory with path $location already exists" }
+            isFalse(directoryRepository.existsByLocation(it.toString())) { "Directory with path $location already exists" }
         }
-        .flatMap {
-            directoryRepository.save(Directory(location = location.toString(), name = location.fileName.toString()))
-        }
+        .flatMap { directoryRepository.save(Directory(location = it.toString(), name = it.fileName.toString())) }
         .doOnNext { applicationEventPublisher.publishEvent(DirectoryCreatedEvent(this, it.id!!)) }
 
     private fun addDirectoryRecursive(location: Path) = fileOperations

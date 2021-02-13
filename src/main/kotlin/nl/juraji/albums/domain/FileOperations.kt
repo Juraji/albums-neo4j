@@ -15,7 +15,6 @@ import java.nio.file.LinkOption
 import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributes
 import java.time.LocalDateTime
-import java.util.stream.Collectors
 
 @Service
 class FileOperations {
@@ -57,8 +56,12 @@ class FileOperations {
         ImmutableImage.loader().fromPath(path)
     }
 
-    fun listDirectories(root: Path, b: Boolean): Flux<Path> = deferIterableTo(scheduler) {
-        Files.find(root, Int.MAX_VALUE, { _, attrs -> attrs.isDirectory }).collect(Collectors.toList())
+    fun listDirectories(root: Path, recursive: Boolean): Flux<Path> = deferIterableTo(scheduler) {
+        val depth = if (recursive) Int.MAX_VALUE else 1
+        root.toFile().walkTopDown().maxDepth(depth)
+            .filter { it.isDirectory }
+            .map { it.toPath() }
+            .toList()
     }
 
     companion object : LoggerCompanion(FileOperations::class)
