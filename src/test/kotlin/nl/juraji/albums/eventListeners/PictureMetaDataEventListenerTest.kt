@@ -26,9 +26,6 @@ internal class PictureMetaDataEventListenerTest {
     private lateinit var publisher: ApplicationEventPublisher
 
     @MockkBean
-    private lateinit var directoryService: DirectoryService
-
-    @MockkBean
     private lateinit var pictureMetaDataService: PictureMetaDataService
 
     @SpykBean
