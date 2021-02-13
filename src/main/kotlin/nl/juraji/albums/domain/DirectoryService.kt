@@ -5,11 +5,11 @@ import nl.juraji.albums.domain.directories.DirectoryCreatedEvent
 import nl.juraji.albums.domain.directories.DirectoryRepository
 import nl.juraji.albums.util.mapToUnit
 import nl.juraji.albums.util.toPath
+import nl.juraji.reactor.validations.validateAsync
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.kotlin.core.publisher.switchIfEmpty
 import reactor.kotlin.extra.bool.not
 import java.nio.file.Path
 
@@ -52,12 +52,14 @@ class DirectoryService(
         .flatMap { directoryRepository.addChild(directoryId, it.id!!) }
         .mapToUnit()
 
-    private fun addDirectory(location: Path) = directoryRepository
-        .findByLocation(location.toString())
-        .switchIfEmpty {
-            directoryRepository.save(Directory(location = location.toString(), name = location.fileName.toString()))
-                .doOnNext { applicationEventPublisher.publishEvent(DirectoryCreatedEvent(this, it.id!!)) }
+    private fun addDirectory(location: Path) = Mono.just(location)
+        .validateAsync {
+            isFalse(directoryRepository.existsByLocation(location.toString())) { "Directory with path $location already exists" }
         }
+        .flatMap {
+            directoryRepository.save(Directory(location = location.toString(), name = location.fileName.toString()))
+        }
+        .doOnNext { applicationEventPublisher.publishEvent(DirectoryCreatedEvent(this, it.id!!)) }
 
     private fun addDirectoryRecursive(location: Path) = fileOperations
         .listDirectories(location, true)

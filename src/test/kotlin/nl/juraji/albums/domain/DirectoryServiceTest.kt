@@ -13,10 +13,12 @@ import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
 import nl.juraji.albums.util.toPath
+import nl.juraji.reactor.validations.ValidationException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationEventPublisher
 import reactor.kotlin.core.publisher.toMono
+import reactor.kotlin.test.expectError
 import reactor.test.StepVerifier
 import java.nio.file.Paths
 
@@ -68,7 +70,7 @@ internal class DirectoryServiceTest {
             .copy(id = null, location = Paths.get("/some/location").toString(), name = "location")
         val expected = postedDirectory.copy(id = fixture.nextString())
 
-        every { directoryRepository.findByLocation(any()) }.returnsEmptyMono()
+        every { directoryRepository.existsByLocation(any()) } returnsMonoOf false
         every { directoryRepository.save(postedDirectory) } returnsMonoOf expected
         every { applicationEventPublisher.publishEvent(any<DirectoryCreatedEvent>()) } just runs
 
@@ -77,7 +79,7 @@ internal class DirectoryServiceTest {
             .verifyComplete()
 
         verify {
-            directoryRepository.findByLocation(postedDirectory.location.toPath().toString())
+            directoryRepository.existsByLocation(postedDirectory.location.toPath().toString())
             directoryRepository.save(postedDirectory)
             applicationEventPublisher.publishEvent(match<DirectoryCreatedEvent> { it.directoryId == expected.id })
         }
@@ -85,18 +87,17 @@ internal class DirectoryServiceTest {
 
     @Test
     internal fun `should not create directory if already exists`() {
-        val postedDirectory = fixture.next<Directory>()
-            .copy(id = null, location = Paths.get("/some/location").toString(), name = "location")
-        val expected = postedDirectory.copy(id = fixture.nextString())
+        val postedPath = "/some/location".toPath()
 
-        every { directoryRepository.findByLocation(any()) } returnsMonoOf expected
+        every { directoryRepository.existsByLocation(any()) } returnsMonoOf true
 
-        StepVerifier.create(directoryService.createDirectory(postedDirectory.location))
-            .expectNext(expected)
-            .verifyComplete()
+        StepVerifier.create(directoryService.createDirectory(postedPath.toString()))
+            .expectError<ValidationException>()
+            .verify()
 
         verify {
-            directoryRepository.findByLocation(postedDirectory.location.toPath().toString())
+            directoryRepository.existsByLocation(postedPath.toString())
+            directoryRepository.save(any()) wasNot Called
         }
     }
 
