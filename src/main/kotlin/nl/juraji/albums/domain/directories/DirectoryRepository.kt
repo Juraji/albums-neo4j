@@ -17,19 +17,4 @@ interface DirectoryRepository : ReactiveNeo4jRepository<Directory, String> {
 
     @Query("MATCH (p:Directory {id: $ id}) MATCH (c:Directory {id: $ childId}) MERGE (p)-[:PARENT_OF]->(c)")
     fun addChild(id: String, childId: String): Mono<Void>
-
-    @Query(
-        """
-        MATCH (root:Directory  {id: $ id})
-        
-        OPTIONAL MATCH (root)-[:PARENT_OF*0..]->(child:Directory)
-        OPTIONAL MATCH (rootPic:Picture)-[:LOCATED_IN]->(root)
-        OPTIONAL MATCH (rootPicMeta)-[:DESCRIBES|HAS_SOURCE|HAS_TARGET]->(rootPic)
-        OPTIONAL MATCH (childPic:Picture)-[:LOCATED_IN]->(child)
-        OPTIONAL MATCH (childPicMeta)-[:DESCRIBES|HAS_SOURCE|HAS_TARGET]->(childPic)
-
-        DETACH DELETE root, rootPic, rootPicMeta, child, childPic, childPicMeta
-        """
-    )
-    fun deleteTreeById(id: String): Mono<Void>
 }

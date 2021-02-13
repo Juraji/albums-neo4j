@@ -2,6 +2,7 @@ package nl.juraji.albums.domain
 
 import nl.juraji.albums.domain.directories.Directory
 import nl.juraji.albums.domain.directories.DirectoryCreatedEvent
+import nl.juraji.albums.domain.directories.DirectoryDeletedEvent
 import nl.juraji.albums.domain.directories.DirectoryRepository
 import nl.juraji.albums.util.mapToUnit
 import nl.juraji.albums.util.toPath
@@ -30,7 +31,8 @@ class DirectoryService(
         }
 
     fun deleteDirectory(directoryId: String): Mono<Unit> = directoryRepository
-        .deleteTreeById(directoryId)
+        .deleteById(directoryId)
+        .doOnSuccess { applicationEventPublisher.publishEvent(DirectoryDeletedEvent(this, directoryId)) }
         .mapToUnit()
 
     fun findAndLinkParent(directoryId: String): Mono<Unit> = directoryRepository

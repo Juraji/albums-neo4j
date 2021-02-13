@@ -8,6 +8,7 @@ import io.mockk.junit5.MockKExtension
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.directories.Directory
 import nl.juraji.albums.domain.directories.DirectoryCreatedEvent
+import nl.juraji.albums.domain.directories.DirectoryDeletedEvent
 import nl.juraji.albums.domain.directories.DirectoryRepository
 import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
@@ -139,6 +140,22 @@ internal class DirectoryServiceTest {
             applicationEventPublisher.publishEvent(match<DirectoryCreatedEvent> { it.directoryId == "child1" })
             applicationEventPublisher.publishEvent(match<DirectoryCreatedEvent> { it.directoryId == "child2" })
             applicationEventPublisher.publishEvent(match<DirectoryCreatedEvent> { it.directoryId == "sub1" })
+        }
+    }
+
+    @Test
+    internal fun `should delete directory`() {
+        val directoryId = fixture.nextString()
+
+        every { directoryRepository.deleteById(directoryId) }.returnsEmptyMono()
+        every { applicationEventPublisher.publishEvent(any()) } just runs
+
+        StepVerifier.create(directoryService.deleteDirectory(directoryId))
+            .verifyComplete()
+
+        verify {
+            directoryRepository.deleteById(directoryId)
+            applicationEventPublisher.publishEvent(match<DirectoryDeletedEvent> { it.directoryId == directoryId })
         }
     }
 
