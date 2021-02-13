@@ -21,4 +21,13 @@ interface PictureRepository : ReactiveNeo4jRepository<Picture, String> {
 
     @Query("MATCH (:Picture {id: $ pictureId})-[rel:TAGGED_BY]->(:Tag {id: $ tagId}) DELETE rel")
     fun removeTag(pictureId: String, tagId: String): Mono<Unit>
+
+    @Query(
+        """
+            MATCH (root: Picture {id: $ id})
+            OPTIONAL MATCH t=(root)<-[:DESCRIBES|HAS_TARGET|HAS_SOURCE*0..]-()
+            DETACH DELETE t,root
+        """
+    )
+    fun deleteTreeById(id: String): Mono<Void>
 }

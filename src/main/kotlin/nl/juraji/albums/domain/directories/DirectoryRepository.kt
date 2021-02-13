@@ -21,15 +21,8 @@ interface DirectoryRepository : ReactiveNeo4jRepository<Directory, String> {
     @Query(
         """
         MATCH (root:Directory  {id: $ id})
-        
-        OPTIONAL MATCH (root)-[:PARENT_OF*0..]->(child:Directory)
-        OPTIONAL MATCH (rootPic:Picture)-[:LOCATED_IN]->(root)
-        OPTIONAL MATCH (rootPic)<-[:DESCRIBES|HAS_SOURCE|HAS_TARGET]-(rootPicMeta)
-
-        OPTIONAL MATCH (childPic:Picture)-[:LOCATED_IN]->(child)
-        OPTIONAL MATCH (childPic)<-[:DESCRIBES|HAS_SOURCE|HAS_TARGET]-(childPicMeta)
-
-        DETACH DELETE root, rootPic, rootPicMeta, child, childPic, childPicMeta
+        OPTIONAL MATCH t=(root)-[:PARENT_OF*0..]->()<-[:LOCATED_IN*0..]-()<-[:DESCRIBES|HAS_TARGET|HAS_SOURCE*0..]-()
+        DETACH DELETE t,root
         """
     )
     fun deleteTreeById(id: String): Mono<Void>

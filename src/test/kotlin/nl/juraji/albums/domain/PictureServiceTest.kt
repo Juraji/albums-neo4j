@@ -128,14 +128,14 @@ internal class PictureServiceTest {
         val picture = fixture.next<Picture>()
 
         every { pictureRepository.findById(picture.id!!) } returnsMonoOf picture
-        every { pictureRepository.delete(picture) }.returnsEmptyMono()
+        every { pictureRepository.deleteTreeById(picture.id!!) }.returnsEmptyMono()
         every { applicationEventPublisher.publishEvent(any<PictureDeletedEvent>()) } just runs
 
         StepVerifier.create(pictureService.deletePicture(picture.id!!, true))
             .verifyComplete()
 
         verify {
-            pictureRepository.delete(picture)
+            pictureRepository.deleteTreeById(picture.id!!)
             applicationEventPublisher.publishEvent(any<PictureDeletedEvent>())
         }
     }

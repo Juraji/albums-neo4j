@@ -6,9 +6,11 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
 import org.springframework.context.annotation.Import
+import org.springframework.test.annotation.DirtiesContext
 import reactor.test.StepVerifier
 
 @DataNeo4jTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Import(TestNeo4jFixtureConfiguration::class)
 class PictureRepositoryTest : AbstractRepositoryTest() {
 
@@ -29,5 +31,27 @@ class PictureRepositoryTest : AbstractRepositoryTest() {
             .verifyComplete()
 
         assertYieldsNoRecords("MATCH (:Picture {id: 'p1'})-[rel:TAGGED_BY]->(:Tag {id: 't1'}) RETURN rel")
+    }
+
+    @Test
+    internal fun `should delete tree, including duplicates and hash data`() {
+        StepVerifier.create(pictureRepository.deleteTreeById("p1"))
+            .verifyComplete()
+
+        assertYieldsNoRecords("MATCH (n:Picture {id: 'p1'}) RETURN n")
+        assertYieldsNoRecords("MATCH (n:HashData {id: 'hd1'}) RETURN n")
+        assertYieldsNoRecords("MATCH (n:Duplicate {id: 'dup1'}) RETURN n")
+        assertYieldsNoRecords("MATCH (n:Duplicate {id: 'dup2'}) RETURN n")
+
+        assertYieldsOneRecord("MATCH (n:Directory {id: 'd1'}) RETURN n")
+        assertYieldsOneRecord("MATCH (n:Directory {id: 'd2'}) RETURN n")
+        assertYieldsOneRecord("MATCH (n:Directory {id: 'd3'}) RETURN n")
+        assertYieldsOneRecord("MATCH (n:Picture {id: 'p2'}) RETURN n")
+        assertYieldsOneRecord("MATCH (n:Picture {id: 'p3'}) RETURN n")
+        assertYieldsOneRecord("MATCH (n:Picture {id: 'p4'}) RETURN n")
+        assertYieldsOneRecord("MATCH (n:Tag {id: 't1'}) RETURN n")
+        assertYieldsOneRecord("MATCH (n:Tag {id: 't2'}) RETURN n")
+        assertYieldsOneRecord("MATCH (n:HashData {id: 'hd2'}) RETURN n")
+        assertYieldsOneRecord("MATCH (n:Duplicate {id: 'dup3'}) RETURN n")
     }
 }

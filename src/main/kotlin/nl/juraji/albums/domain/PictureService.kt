@@ -46,7 +46,7 @@ class PictureService(
 
     fun deletePicture(pictureId: String, doDeleteFile: Boolean): Mono<Unit> = pictureRepository
         .findById(pictureId)
-        .flatMap { pictureRepository.delete(it).thenReturn(it) }
+        .flatMap { pictureRepository.deleteTreeById(it.id!!).thenReturn(it) }
         .doOnNext { applicationEventPublisher.publishEvent(PictureDeletedEvent(it.id!!, it.location, doDeleteFile)) }
         .mapToUnit()
 
