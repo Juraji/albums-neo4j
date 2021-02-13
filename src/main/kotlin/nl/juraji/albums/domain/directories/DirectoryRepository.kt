@@ -17,7 +17,14 @@ interface DirectoryRepository : ReactiveNeo4jRepository<Directory, String> {
 
     fun findDirectoryPropsById(directoryId: String): Mono<DirectoryProps>
 
-    @Query("MATCH (d:Directory) WHERE NOT (d)<-[:PARENT_OF]-() RETURN d ORDER BY d.location")
+    @Query(
+        """
+        MATCH (d:Directory)
+          WHERE NOT (d)<-[:PARENT_OF]-()
+        RETURN d{.id, .location, .name, __nodeLabels__: labels(d), __internalNeo4jId__: id(d), __paths__: [p = (n)-[:`PARENT_OF`]->()-[:`PARENT_OF`*0..]-() | p]}
+        ORDER BY d.location
+        """
+    )
     fun findRoots(): Flux<Directory>
 
     @Query("MATCH (p:Directory {id: $ id}) MATCH (c:Directory {id: $ childId}) MERGE (p)-[:PARENT_OF]->(c)")
