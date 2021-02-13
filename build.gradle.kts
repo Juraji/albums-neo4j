@@ -31,6 +31,7 @@ dependencies {
     implementation("com.sksamuel.scrimage:scrimage-core:4.0.16")
     implementation("com.sksamuel.scrimage:scrimage-formats-extra:4.0.16")
     implementation("com.sksamuel.scrimage:scrimage-filters:4.0.16")
+    implementation("org.springdoc:springdoc-openapi-webflux-ui:1.5.4")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
