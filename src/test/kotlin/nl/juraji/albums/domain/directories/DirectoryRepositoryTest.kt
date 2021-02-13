@@ -19,9 +19,28 @@ class DirectoryRepositoryTest : AbstractRepositoryTest() {
 
     @Test
     internal fun `should find roots`() {
+        val expected = listOf(
+            Directory(
+                id = "d1",
+                location = "F:\\Desktop",
+                name = "Desktop",
+                children = listOf(
+                    Directory(
+                        id = "d2",
+                        location = "F:\\Desktop\\TestMap",
+                        name = "TestMap"
+                    )
+                )
+            ),
+            Directory(
+                id = "d3",
+                location = "F:\\Desktop\\NotLinkedTestMap",
+                name = "NotLinkedTestMap"
+            )
+        )
+
         StepVerifier.create(directoryRepository.findRoots())
-            .expectNext(Directory(id = "d1", location = "F:\\Desktop", name = "Desktop"))
-            .expectNext(Directory(id = "d3", location = "F:\\Desktop\\NotLinkedTestMap", name = "NotLinkedTestMap"))
+            .expectNextSequence(expected)
             .verifyComplete()
     }
 
