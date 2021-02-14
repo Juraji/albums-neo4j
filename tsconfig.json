@@ -19,7 +19,19 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "@environment": [
+        "src/web/environments/environment"
+      ],
+      "@actions/*": ["src/web/app/@actions/*"],
+      "@components/*": ["src/web/app/@components/*"],
+      "@effects/*": ["src/web/app/@effects/*"],
+      "@models/*": ["src/web/app/@models/*"],
+      "@reducers/*": ["src/web/app/@reducers/*"],
+      "@services/*": ["src/web/app/@services/*"],
+      "@utils/*": ["src/web/app/@utils/*"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

@@ -1,0 +1,25 @@
+<ul class="list-group list-group-flush" [class.ml-4]="level !== 0">
+  <ng-container *ngFor="let directory of directories">
+    <li class="list-group-item">
+      <button type="button" class="btn btn-link btn-sm mr-2"
+              (click)="toggleDirectory(directory)"
+              [disabled]="directory.children.length === 0">
+        <ng-container [ngSwitch]="!!openedStates[directory.id]">
+          <span *ngSwitchCase="true" class="fa fa-minus"></span>
+          <span *ngSwitchCase="false" class="fa fa-plus"></span>
+        </ng-container>
+      </button>
+      <ng-container [ngSwitch]="level">
+        <span *ngSwitchCase="0">{{directory.location}}</span>
+        <span *ngSwitchDefault>{{directory.name}}</span>
+      </ng-container>
+      <span class="directory-name"></span>
+      <button type="button" class="btn btn-outline-primary btn-sm float-right">
+        <span class="fa fa-search"></span>
+      </button>
+    </li>
+    <app-directory-tree *ngIf="!!openedStates[directory.id]"
+                        [directories]="directory.children"
+                        [level]="level + 1"></app-directory-tree>
+  </ng-container>
+</ul>

@@ -2,14 +2,18 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { HomeRoutingModule } from './home-routing.module';
-import { HomeComponent } from './home.component';
+import { HomePage } from './home.page';
+import {DirectoryTreeModule} from "@components/directory-tree/directory-tree.module";
+import {MainNavbarModule} from "@components/main-navbar/main-navbar.module";
 
 
 @NgModule({
-  declarations: [HomeComponent],
+  declarations: [HomePage],
   imports: [
     CommonModule,
-    HomeRoutingModule
+    HomeRoutingModule,
+    DirectoryTreeModule,
+    MainNavbarModule
   ]
 })
 export class HomeModule { }

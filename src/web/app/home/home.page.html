@@ -1,0 +1,20 @@
+<app-main-navbar></app-main-navbar>
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col col-sm-8">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between">
+          <h5 class="my-0">Directories</h5>
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="reloadRoots()">
+            <span class="fa fa-sync"></span>
+          </button>
+        </div>
+        <div class="card-body p-0">
+          <app-directory-tree [directories]="directories$ | async"></app-directory-tree>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
