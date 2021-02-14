@@ -4,6 +4,10 @@ import {Observable} from "rxjs";
 import {loadRootDirectories} from "@actions/directories.actions";
 import {Router} from "@angular/router";
 import {selectDirectoryTree} from "@reducers/directories";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {AddDirectoryModal} from "@components/add-directory-modal/add-directory/add-directory.modal";
+import {switchMap} from "rxjs/operators";
+import {DirectoriesService} from "@services/directories.service";
 
 @Component({
   templateUrl: './directories-overview.page.html'
@@ -15,7 +19,9 @@ export class DirectoriesOverviewPage implements OnInit {
 
   constructor(
     private readonly store: Store<AppState>,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly directoriesService: DirectoriesService,
+    private readonly modalService: NgbModal
   ) {
   }
 
@@ -25,6 +31,16 @@ export class DirectoriesOverviewPage implements OnInit {
 
   reloadRoots() {
     this.store.dispatch(loadRootDirectories())
+  }
+
+  addDirectory() {
+    const modalRef = this.modalService.open(AddDirectoryModal)
+    modalRef.closed
+      .pipe(
+        switchMap(({location, recursive}: AddDirectoryModalResult) =>
+          this.directoriesService.createDirectory({location}, recursive))
+      )
+      .subscribe((result: Directory) => console.log(result))
   }
 
   onDirectoryAction(directory: Directory) {

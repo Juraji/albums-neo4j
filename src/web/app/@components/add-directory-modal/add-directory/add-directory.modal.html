@@ -1,0 +1,24 @@
+<form [formGroup]="form" (submit)="addDirectory()">
+  <div class="modal-header">
+    <h4 class="modal-title">Add directory</h4>
+    <button type="button" class="close" aria-label="Close" (click)="dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="mb-3">
+      <label for="location-input" class="form-label">Location</label>
+      <input type="text" class="form-control" id="location-input" aria-describedby="location-input-help"
+             formControlName="location">
+      <div id="location-input-help" class="form-text small text-muted">The path of the directory to add.</div>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="" id="recursive-input" formControlName="recursive">
+      <label class="form-check-label" for="recursive-input">Recursive</label>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-danger" (click)="dismiss()">Close</button>
+    <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Add</button>
+  </div>
+</form>

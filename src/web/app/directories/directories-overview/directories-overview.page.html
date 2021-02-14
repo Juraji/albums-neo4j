@@ -4,13 +4,23 @@
   <div class="row">
     <div class="col col-lg-8">
       <div class="card">
-        <div class="card-header d-flex justify-content-between">
+        <div class="card-header d-flex">
           <h5 class="my-0">Directories</h5>
-          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="reloadRoots()">
-            <span class="fa fa-sync"></span>
-          </button>
+          <span class="flex-grow-1"></span>
+          <div class="btn-group btn-group-sm">
+            <button type="button" class="btn btn-outline-secondary" (click)="reloadRoots()">
+              <span class="fa fa-sync"></span>
+            </button>
+            <button type="button" class="btn btn-outline-primary" (click)="addDirectory()">
+              <span class="fa fa-folder-open"></span>
+            </button>
+          </div>
         </div>
         <div class="card-body p-0">
+          <div class="alert alert-info m-2" *ngIf="(directories$ | async)?.length === 0">
+            No directories registered yet.
+            Use the "<span class="fa fa-folder-open"></span>" button to register a directory!
+          </div>
           <app-directory-tree [directories]="directories$ | async"
                               (directoryAction)="onDirectoryAction($event)"></app-directory-tree>
         </div>

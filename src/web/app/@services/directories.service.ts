@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpParams} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {environment} from "@environment";
 
@@ -13,5 +13,13 @@ export class DirectoriesService {
 
   getRoots(): Observable<Directory[]> {
     return this.httpClient.get<Directory[]>(`${environment.apiBaseUri}/directories/roots`)
+  }
+
+  createDirectory(dto: NewDirectoryDto, recursive: any): Observable<Directory> {
+    return this.httpClient
+      .post<Directory>(`${environment.apiBaseUri}/directories`, dto, {
+        params: new HttpParams()
+          .append("recursive", recursive)
+      })
   }
 }

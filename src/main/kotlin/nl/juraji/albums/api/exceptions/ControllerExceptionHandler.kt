@@ -4,7 +4,6 @@ import nl.juraji.albums.api.dto.ErrorDto
 import nl.juraji.albums.api.dto.FieldValidationErrorDto
 import nl.juraji.albums.api.dto.GenericErrorDto
 import nl.juraji.albums.api.dto.ValidationErrorDto
-import nl.juraji.albums.util.LoggerCompanion
 import nl.juraji.reactor.validations.ValidationException
 import org.springframework.boot.autoconfigure.web.WebProperties
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler
@@ -48,7 +47,7 @@ class GlobalErrorWebExceptionHandler(
             is WebExchangeBindException -> handleWebExchangeBindException(error, requestId)
             is ValidationException -> handleValidationException(error, requestId)
             is ResponseStatusException -> handleResponseStatusException(error, requestId)
-            else -> handleOther(error, requestId)
+            else -> handleOther(requestId)
         }
 
         return ServerResponse.status(dtoBody.status)
@@ -85,15 +84,11 @@ class GlobalErrorWebExceptionHandler(
         )
     }
 
-    private fun handleOther(error: Throwable?, requestId: String): ErrorDto {
-        logger.error("An error occurred during handling of a request", error)
-
+    private fun handleOther(requestId: String): ErrorDto {
         return GenericErrorDto(
             message = "Er is een onbekende fout opgetreden",
             requestId = requestId,
             status = HttpStatus.INTERNAL_SERVER_ERROR
         )
     }
-
-    companion object : LoggerCompanion(GlobalErrorWebExceptionHandler::class)
 }

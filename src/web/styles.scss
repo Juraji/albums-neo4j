@@ -5,3 +5,13 @@
 
 @import "~@fortawesome/fontawesome-free/scss/fontawesome";
 @import "~@fortawesome/fontawesome-free/scss/solid";
+
+// Compatibility between ng forms and bootstrap validations
+.form-control.ng-touched {
+  &.ng-invalid {
+    @extend .is-invalid;
+  }
+  &.ng-valid {
+    @extend .is-valid;
+  }
+}

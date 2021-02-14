@@ -6,6 +6,7 @@ import {DirectoriesOverviewPage} from './directories-overview/directories-overvi
 import {DirectoryTreeModule} from "@components/directory-tree/directory-tree.module";
 import {MainNavbarModule} from "@components/main-navbar/main-navbar.module";
 import {DirectoryPage} from './directory/directory.page';
+import {AddDirectoryModalModule} from "@components/add-directory-modal/add-directory-modal.module";
 
 
 @NgModule({
@@ -14,7 +15,8 @@ import {DirectoryPage} from './directory/directory.page';
     CommonModule,
     DirectoriesRoutingModule,
     DirectoryTreeModule,
-    MainNavbarModule
+    MainNavbarModule,
+    AddDirectoryModalModule
   ]
 })
 export class DirectoriesModule {
