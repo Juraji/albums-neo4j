@@ -1,0 +1,3 @@
+interface DirectoriesSliceState {
+  tree: Directory[]
+}

@@ -1,16 +1,17 @@
 import {Component, OnInit} from '@angular/core';
-import {AppState} from "@reducers/index";
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs";
 import {loadRootDirectories} from "@actions/directories.actions";
 import {Router} from "@angular/router";
+import {selectDirectoryTree} from "@reducers/directories";
 
 @Component({
   templateUrl: './directories-overview.page.html'
 })
 export class DirectoriesOverviewPage implements OnInit {
 
-  directories$: Observable<Directory[]> = this.store.select((s) => s.directories.tree)
+  readonly directories$: Observable<Directory[]> =
+    this.store.select(selectDirectoryTree)
 
   constructor(
     private readonly store: Store<AppState>,
