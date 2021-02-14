@@ -14,12 +14,14 @@
         <span *ngSwitchDefault>{{directory.name}}</span>
       </ng-container>
       <span class="directory-name"></span>
-      <button type="button" class="btn btn-outline-primary btn-sm float-right">
+      <button type="button" class="btn btn-outline-primary btn-sm float-right" (click)="onDirectoryAction(directory)">
         <span class="fa fa-search"></span>
       </button>
     </li>
     <app-directory-tree *ngIf="!!openedStates[directory.id]"
                         [directories]="directory.children"
-                        [level]="level + 1"></app-directory-tree>
+                        [level]="level + 1"
+                        (directoryAction)="onDirectoryAction($event)"
+    ></app-directory-tree>
   </ng-container>
 </ul>

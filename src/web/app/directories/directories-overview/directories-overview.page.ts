@@ -3,17 +3,19 @@ import {AppState} from "@reducers/index";
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs";
 import {loadRootDirectories} from "@actions/directories.actions";
+import {Router} from "@angular/router";
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.page.html',
-  styleUrls: ['./home.page.scss']
+  templateUrl: './directories-overview.page.html'
 })
-export class HomePage implements OnInit {
+export class DirectoriesOverviewPage implements OnInit {
 
   directories$: Observable<Directory[]> = this.store.select((s) => s.directories.tree)
 
-  constructor(private readonly store: Store<AppState>) {
+  constructor(
+    private readonly store: Store<AppState>,
+    private readonly router: Router
+  ) {
   }
 
   ngOnInit(): void {
@@ -24,4 +26,7 @@ export class HomePage implements OnInit {
     this.store.dispatch(loadRootDirectories())
   }
 
+  onDirectoryAction(directory: Directory) {
+    this.router.navigate(["directories", directory.id])
+  }
 }

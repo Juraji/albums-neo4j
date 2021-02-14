@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 
 @Component({
   selector: 'app-directory-tree',
@@ -6,6 +6,7 @@ import {Component, Input} from '@angular/core';
   styleUrls: ['./directory-tree.component.scss']
 })
 export class DirectoryTreeComponent {
+  openedStates: Record<string, boolean> = {}
 
   @Input()
   directories: Directory[] | null = []
@@ -13,7 +14,8 @@ export class DirectoryTreeComponent {
   @Input()
   level: number = 0
 
-  openedStates: Record<string, boolean> = {}
+  @Output()
+  readonly directoryAction = new EventEmitter<Directory>()
 
   constructor() {
   }
@@ -23,5 +25,9 @@ export class DirectoryTreeComponent {
       .copy({
         [directory.id]: !this.openedStates[directory.id]
       })
+  }
+
+  onDirectoryAction(directory: Directory) {
+    this.directoryAction.emit(directory)
   }
 }
