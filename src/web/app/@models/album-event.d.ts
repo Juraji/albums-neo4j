@@ -1,0 +1,3 @@
+interface AlbumEvent {
+  eventType: string;
+}

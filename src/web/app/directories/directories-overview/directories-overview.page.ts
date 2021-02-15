@@ -1,13 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs";
-import {loadRootDirectories} from "@actions/directories.actions";
 import {Router} from "@angular/router";
 import {selectDirectoryTree} from "@reducers/directories";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {AddDirectoryModal} from "@components/add-directory-modal/add-directory/add-directory.modal";
 import {switchMap} from "rxjs/operators";
 import {DirectoriesService} from "@services/directories.service";
+import {loadRootDirectories} from "@actions/directories.actions";
 
 @Component({
   templateUrl: './directories-overview.page.html'

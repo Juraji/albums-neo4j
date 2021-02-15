@@ -11,8 +11,14 @@ export class DirectoriesService {
   constructor(private readonly httpClient: HttpClient) {
   }
 
-  getRoots(): Observable<Directory[]> {
-    return this.httpClient.get<Directory[]>(`${environment.apiBaseUri}/directories/roots`)
+  getRoots(fromId?: string): Observable<Directory[]> {
+    let params = new HttpParams()
+
+    if (!!fromId) {
+      params = params.append("fromId", fromId)
+    }
+
+    return this.httpClient.get<Directory[]>(`${environment.apiBaseUri}/directories/roots`, {params})
   }
 
   createDirectory(dto: NewDirectoryDto, recursive: any): Observable<Directory> {

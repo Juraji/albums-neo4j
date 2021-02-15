@@ -17,3 +17,23 @@ interface NewPictureDto {
 }
 
 type FileType = "JPEG" | "BMP" | "GIF" | "PNG" | "TIFF" | "UNKNOWN"
+
+interface PictureCreatedEvent extends AlbumEvent {
+  eventType: "PictureCreatedEvent";
+  pictureId: string;
+  location: string;
+  directoryId: string;
+
+}
+
+interface PictureUpdatedEvent extends AlbumEvent {
+  eventType: "PictureUpdatedEvent";
+  pictureId: string;
+}
+
+interface PictureDeletedEvent extends AlbumEvent {
+  eventType: "PictureDeletedEvent";
+  pictureId: string;
+  location: string;
+  doDeleteFile: boolean;
+}
