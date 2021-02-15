@@ -9,6 +9,7 @@ import nl.juraji.albums.domain.pictures.*
 import nl.juraji.albums.util.mapToUnit
 import nl.juraji.albums.util.toPath
 import nl.juraji.reactor.validations.ValidationException
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
@@ -25,7 +26,8 @@ class PictureMetaDataService(
     private val pictureRepository: PictureRepository,
     private val hashDataRepository: HashDataRepository,
     private val fileOperations: FileOperations,
-    private val configuration: DuplicateScannerConfiguration
+    private val configuration: DuplicateScannerConfiguration,
+    private val applicationEventPublisher: ApplicationEventPublisher
 ) {
 
     fun updateMetaData(pictureId: String): Mono<Picture> = pictureRepository
@@ -53,12 +55,14 @@ class PictureMetaDataService(
                 }
         }
         .flatMap(pictureRepository::save)
+        .doOnNext { applicationEventPublisher.publishEvent(PictureUpdatedEvent(pictureId)) }
 
     fun updatePictureHash(pictureId: String): Mono<Unit> = pictureRepository
         .findById(pictureId)
         .flatMap { p -> fileOperations.loadImage(p.location.toPath()).map { p to it } }
         .map { (p, img) -> p to generateHash(img) }
         .flatMap { (p, hash) -> hashDataRepository.save(HashData(hash = hash, picture = p)) }
+        .doOnNext { applicationEventPublisher.publishEvent(PictureUpdatedEvent(pictureId)) }
         .mapToUnit()
 
     private fun generateHash(image: ImmutableImage): String {

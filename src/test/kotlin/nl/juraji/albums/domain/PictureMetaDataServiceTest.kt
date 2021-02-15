@@ -3,16 +3,14 @@ package nl.juraji.albums.domain
 import com.marcellogalhardo.fixture.next
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.canvas.painters.RadialGradient
-import io.mockk.CapturingSlotMatcher
-import io.mockk.every
+import io.mockk.*
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.SpyK
 import io.mockk.junit5.MockKExtension
-import io.mockk.slot
-import io.mockk.verify
 import nl.juraji.albums.configuration.DuplicateScannerConfiguration
 import nl.juraji.albums.configurations.TestFixtureConfiguration
+import nl.juraji.albums.domain.events.AlbumEvent
 import nl.juraji.albums.domain.pictures.*
 import nl.juraji.albums.util.returnsArgumentAsMono
 import nl.juraji.albums.util.returnsMonoOf
@@ -21,6 +19,8 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.context.ApplicationEventPublisher
+import reactor.kotlin.core.publisher.toMono
 import reactor.test.StepVerifier
 import java.awt.Color
 
@@ -37,6 +37,9 @@ internal class PictureMetaDataServiceTest {
     @MockK
     private lateinit var pictureRepository: PictureRepository
 
+    @MockK
+    private lateinit var applicationEventPublisher: ApplicationEventPublisher
+
     @SpyK
     private var duplicateScannerConfiguration = DuplicateScannerConfiguration(hashSampleSize = 10)
 
@@ -51,11 +54,12 @@ internal class PictureMetaDataServiceTest {
 
         val savedPicture = slot<Picture>()
 
-        every { pictureRepository.findById(picture.id!!) } returnsMonoOf picture
-        every { fileOperations.readAttributes(picture.location.toPath()) } returnsMonoOf attributes
-        every { fileOperations.loadImage(picture.location.toPath()) } returnsMonoOf image
-        every { fileOperations.readContentType(picture.location.toPath()) } returnsMonoOf "image/jpeg"
+        every { pictureRepository.findById(any<String>()) } returnsMonoOf picture
+        every { fileOperations.readAttributes(any()) } returnsMonoOf attributes
+        every { fileOperations.loadImage(any()) } returnsMonoOf image
+        every { fileOperations.readContentType(any()) } returnsMonoOf "image/jpeg"
         every { pictureRepository.save(capture(savedPicture)) }.returnsArgumentAsMono()
+        every { applicationEventPublisher.publishEvent(any<AlbumEvent>()) } just runs
 
         StepVerifier.create(pictureMetaDataService.updateMetaData(picture.id!!))
             .expectNextCount(1)
@@ -67,6 +71,15 @@ internal class PictureMetaDataServiceTest {
         assertEquals(attributes.size, savedPicture.captured.fileSize)
         assertEquals(FileType.JPEG, savedPicture.captured.fileType)
         assertEquals(attributes.lastModifiedTime, savedPicture.captured.lastModified)
+
+        verify {
+            pictureRepository.findById(picture.id!!)
+            fileOperations.readAttributes(picture.location.toPath())
+            fileOperations.loadImage(picture.location.toPath())
+            fileOperations.readContentType(picture.location.toPath())
+            pictureRepository.save(any())
+            applicationEventPublisher.publishEvent(PictureUpdatedEvent(picture.id!!))
+        }
     }
 
     @Test
@@ -78,11 +91,10 @@ internal class PictureMetaDataServiceTest {
         val savedHashData = slot<HashData>()
         val expectedHash = "4IEHHnjggw8++OCDAw=="
 
-        every { pictureRepository.findById(picture.id!!) } returnsMonoOf picture
-        every { fileOperations.loadImage(picture.location.toPath()) } returnsMonoOf image
-        every {
-            hashDataRepository.save(match(CapturingSlotMatcher(savedHashData, HashData::class)))
-        } returnsMonoOf HashData("hd1", expectedHash, picture)
+        every { pictureRepository.findById(any<String>()) } returnsMonoOf picture
+        every { fileOperations.loadImage(any()) } returnsMonoOf image
+        every { hashDataRepository.save(capture(savedHashData)) } answers { firstArg<HashData>().copy(id = "hd1").toMono() }
+        every { applicationEventPublisher.publishEvent(any<AlbumEvent>()) } just runs
 
         StepVerifier.create(pictureMetaDataService.updatePictureHash(picture.id!!))
             .verifyComplete()
@@ -92,6 +104,7 @@ internal class PictureMetaDataServiceTest {
             pictureRepository.findById(picture.id!!)
             fileOperations.loadImage(picture.location.toPath())
             hashDataRepository.save(any())
+            applicationEventPublisher.publishEvent(PictureUpdatedEvent(picture.id!!))
         }
 
         assertTrue(savedHashData.isCaptured)

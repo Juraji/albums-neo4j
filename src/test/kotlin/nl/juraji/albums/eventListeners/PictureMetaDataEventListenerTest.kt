@@ -31,9 +31,8 @@ internal class PictureMetaDataEventListenerTest {
 
     @Test
     fun `should update picture meta data`() {
-        val pictureId = fixture.nextString()
         val location = "/some/location"
-        val event = PictureCreatedEvent(pictureId, location)
+        val event = fixture.next<PictureCreatedEvent>().copy(location = location)
 
         // Mock other listeners in component
         every { pictureMetaDataEventListener.generatePictureImageHash(any()) } just runs
@@ -42,14 +41,13 @@ internal class PictureMetaDataEventListenerTest {
 
         publisher.publishEvent(event)
 
-        verify { pictureMetaDataService.updateMetaData(pictureId) }
+        verify { pictureMetaDataService.updateMetaData(event.pictureId) }
     }
 
     @Test
     fun `should generate picture image hash`() {
-        val pictureId = fixture.nextString()
         val location = "/some/location"
-        val event = PictureCreatedEvent(pictureId, location)
+        val event = fixture.next<PictureCreatedEvent>().copy(location = location)
 
         // Mock other listeners in component
         every { pictureMetaDataEventListener.updatePictureMetaData(any()) } just runs
@@ -58,6 +56,6 @@ internal class PictureMetaDataEventListenerTest {
 
         publisher.publishEvent(event)
 
-        verify { pictureMetaDataService.updatePictureHash(pictureId) }
+        verify { pictureMetaDataService.updatePictureHash(event.pictureId) }
     }
 }

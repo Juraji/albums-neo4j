@@ -1,10 +1,7 @@
 package nl.juraji.albums.domain
 
 import nl.juraji.albums.domain.directories.DirectoryRepository
-import nl.juraji.albums.domain.pictures.Picture
-import nl.juraji.albums.domain.pictures.PictureCreatedEvent
-import nl.juraji.albums.domain.pictures.PictureDeletedEvent
-import nl.juraji.albums.domain.pictures.PictureRepository
+import nl.juraji.albums.domain.pictures.*
 import nl.juraji.albums.util.mapToUnit
 import nl.juraji.albums.util.toPath
 import nl.juraji.reactor.validations.validateAsync
@@ -42,7 +39,7 @@ class PictureService(
             )
         }
         .flatMap(pictureRepository::save)
-        .doOnNext { applicationEventPublisher.publishEvent(PictureCreatedEvent(it.id!!, it.location)) }
+        .doOnNext { applicationEventPublisher.publishEvent(PictureCreatedEvent(it.id!!, it.location, it.directory.id!!)) }
 
     fun deletePicture(pictureId: String, doDeleteFile: Boolean): Mono<Unit> = pictureRepository
         .findById(pictureId)
@@ -50,7 +47,11 @@ class PictureService(
         .doOnNext { applicationEventPublisher.publishEvent(PictureDeletedEvent(it.id!!, it.location, doDeleteFile)) }
         .mapToUnit()
 
-    fun addTag(pictureId: String, tagId: String): Mono<Unit> = pictureRepository.addTag(pictureId, tagId)
+    fun addTag(pictureId: String, tagId: String): Mono<Unit> = pictureRepository
+        .addTag(pictureId, tagId)
+        .doOnNext { applicationEventPublisher.publishEvent(PictureUpdatedEvent(pictureId)) }
 
-    fun removeTag(pictureId: String, tagId: String): Mono<Unit> = pictureRepository.removeTag(pictureId, tagId)
+    fun removeTag(pictureId: String, tagId: String): Mono<Unit> = pictureRepository
+        .removeTag(pictureId, tagId)
+        .doOnNext { applicationEventPublisher.publishEvent(PictureUpdatedEvent(pictureId)) }
 }
