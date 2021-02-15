@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 import reactor.kotlin.extra.bool.not
 import java.nio.file.Path
 
@@ -17,8 +18,6 @@ class DirectoryService(
     private val directoryRepository: DirectoryRepository,
     private val applicationEventPublisher: ApplicationEventPublisher
 ) {
-    fun getDirectory(directoryId: String): Mono<DirectoryProps> = directoryRepository.findDirectoryPropsById(directoryId)
-
     fun getRootDirectories(): Flux<Directory> = directoryRepository.findRoots()
 
     fun createDirectory(location: String, recursive: Boolean = false): Mono<Directory> = Mono.just(location.toPath())

@@ -54,22 +54,6 @@ internal class DirectoriesControllerTest {
     }
 
     @Test
-    internal fun `get directory by id`() {
-        val directory = fixture.next<DirectoryProps>()
-
-        every { directoryService.getDirectory(directory.id!!) } returnsMonoOf directory
-
-        webTestClient
-            .get()
-            .uri("/directories/${directory.id}")
-            .accept(MediaType.APPLICATION_JSON)
-            .exchange()
-            .expectStatus().isOk
-            .expectBody<DirectoryProps>()
-            .isEqualTo(directory)
-    }
-
-    @Test
     internal fun `should create directory`() {
         val directoryDto = fixture.next<NewDirectoryDto>()
         val directory = fixture.next<Directory>()

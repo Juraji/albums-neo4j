@@ -50,19 +50,6 @@ internal class DirectoryServiceTest {
     }
 
     @Test
-    internal fun `should get directory by id`() {
-        val expected = fixture.next<DirectoryProps>()
-
-        every { directoryRepository.findDirectoryPropsById(expected.id!!) } returnsMonoOf expected
-
-        StepVerifier.create(directoryService.getDirectory(expected.id!!))
-            .expectNext(expected)
-            .verifyComplete()
-
-        verify { directoryRepository.findDirectoryPropsById(expected.id!!) }
-    }
-
-    @Test
     internal fun `should create directory`() {
         val postedDirectory = fixture.next<Directory>()
             .copy(id = null, location = Paths.get("/some/location").toString(), name = "location")

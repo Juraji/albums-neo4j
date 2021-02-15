@@ -1,5 +1,6 @@
 package nl.juraji.albums.configuration
 
+import nl.juraji.albums.util.LoggerCompanion
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.event.ApplicationEventMulticaster
@@ -21,6 +22,9 @@ class SpringEventsConfiguration {
 
         val eventMulticaster = SimpleApplicationEventMulticaster()
         eventMulticaster.setTaskExecutor(taskExecutor)
+        eventMulticaster.setErrorHandler { logger.error("Error during event", it) }
         return eventMulticaster
     }
+
+    companion object: LoggerCompanion(SpringEventsConfiguration::class)
 }
