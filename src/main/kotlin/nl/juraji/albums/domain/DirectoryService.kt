@@ -1,9 +1,6 @@
 package nl.juraji.albums.domain
 
-import nl.juraji.albums.domain.directories.Directory
-import nl.juraji.albums.domain.directories.DirectoryCreatedEvent
-import nl.juraji.albums.domain.directories.DirectoryProps
-import nl.juraji.albums.domain.directories.DirectoryRepository
+import nl.juraji.albums.domain.directories.*
 import nl.juraji.albums.util.mapToUnit
 import nl.juraji.albums.util.toPath
 import nl.juraji.reactor.validations.validateAsync
@@ -39,7 +36,8 @@ class DirectoryService(
         .map { it.location.toPath() }
         .filter { it.parent != null }
         .flatMap { directoryRepository.findByLocation(it.parent.toString()) }
-        .flatMap { directoryRepository.addChild(it.id!!, directoryId) }
+        .flatMap { directoryRepository.addChild(it.id!!, directoryId).thenReturn(it) }
+        .doOnNext { applicationEventPublisher.publishEvent(DirectoryTreeUpdatedEvent(it.id!!)) }
         .mapToUnit()
 
     fun findAndLinkChildren(directoryId: String): Flux<Unit> = directoryRepository
@@ -50,7 +48,8 @@ class DirectoryService(
                 .findByLocationStartingWith(d.location)
                 .filter { it.location.toPath().count() == childPathCount } // Only to direct children
         }
-        .flatMap { directoryRepository.addChild(directoryId, it.id!!) }
+        .flatMap { directoryRepository.addChild(directoryId, it.id!!).thenReturn(it) }
+        .doOnComplete { applicationEventPublisher.publishEvent(DirectoryTreeUpdatedEvent(directoryId)) }
         .mapToUnit()
 
     private fun addDirectory(location: Path) = Mono.just(location)

@@ -6,10 +6,7 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import nl.juraji.albums.configurations.TestFixtureConfiguration
-import nl.juraji.albums.domain.directories.Directory
-import nl.juraji.albums.domain.directories.DirectoryCreatedEvent
-import nl.juraji.albums.domain.directories.DirectoryProps
-import nl.juraji.albums.domain.directories.DirectoryRepository
+import nl.juraji.albums.domain.directories.*
 import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
@@ -18,8 +15,6 @@ import nl.juraji.reactor.validations.ValidationException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationEventPublisher
-import org.springframework.http.MediaType
-import org.springframework.test.web.reactive.server.expectBodyList
 import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.expectError
 import reactor.test.StepVerifier
@@ -153,6 +148,7 @@ internal class DirectoryServiceTest {
         every { directoryRepository.findById(directory.id!!) } returnsMonoOf directory
         every { directoryRepository.findByLocation(any()) } returnsMonoOf parentDirectory
         every { directoryRepository.addChild(any(), any()) }.returnsEmptyMono()
+        every { applicationEventPublisher.publishEvent(any<Any>()) } just runs
 
         StepVerifier.create(directoryService.findAndLinkParent(directory.id!!))
             .verifyComplete()
@@ -161,6 +157,7 @@ internal class DirectoryServiceTest {
             directoryRepository.findById(directory.id!!)
             directoryRepository.findByLocation(parentDirectory.location)
             directoryRepository.addChild(parentDirectory.id!!, directory.id!!)
+            applicationEventPublisher.publishEvent(DirectoryTreeUpdatedEvent(parentDirectory.id!!))
         }
     }
 
@@ -176,6 +173,7 @@ internal class DirectoryServiceTest {
             directory, child1, child2, childOfChild
         )
         every { directoryRepository.addChild(any(), any()) }.returnsEmptyMono()
+        every { applicationEventPublisher.publishEvent(any<Any>()) } just runs
 
         StepVerifier.create(directoryService.findAndLinkChildren(directory.id!!))
             .verifyComplete()
@@ -184,6 +182,7 @@ internal class DirectoryServiceTest {
             directoryRepository.findByLocationStartingWith(directory.location)
             directoryRepository.addChild(directory.id!!, child1.id!!)
             directoryRepository.addChild(directory.id!!, child2.id!!)
+            applicationEventPublisher.publishEvent(DirectoryTreeUpdatedEvent(directory.id!!))
         }
     }
 }
