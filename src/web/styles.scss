@@ -11,7 +11,12 @@
   &.ng-invalid {
     @extend .is-invalid;
   }
+
   &.ng-valid {
     @extend .is-valid;
   }
+}
+
+.clear-navbar {
+  margin-top: 4.5rem;
 }

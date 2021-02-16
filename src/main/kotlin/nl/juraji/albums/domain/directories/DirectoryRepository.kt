@@ -15,8 +15,6 @@ interface DirectoryRepository : ReactiveNeo4jRepository<Directory, String> {
 
     fun findByLocationStartingWith(location: String): Flux<Directory>
 
-    fun findDirectoryPropsById(directoryId: String): Mono<DirectoryProps>
-
     @Query(
         """
         MATCH (d:Directory)

@@ -7,16 +7,17 @@ import {DirectoryTreeModule} from "@components/directory-tree/directory-tree.mod
 import {MainNavbarModule} from "@components/main-navbar/main-navbar.module";
 import {DirectoryPage} from './directory/directory.page';
 import {AddDirectoryModalModule} from "@components/add-directory-modal/add-directory-modal.module";
+import {DirectoryPropertiesComponent} from './directory-properties/directory-properties.component';
 
 
 @NgModule({
-  declarations: [DirectoriesOverviewPage, DirectoryPage],
+  declarations: [DirectoriesOverviewPage, DirectoryPage, DirectoryPropertiesComponent],
   imports: [
     CommonModule,
     DirectoriesRoutingModule,
     DirectoryTreeModule,
     MainNavbarModule,
-    AddDirectoryModalModule
+    AddDirectoryModalModule,
   ]
 })
 export class DirectoriesModule {

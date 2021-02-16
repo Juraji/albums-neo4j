@@ -9,7 +9,6 @@ import nl.juraji.albums.api.dto.NewDirectoryDto
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.DirectoryService
 import nl.juraji.albums.domain.directories.Directory
-import nl.juraji.albums.domain.directories.DirectoryProps
 import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf

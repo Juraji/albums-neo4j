@@ -1,15 +1,19 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 
 @Component({
   selector: 'app-directory-tree',
   templateUrl: './directory-tree.component.html',
   styleUrls: ['./directory-tree.component.scss']
 })
-export class DirectoryTreeComponent {
+export class DirectoryTreeComponent implements OnChanges {
   openedStates: Record<string, boolean> = {}
+  isRoot: boolean = false;
 
   @Input()
   directories: Directory[] | null = []
+
+  @Input()
+  showRootPaths: boolean = true
 
   @Input()
   level: number = 0
@@ -18,6 +22,10 @@ export class DirectoryTreeComponent {
   readonly directoryAction = new EventEmitter<Directory>()
 
   constructor() {
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    this.isRoot = this.level === 0
   }
 
   toggleDirectory(directory: Directory) {

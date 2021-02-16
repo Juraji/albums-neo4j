@@ -9,12 +9,6 @@ interface NewDirectoryDto {
   location: string;
 }
 
-interface DirectoryProps {
-  id: string;
-  location: string;
-  name: string;
-}
-
 interface DirectoryCreatedEvent extends AlbumEvent {
   eventType: "DirectoryCreatedEvent";
   directoryId: string;

@@ -4,9 +4,9 @@ import {loadRootDirectories, loadRootDirectoriesSuccess} from "@actions/director
 import {debounceTime, map, switchMap} from "rxjs/operators";
 import {DirectoriesService} from "@services/directories.service";
 import {AlbumEventsService} from "@services/album-events.service";
+import {EffectMarker} from "@utils/effect-marker.annotation";
 
 
-// noinspection JSUnusedGlobalSymbols
 @Injectable()
 export class DirectoriesEffects {
 
@@ -17,12 +17,14 @@ export class DirectoriesEffects {
   ) {
   }
 
+  @EffectMarker
   readonly loadRoots$ = createEffect(() => this.actions$.pipe(
     ofType(loadRootDirectories),
     switchMap(() => this.directoriesService.getRoots()),
     map((tree) => loadRootDirectoriesSuccess({tree}))
   ))
 
+  @EffectMarker
   readonly rootUpdates$ = createEffect(() => this.albumEventsService
     .ofType<DirectoryTreeUpdatedEvent>("DirectoryTreeUpdatedEvent")
     .pipe(

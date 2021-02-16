@@ -1,21 +1,19 @@
-<ul class="list-group list-group-flush" [class.ml-4]="level !== 0">
+<ul class="list-group list-group-flush" [class.ml-4]="!isRoot">
   <ng-container *ngFor="let directory of directories">
-    <li class="list-group-item">
-      <button type="button" class="btn btn-link btn-sm mr-2"
-              (click)="toggleDirectory(directory)"
-              [disabled]="directory.children.length === 0">
+    <li class="list-group-item list-group-item-action">
+      <button type="button" class="btn btn-link btn-sm"
+              (click)="toggleDirectory(directory);$event.preventDefault()"
+              [disabled]="!directory.children.length">
         <ng-container [ngSwitch]="!!openedStates[directory.id]">
           <span *ngSwitchCase="true" class="fa fa-minus"></span>
           <span *ngSwitchCase="false" class="fa fa-plus"></span>
         </ng-container>
       </button>
-      <ng-container [ngSwitch]="level">
-        <span *ngSwitchCase="0">{{directory.location}}</span>
-        <span *ngSwitchDefault>{{directory.name}}</span>
-      </ng-container>
-      <span class="directory-name"></span>
-      <button type="button" class="btn btn-outline-primary btn-sm float-right" (click)="onDirectoryAction(directory)">
-        <span class="fa fa-search"></span>
+      <button type="button" class="btn btn-link" (click)="onDirectoryAction(directory)">
+        <ng-container [ngSwitch]="showRootPaths && isRoot">
+          <span *ngSwitchCase="true">{{directory.location}}</span>
+          <span *ngSwitchDefault>{{directory.name}}</span>
+        </ng-container>
       </button>
     </li>
     <app-directory-tree *ngIf="!!openedStates[directory.id]"
