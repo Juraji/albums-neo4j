@@ -7,13 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean
+import javax.validation.Validation
+import javax.validation.Validator
 
-@SpringBootTest
-@Import(TestApiConfiguration::class)
 internal class ValidFileSystemPathValidatorTest {
-
-    @Autowired
-    private lateinit var validator: LocalValidatorFactoryBean
+    private val validator: Validator = Validation.buildDefaultValidatorFactory().validator
 
     @Test
     internal fun `should succeed constraint when path is valid`() {

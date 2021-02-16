@@ -37,21 +37,6 @@ internal class PicturesControllerTest {
     private lateinit var fixture: Fixture
 
     @Test
-    internal fun `should get all pictures`() {
-        val picture = fixture.next<Picture>()
-
-        every { pictureService.getAllPictures() } returnsFluxOf picture
-
-        webTestClient
-            .get()
-            .uri("/pictures")
-            .exchange()
-            .expectStatus().isOk
-            .expectBodyList<Picture>()
-            .contains(picture)
-    }
-
-    @Test
     internal fun `should get picture by id`() {
         val picture = fixture.next<Picture>()
 

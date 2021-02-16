@@ -6,6 +6,8 @@ import nl.juraji.albums.util.mapToUnit
 import nl.juraji.albums.util.toPath
 import nl.juraji.reactor.validations.validateAsync
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -20,9 +22,10 @@ class PictureService(
     private val applicationEventPublisher: ApplicationEventPublisher
 
 ) {
-    fun getAllPictures(): Flux<Picture> = pictureRepository.findAll()
-
     fun getPicture(pictureId: String): Mono<Picture> = pictureRepository.findById(pictureId)
+
+    fun getByDirectoryId(directoryId: String, pageable: Pageable): Flux<PictureProps> =
+        pictureRepository.findPageByDirectoryId(directoryId, pageable)
 
     fun addPicture(location: String, name: String?): Mono<Picture> = Mono.just(location.toPath())
         .validateAsync { path ->
@@ -39,7 +42,15 @@ class PictureService(
             )
         }
         .flatMap(pictureRepository::save)
-        .doOnNext { applicationEventPublisher.publishEvent(PictureCreatedEvent(it.id!!, it.location, it.directory.id!!)) }
+        .doOnNext {
+            applicationEventPublisher.publishEvent(
+                PictureCreatedEvent(
+                    it.id!!,
+                    it.location,
+                    it.directory.id!!
+                )
+            )
+        }
 
     fun deletePicture(pictureId: String, doDeleteFile: Boolean): Mono<Unit> = pictureRepository
         .findById(pictureId)

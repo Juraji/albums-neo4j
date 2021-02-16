@@ -44,19 +44,6 @@ internal class PictureServiceTest {
     private lateinit var pictureService: PictureService
 
     @Test
-    internal fun `should get all pictures`() {
-        val picture = fixture.next<Picture>()
-
-        every { pictureRepository.findAll() } returnsFluxOf picture
-
-        StepVerifier.create(pictureService.getAllPictures())
-            .expectNext(picture)
-            .verifyComplete()
-
-        verify { pictureRepository.findAll() }
-    }
-
-    @Test
     internal fun `should get picture by id`() {
         val picture = fixture.next<Picture>()
 

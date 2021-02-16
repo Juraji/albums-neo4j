@@ -14,9 +14,6 @@ class PicturesController(
     private val pictureService: PictureService
 ) {
 
-    @GetMapping
-    fun getAllPictures(): Flux<Picture> = pictureService.getAllPictures()
-
     @GetMapping("/{pictureId}")
     fun getPicture(
         @PathVariable("pictureId") pictureId: String
