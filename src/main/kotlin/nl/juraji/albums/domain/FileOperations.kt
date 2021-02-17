@@ -10,6 +10,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Scheduler
 import reactor.core.scheduler.Schedulers
+import java.io.File
 import java.nio.file.Files
 import java.nio.file.LinkOption
 import java.nio.file.Path
@@ -60,8 +61,14 @@ class FileOperations {
         val depth = if (recursive) Int.MAX_VALUE else 1
         root.toFile().walkTopDown().maxDepth(depth)
             .filter { it.isDirectory }
-            .map { it.toPath() }
+            .map(File::toPath)
             .toList()
+    }
+
+    fun listFiles(root: Path): Flux<Path> = deferIterableTo(scheduler) {
+        root.toFile().listFiles()
+            ?.map(File::toPath)
+            ?: emptyList()
     }
 
     companion object : LoggerCompanion(FileOperations::class)

@@ -1,17 +1,18 @@
 package nl.juraji.albums.domain.pictures
 
-import org.springframework.http.MediaType
-
-enum class FileType(val contentType: String, val typeName: String, val mediaType: MediaType) {
-    JPEG("image/jpeg", "jpeg", MediaType.IMAGE_JPEG),
-    BMP("image/bmp", "bmp", MediaType("image", "bmp")),
-    GIF("image/gif", "gif", MediaType.IMAGE_GIF),
-    PNG("image/png", "png", MediaType.IMAGE_PNG),
-    TIFF("image/tiff", "tiff", MediaType("image", "tiff")),
-    UNKNOWN("*/*", "", MediaType.ALL);
+enum class FileType(val contentType: String, vararg val typeNames: String) {
+    JPEG("image/jpeg", "jpg", "jpeg"),
+    BMP("image/bmp", "bmp"),
+    GIF("image/gif", "gif"),
+    PNG("image/png", "png"),
+    TIFF("image/tiff", "tiff"),
+    UNKNOWN("*/*");
 
     companion object {
         fun of(contentType: String): FileType? = values()
             .firstOrNull { pType -> pType.contentType == contentType }
+
+        fun supportsExtension(extension: String): Boolean = values()
+            .any { pType -> pType.typeNames.any { tn -> tn.equals(extension, true) } }
     }
 }

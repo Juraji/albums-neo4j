@@ -4,7 +4,6 @@ import nl.juraji.albums.api.dto.NewPictureDto
 import nl.juraji.albums.domain.PictureService
 import nl.juraji.albums.domain.pictures.Picture
 import org.springframework.web.bind.annotation.*
-import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import javax.validation.Valid
 

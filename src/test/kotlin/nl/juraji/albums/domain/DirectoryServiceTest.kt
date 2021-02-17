@@ -6,7 +6,10 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import nl.juraji.albums.configurations.TestFixtureConfiguration
-import nl.juraji.albums.domain.directories.*
+import nl.juraji.albums.domain.directories.Directory
+import nl.juraji.albums.domain.directories.DirectoryCreatedEvent
+import nl.juraji.albums.domain.directories.DirectoryRepository
+import nl.juraji.albums.domain.directories.DirectoryTreeUpdatedEvent
 import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
@@ -18,6 +21,7 @@ import org.springframework.context.ApplicationEventPublisher
 import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.expectError
 import reactor.test.StepVerifier
+import java.nio.file.Path
 import java.nio.file.Paths
 
 @ExtendWith(MockKExtension::class)
@@ -29,6 +33,9 @@ internal class DirectoryServiceTest {
 
     @MockK
     private lateinit var directoryRepository: DirectoryRepository
+
+    @MockK
+    private lateinit var pictureService: PictureService
 
     @MockK
     private lateinit var applicationEventPublisher: ApplicationEventPublisher
@@ -170,6 +177,38 @@ internal class DirectoryServiceTest {
             directoryRepository.addChild(directory.id!!, child1.id!!)
             directoryRepository.addChild(directory.id!!, child2.id!!)
             applicationEventPublisher.publishEvent(DirectoryTreeUpdatedEvent(directory.id!!))
+        }
+    }
+
+    @Test
+    internal fun `should update pictures from disk`() {
+        val directory = fixture.next<Directory>()
+        val paths = listOf(
+            "/some/location/picture1.jpg".toPath(),
+            "/some/location/other-file.txt".toPath(),
+            "/some/location/picture2.BMP".toPath(),
+            "/some/location/picture3.tiff".toPath()
+        )
+
+
+        every { directoryRepository.findById(any<String>()) } returnsMonoOf directory
+        every { fileOperations.listFiles(any()) } returnsFluxOf paths
+        every { pictureService.existsByLocation(any()) } returnsMonoOf false
+        every { pictureService.existsByLocation(paths[3].toString()) } returnsMonoOf true
+        every { pictureService.addPicture(any<Path>(), any(), any()) } returnsMonoOf fixture.next()
+
+        StepVerifier.create(directoryService.updatePicturesFromDisk(directory.id!!))
+            .verifyComplete()
+
+        verify {
+            directoryRepository.findById(directory.id!!)
+            fileOperations.listFiles(directory.location.toPath())
+            pictureService.existsByLocation(paths[0].toString())
+            pictureService.existsByLocation(paths[1].toString()) wasNot Called
+            pictureService.existsByLocation(paths[2].toString())
+            pictureService.existsByLocation(paths[3].toString()) wasNot Called
+            pictureService.addPicture(paths[0], null, directory)
+            pictureService.addPicture(paths[2], null, directory)
         }
     }
 }

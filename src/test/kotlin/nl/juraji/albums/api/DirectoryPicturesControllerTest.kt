@@ -6,8 +6,10 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
 import nl.juraji.albums.configurations.TestFixtureConfiguration
+import nl.juraji.albums.domain.DirectoryService
 import nl.juraji.albums.domain.PictureService
 import nl.juraji.albums.domain.pictures.PictureProps
+import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,6 +27,9 @@ import org.springframework.test.web.reactive.server.expectBodyList
 internal class DirectoryPicturesControllerTest {
     @MockkBean
     private lateinit var pictureService: PictureService
+
+    @MockkBean
+    private lateinit var directoryService: DirectoryService
 
     @Autowired
     private lateinit var webTestClient: WebTestClient
@@ -56,6 +61,23 @@ internal class DirectoryPicturesControllerTest {
 
         verify {
             pictureService.getByDirectoryId(directoryId, PageRequest.of(1, 50))
+        }
+    }
+
+    @Test
+    internal fun `should update directory pictures`() {
+        val directoryId = fixture.nextString()
+
+        every { directoryService.updatePicturesFromDisk(any()) }.returnsEmptyMono()
+
+        webTestClient.post()
+            .uri("/directories/$directoryId/update")
+            .exchange()
+            .expectStatus().isOk
+
+
+        verify {
+            directoryService.updatePicturesFromDisk(directoryId)
         }
     }
 }

@@ -1,6 +1,7 @@
 package nl.juraji.albums.domain
 
 import nl.juraji.albums.domain.directories.*
+import nl.juraji.albums.domain.pictures.FileType
 import nl.juraji.albums.util.mapToUnit
 import nl.juraji.albums.util.toPath
 import nl.juraji.reactor.validations.validateAsync
@@ -8,14 +9,15 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.core.scheduler.Schedulers
 import reactor.kotlin.extra.bool.not
 import java.nio.file.Path
+import kotlin.io.path.extension
 
 @Service
 class DirectoryService(
     private val fileOperations: FileOperations,
     private val directoryRepository: DirectoryRepository,
+    private val pictureService: PictureService,
     private val applicationEventPublisher: ApplicationEventPublisher
 ) {
     fun getRootDirectories(): Flux<Directory> = directoryRepository.findRoots()
@@ -50,6 +52,21 @@ class DirectoryService(
         .flatMap { directoryRepository.addChild(directoryId, it.id!!).thenReturn(it) }
         .doOnComplete { applicationEventPublisher.publishEvent(DirectoryTreeUpdatedEvent(directoryId)) }
         .mapToUnit()
+
+    fun updatePicturesFromDisk(directoryId: String): Mono<Unit> {
+        return directoryRepository
+            .findById(directoryId)
+            .flatMapMany { dir ->
+                fileOperations
+                    .listFiles(dir.location.toPath())
+                    .filter { FileType.supportsExtension(it.extension) }
+                    .filterWhen { p -> pictureService.existsByLocation(p.toString()).not() }
+                    .map { p -> dir to p }
+            }
+            .flatMap { (dir, path) -> pictureService.addPicture(path, null, dir) }
+            .last()
+            .mapToUnit()
+    }
 
     private fun addDirectory(location: Path) = Mono.just(location)
         .validateAsync {
