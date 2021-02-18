@@ -48,7 +48,10 @@ dependencies {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
+        freeCompilerArgs = listOf(
+            "-Xjsr305=strict",
+            "-Xopt-in=kotlin.io.path.ExperimentalPathApi"
+        )
         jvmTarget = java.targetCompatibility.majorVersion
     }
 }

@@ -12,12 +12,10 @@ class PictureMetaDataEventListener(
 ) : ReactiveEventListener() {
 
     @EventListener
-    fun updatePictureMetaData(event: PictureCreatedEvent) = consumePublisher {
-        pictureMetaDataService.updateMetaData(event.pictureId)
-    }
+    fun processNewPicture(event: PictureCreatedEvent) = consumePublisher {
+        val metaData = pictureMetaDataService.updateMetaData(event.pictureId)
+        val hash = pictureMetaDataService.updatePictureHash(event.pictureId)
 
-    @EventListener
-    fun generatePictureImageHash(event: PictureCreatedEvent) = consumePublisher {
-        pictureMetaDataService.updatePictureHash(event.pictureId)
+        metaData.then(hash)
     }
 }
