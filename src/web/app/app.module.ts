@@ -11,6 +11,9 @@ import {EffectsModule} from '@ngrx/effects';
 import {metaReducers, reducers} from "./@reducers";
 import {HttpClientModule} from "@angular/common/http";
 import {DirectoriesEffects} from "@effects/directories.effects";
+import {PicturesEffects} from "@effects/pictures.effects";
+import {NgbmodModalsModule} from "@juraji/ng-bootstrap-modals";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 @NgModule({
   declarations: [
@@ -19,11 +22,13 @@ import {DirectoriesEffects} from "@effects/directories.effects";
   imports: [
     BrowserModule,
     AppRoutingModule,
+    BrowserAnimationsModule,
     HttpClientModule,
     NgbModule,
+    NgbmodModalsModule.forRoot(),
     StoreModule.forRoot(reducers, {metaReducers}),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
-    EffectsModule.forRoot([DirectoriesEffects])
+    EffectsModule.forRoot([DirectoriesEffects, PicturesEffects])
   ],
   providers: [],
   bootstrap: [AppComponent]

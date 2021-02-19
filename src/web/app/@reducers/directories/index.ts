@@ -1,4 +1,4 @@
-import {createReducer, createSelector, on} from '@ngrx/store';
+import {createFeatureSelector, createReducer, createSelector, on} from '@ngrx/store';
 import {loadRootDirectoriesSuccess} from "@actions/directories.actions";
 
 
@@ -19,9 +19,9 @@ export const reducer = createReducer(
   }),
 );
 
-export const selectDirectories = (state: AppState) => state.directories;
-export const selectDirectoryTree = createSelector(selectDirectories, (s) => s.tree)
+export const selectDirectoriesState = createFeatureSelector<DirectoriesSliceState>("directories");
+export const selectDirectoryTree = createSelector(selectDirectoriesState, (s) => s.tree)
 export const selectDirectory = createSelector(
-  selectDirectories,
-  (s: DirectoriesSliceState, {directoryId}: { directoryId: string }) => s.directories[directoryId]
+  selectDirectoriesState,
+  (s: DirectoriesSliceState, {directoryId}: SelectDirectoryProps) => s.directories[directoryId]
 )

@@ -1,3 +1,4 @@
 interface AppState {
-  directories: DirectoriesSliceState
+  directories: DirectoriesSliceState,
+  pictures: PicturesSliceState
 }

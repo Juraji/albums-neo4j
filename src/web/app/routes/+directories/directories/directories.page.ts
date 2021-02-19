@@ -3,16 +3,16 @@ import {Store} from "@ngrx/store";
 import {Observable} from "rxjs";
 import {Router} from "@angular/router";
 import {selectDirectoryTree} from "@reducers/directories";
-import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {AddDirectoryModal} from "@components/add-directory-modal/add-directory/add-directory.modal";
 import {switchMap} from "rxjs/operators";
 import {DirectoriesService} from "@services/directories.service";
 import {loadRootDirectories} from "@actions/directories.actions";
+import {Modals} from "@juraji/ng-bootstrap-modals";
 
 @Component({
-  templateUrl: './directories-overview.page.html'
+  templateUrl: './directories.page.html'
 })
-export class DirectoriesOverviewPage {
+export class DirectoriesPage {
 
   readonly directories$: Observable<Directory[]> =
     this.store.select(selectDirectoryTree)
@@ -21,7 +21,7 @@ export class DirectoriesOverviewPage {
     private readonly store: Store<AppState>,
     private readonly router: Router,
     private readonly directoriesService: DirectoriesService,
-    private readonly modalService: NgbModal
+    private readonly modalService: Modals
   ) {
   }
 
@@ -30,12 +30,11 @@ export class DirectoriesOverviewPage {
   }
 
   addDirectory() {
-    const modalRef = this.modalService.open(AddDirectoryModal)
-    modalRef.closed
-      .pipe(
-        switchMap(({location, recursive}: AddDirectoryModalResult) =>
-          this.directoriesService.createDirectory({location}, recursive))
-      )
+    this.modalService
+      .open<any, AddDirectoryModalResult>(AddDirectoryModal)
+      .onResolved
+      .pipe(switchMap(({location, recursive}) =>
+        this.directoriesService.createDirectory({location}, recursive)))
       .subscribe()
   }
 

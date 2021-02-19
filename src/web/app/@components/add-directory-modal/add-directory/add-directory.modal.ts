@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
-import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {ModalRef} from "@juraji/ng-bootstrap-modals";
 
 @Component({
   templateUrl: './add-directory.modal.html',
@@ -13,14 +13,14 @@ export class AddDirectoryModal {
     recursive: new FormControl(true)
   })
 
-  constructor(private readonly activeModal: NgbActiveModal) {
+  constructor(private readonly modalRef: ModalRef) {
   }
 
   dismiss() {
-    this.activeModal.dismiss()
+    this.modalRef.dismiss()
   }
 
   addDirectory() {
-    this.activeModal.close(this.form.value)
+    this.modalRef.resolve(this.form.value)
   }
 }

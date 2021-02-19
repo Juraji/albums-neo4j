@@ -11,6 +11,17 @@ interface Picture {
   tags: Tag[]
 }
 
+interface PictureProps {
+  id: string
+  location: string
+  name: string
+  width: number
+  height: number
+  fileSize: number
+  fileType: FileType
+  lastModified: string
+}
+
 interface NewPictureDto {
   location: string
   name?: string

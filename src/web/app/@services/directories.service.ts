@@ -28,4 +28,8 @@ export class DirectoriesService {
           .append("recursive", recursive)
       })
   }
+
+  updateDirectoryPictures(directoryId: string): Observable<void> {
+    return this.httpClient.post<void>(`${environment.apiBaseUri}/directories/${directoryId}/update`, null)
+  }
 }

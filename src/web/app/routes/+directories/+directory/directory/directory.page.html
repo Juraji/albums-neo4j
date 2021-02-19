@@ -1,0 +1,12 @@
+<app-main-navbar></app-main-navbar>
+<app-directory-properties [directory]="directoryProps$ | async"></app-directory-properties>
+
+<div class="container-fluid clear-navbar"
+     infinite-scroll
+     (scrolled)="onInfiniteScrollDown($event)"
+     (scrolledUp)="onInfiniteScrollUp($event)"
+>
+  <ul>
+    <li *ngFor="let p of directoryPictures$ | async">{{p.id}}</li>
+  </ul>
+</div>

@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  apiBaseUri: `${window.origin}/api`
+  apiBaseUri: `${window.origin}/api`,
+  defaultPicturePageSize: 10
 };

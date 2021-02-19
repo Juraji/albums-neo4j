@@ -10,9 +10,14 @@
   <div class="card shadow directory-properties-card" *ngIf="!!directory">
     <div class="card-header d-flex justify-content-between">
       <h4 class="my-0"><span class="fa fa-folder-open"></span>&nbsp;{{directory.name}}</h4>
-      <button type="button" class="btn btn-outline-primary btn-sm" (click)="closed$.toggle()" title="Collapse...">
-        <span class="fa fa-chevron-right"></span>
-      </button>
+      <div class="btn-group btn-group-sm">
+        <button type="button" class="btn btn-primary" (click)="onUpdateDirectoryPictures()" title="Update directory pictures from disk">
+          <span class="fa fa-sync"></span>
+        </button>
+        <button type="button" class="btn btn-outline-primary" (click)="closed$.toggle()" title="Collapse...">
+          <span class="fa fa-chevron-right"></span>
+        </button>
+      </div>
     </div>
     <div class="card-body">
       <ul class="list-unstyled">
