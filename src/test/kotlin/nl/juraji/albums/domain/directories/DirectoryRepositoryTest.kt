@@ -10,7 +10,6 @@ import org.springframework.test.annotation.DirtiesContext
 import reactor.test.StepVerifier
 
 @DataNeo4jTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Import(TestNeo4jFixtureConfiguration::class)
 class DirectoryRepositoryTest : AbstractRepositoryTest() {
 
@@ -53,6 +52,7 @@ class DirectoryRepositoryTest : AbstractRepositoryTest() {
     }
 
     @Test
+    @DirtiesContext
     internal fun `should delete tree, including pictures`() {
         StepVerifier.create(directoryRepository.deleteTreeById("d1"))
             .verifyComplete()

@@ -10,12 +10,18 @@ import org.springframework.test.annotation.DirtiesContext
 import reactor.test.StepVerifier
 
 @DataNeo4jTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Import(TestNeo4jFixtureConfiguration::class)
 class PictureRepositoryTest : AbstractRepositoryTest() {
 
     @Autowired
     private lateinit var pictureRepository: PictureRepository
+
+    @Test
+    internal fun `should find image location by id`() {
+        StepVerifier.create(pictureRepository.findImageLocationById("p1"))
+            .expectNext("F:\\Desktop\\TestMap\\DA37o272cCU.jpg")
+            .verifyComplete()
+    }
 
     @Test
     internal fun `should add TAGGED_BY relationship on picture to tag`() {
@@ -34,6 +40,7 @@ class PictureRepositoryTest : AbstractRepositoryTest() {
     }
 
     @Test
+    @DirtiesContext
     internal fun `should delete tree, including duplicates and hash data`() {
         StepVerifier.create(pictureRepository.deleteTreeById("p1"))
             .verifyComplete()

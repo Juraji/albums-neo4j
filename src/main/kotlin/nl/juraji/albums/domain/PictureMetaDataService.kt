@@ -67,8 +67,8 @@ class PictureMetaDataService(
 
     private fun generateHash(image: ImmutableImage): String {
         val sample = image
-            .autocrop(Color.WHITE, AC_COLOR_TOLERANCE)
-            .autocrop(Color.BLACK, AC_COLOR_TOLERANCE)
+            .autocrop(Color.WHITE)
+            .autocrop(Color.BLACK)
             .cover(
                 configuration.hashSampleSize,
                 configuration.hashSampleSize,
@@ -89,6 +89,6 @@ class PictureMetaDataService(
     }
 
     companion object {
-        private const val AC_COLOR_TOLERANCE = 3
+        private const val AC_COLOR_TOLERANCE = 1
     }
 }

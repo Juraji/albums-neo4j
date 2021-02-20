@@ -28,6 +28,8 @@ class PictureService(
     fun getByDirectoryId(directoryId: String, pageable: Pageable): Flux<PictureProps> =
         pictureRepository.findPageByDirectoryId(directoryId, pageable)
 
+    fun getImageLocationById(id: String): Mono<String> = pictureRepository.findImageLocationById(id)
+
     fun existsByLocation(location: String): Mono<Boolean> = pictureRepository.existsByLocation(location)
 
     fun addPicture(location: String, name: String?): Mono<Picture> = Mono.just(location.toPath())

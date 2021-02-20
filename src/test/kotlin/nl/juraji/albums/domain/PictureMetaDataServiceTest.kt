@@ -89,7 +89,7 @@ internal class PictureMetaDataServiceTest {
             .fill(RadialGradient(50f, 50f, 100f, floatArrayOf(0f, 1f), arrayOf(Color.BLACK, Color.GREEN)))
 
         val savedHashData = slot<HashData>()
-        val expectedHash = "4IEHHnjggw8++OCDAw=="
+        val expectedHash = "4IMPPvjggw8++OCDAw=="
 
         every { pictureRepository.findById(any<String>()) } returnsMonoOf picture
         every { fileOperations.loadImage(any()) } returnsMonoOf image

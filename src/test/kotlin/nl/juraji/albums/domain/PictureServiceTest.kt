@@ -8,11 +8,7 @@ import io.mockk.junit5.MockKExtension
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.directories.Directory
 import nl.juraji.albums.domain.directories.DirectoryRepository
-import nl.juraji.albums.domain.pictures.Picture
-import nl.juraji.albums.domain.pictures.PictureCreatedEvent
-import nl.juraji.albums.domain.pictures.PictureDeletedEvent
-import nl.juraji.albums.domain.pictures.PictureRepository
-import nl.juraji.albums.domain.tags.TagRepository
+import nl.juraji.albums.domain.pictures.*
 import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
@@ -20,6 +16,7 @@ import nl.juraji.reactor.validations.ValidationException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.data.domain.PageRequest
 import reactor.kotlin.test.verifyError
 import reactor.test.StepVerifier
 import java.nio.file.Paths
@@ -54,6 +51,48 @@ internal class PictureServiceTest {
             .verifyComplete()
 
         verify { pictureRepository.findById(picture.id!!) }
+    }
+
+    @Test
+    internal fun `should get by directory id`() {
+        val directoryId = "dir1"
+        val pageable = PageRequest.of(0, 5)
+        val pictures: List<PictureProps> = fixture.next()
+
+        every { pictureRepository.findPageByDirectoryId(any(), any()) } returnsFluxOf pictures
+
+        StepVerifier.create(pictureService.getByDirectoryId(directoryId, pageable))
+            .expectNextSequence(pictures)
+            .verifyComplete()
+
+        verify { pictureRepository.findPageByDirectoryId(directoryId, pageable) }
+    }
+
+    @Test
+    internal fun `should get image location by id`() {
+        val pictureId = "p1"
+        val location = "/some/location"
+
+        every { pictureRepository.findImageLocationById(any()) } returnsMonoOf location
+
+        StepVerifier.create(pictureService.getImageLocationById(pictureId))
+            .expectNext(location)
+            .verifyComplete()
+
+        verify { pictureRepository.findImageLocationById(pictureId) }
+    }
+
+    @Test
+    internal fun `should exists by location`() {
+        val location = "/some/location"
+
+        every { pictureRepository.existsByLocation(any()) } returnsMonoOf true
+
+        StepVerifier.create(pictureService.existsByLocation(location))
+            .expectNext(true)
+            .verifyComplete()
+
+        every { pictureRepository.existsByLocation(location) }
     }
 
     @Test
