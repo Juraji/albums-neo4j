@@ -1,5 +1,5 @@
 import {createFeatureSelector, createReducer, createSelector, on} from '@ngrx/store';
-import {loadPicturesSuccess} from '@actions/pictures.actions';
+import {loadPicturesSuccess, setAllPicturesLoaded} from '@actions/pictures.actions';
 
 
 const initialState: PicturesSliceState = {};
@@ -19,6 +19,14 @@ export const reducer = createReducer(
         pictures: [...pdState.pictures, ...pictures]
       })
     });
+  }),
+  on(setAllPicturesLoaded, (s, {directoryId}) => {
+    const pdState = s[directoryId] || initialPictureDirectoryState.copy();
+    return s.copy({
+      [directoryId]: pdState.copy({
+        fullyLoaded: true
+      })
+    });
   })
 );
 
@@ -33,8 +41,10 @@ export const selectPicturesRange = createSelector(
   (s: PictureDirectoryState, {page, size}: SelectPictureRangeProps) => {
     const start = page * size;
     const end = start + size;
-    return s.pictures.slice(start, end);
+    return s.pictures.slice(0, end);
   }
 );
 export const selectLoadedPictureCount = createSelector(selectPictureSet,
   (s) => s.pictures.length);
+export const isPictureSetFullyLoaded = createSelector(selectPictureSet,
+  (s) => s.fullyLoaded);

@@ -1,12 +1,14 @@
 .directory-properties-card {
   width: 20rem;
-  position: absolute;
-  top: 4.5rem;
-  right: 1rem;
+  position: fixed;
+  top: 5.5rem;
+  right: 2rem;
+  z-index: 500;
 }
 
 .show-directory-properties-btn {
-  position: absolute;
-  top: 4.5rem;
-  right: 1rem;
+  position: fixed;
+  top: 5rem;
+  right: 2rem;
+  z-index: 500;
 }

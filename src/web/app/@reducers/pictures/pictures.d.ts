@@ -9,7 +9,7 @@ interface SelectPicturesSetProps {
   directoryId: string;
 }
 
-interface SelectPictureRangeProps extends SelectPicturesSetProps{
+interface SelectPictureRangeProps extends SelectPicturesSetProps {
   page: number;
   size: number;
 }

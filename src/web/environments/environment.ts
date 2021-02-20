@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   apiBaseUri: `${window.origin}/api`,
-  defaultPicturePageSize: 10
+  defaultPicturePageSize: 50
 };
 
 /*

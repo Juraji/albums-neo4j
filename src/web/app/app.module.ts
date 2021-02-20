@@ -14,6 +14,9 @@ import {DirectoriesEffects} from '@effects/directories.effects';
 import {PicturesEffects} from '@effects/pictures.effects';
 import {NgbmodModalsModule} from '@juraji/ng-bootstrap-modals';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {hostWindowFactory, WINDOW} from '@services/provided/window.injection-token';
+import {ROOT_EM_SIZE, rootEmSizeFactory} from '@services/provided/rem-size.injection-token';
+import {DOCUMENT} from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -30,7 +33,10 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     !environment.production ? StoreDevtoolsModule.instrument() : [],
     EffectsModule.forRoot([DirectoriesEffects, PicturesEffects])
   ],
-  providers: [],
+  providers: [
+    {provide: WINDOW, useFactory: hostWindowFactory},
+    {provide: ROOT_EM_SIZE, useFactory: rootEmSizeFactory, deps: [DOCUMENT]},
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

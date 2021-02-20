@@ -1,19 +1,20 @@
-import {Component} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {ActivatedRoute} from '@angular/router';
-import {filter, map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
+import {filter, map, switchMap, tap} from 'rxjs/operators';
 import {selectDirectory} from '@reducers/directories';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {selectPicturesRange} from '@reducers/pictures';
-import {IInfiniteScrollEvent} from 'ngx-infinite-scroll';
+import {BehaviorSubject, combineLatest, fromEvent, Observable} from 'rxjs';
+import {isPictureSetFullyLoaded, selectPicturesRange} from '@reducers/pictures';
 import {insurePictureRange} from '@actions/pictures.actions';
 import {environment} from '@environment';
+import {untilDestroyed} from '@utils/until-destroyed';
+import {filterAsync} from '@utils/filter-async.rx-pipe';
 
 @Component({
   templateUrl: './directory.page.html',
+  styleUrls: ['./directory.page.scss']
 })
-export class DirectoryPage {
-
+export class DirectoryPage implements OnInit, OnDestroy {
   private readonly offSetLimitSelection$ = new BehaviorSubject<{ page: number; size: number }>({
     page: 0,
     size: environment.defaultPicturePageSize
@@ -28,8 +29,8 @@ export class DirectoryPage {
     switchMap((directoryId) => this.store.select(selectDirectory, {directoryId}))
   );
 
-  readonly directoryPictures$: Observable<PictureProps[]> = this.directoryId$.pipe(
-    withLatestFrom(this.offSetLimitSelection$),
+  readonly directoryPictures$: Observable<PictureProps[]> = combineLatest(this.directoryId$, this.offSetLimitSelection$).pipe(
+    filterAsync(([directoryId]) => this.store.select(isPictureSetFullyLoaded, {directoryId}).pipe(map(s => !s))),
     map(([directoryId, {page, size}]) => ({directoryId, page, size})),
     tap((props) => this.store.dispatch(insurePictureRange(props))),
     switchMap((props) => this.store.select(selectPicturesRange, props))
@@ -41,11 +42,20 @@ export class DirectoryPage {
   ) {
   }
 
-  onInfiniteScrollUp($event: IInfiniteScrollEvent) {
-    console.log($event);
+  ngOnInit(): void {
+    fromEvent<KeyboardEvent>(document, 'keydown')
+      .pipe(
+        untilDestroyed(this),
+        filter(e => e.key === 'End')
+      )
+      .subscribe(() => this.loadMore());
   }
 
-  onInfiniteScrollDown($event: IInfiniteScrollEvent) {
-    console.log($event);
+  ngOnDestroy(): void {
+  }
+
+  loadMore() {
+    const current = this.offSetLimitSelection$.value;
+    this.offSetLimitSelection$.next(current.copy({page: current.page + 1}));
   }
 }

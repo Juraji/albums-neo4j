@@ -10,7 +10,7 @@ export class DirectoryTreeComponent implements OnChanges {
   isRoot = false;
 
   @Input()
-  directories: Directory[] | null = [];
+  directories: Directory[] | null = null;
 
   @Input()
   showRootPaths = true;

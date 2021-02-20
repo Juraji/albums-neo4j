@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {PicturesService} from '@services/pictures.service';
-import {insurePictureRange, loadPicturesSuccess} from '@actions/pictures.actions';
+import {insurePictureRange, loadPicturesSuccess, setAllPicturesLoaded} from '@actions/pictures.actions';
 import {Store} from '@ngrx/store';
-import {filter, map, switchMap, withLatestFrom} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {selectLoadedPictureCount} from '@reducers/pictures';
-import {of} from 'rxjs';
 import {EffectMarker} from '@utils/effect-marker.annotation';
+import {filterAsync} from '@utils/filter-async.rx-pipe';
 
 
 @Injectable()
@@ -15,12 +15,18 @@ export class PicturesEffects {
   @EffectMarker
   insurePictureSetRange$ = createEffect(() => this.actions$.pipe(
     ofType(insurePictureRange),
-    switchMap((props) => of(props).pipe(withLatestFrom(this.store.select(selectLoadedPictureCount, props)))),
-    filter(([{page, size}, currentCount]) => currentCount < (page * size + size)),
-    switchMap(([{directoryId, page, size}]) =>
+    filterAsync((p) => this.store.select(selectLoadedPictureCount, p)
+      .pipe(map((c) => c < (p.page * p.size) + p.size))),
+    switchMap(({directoryId, page, size}) =>
       this.picturesService.getPicturesByDirectory(directoryId, page, size)
         .pipe(map((pictures) => ({directoryId, pictures})))),
-    map((props) => loadPicturesSuccess(props))
+    map((props) => {
+      if (props.pictures.length === 0) {
+        return setAllPicturesLoaded(props);
+      } else {
+        return loadPicturesSuccess(props);
+      }
+    })
   ));
 
   constructor(

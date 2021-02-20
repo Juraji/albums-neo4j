@@ -5,18 +5,14 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.PictureService
-import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.util.returnsMonoOf
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
 import org.springframework.context.annotation.Import
 import org.springframework.core.io.ByteArrayResource
-import org.springframework.core.io.FileSystemResource
-import org.springframework.core.io.PathResource
 import org.springframework.core.io.Resource
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
