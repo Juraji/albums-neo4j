@@ -22,15 +22,15 @@ export const reducer = createReducer(
   }),
   on(setAllPicturesLoaded, (s, {directoryId}) => {
     const pdState = s[directoryId] || initialPictureDirectoryState.copy();
-    return s.copy({
-      [directoryId]: pdState.copy({
-        fullyLoaded: true
-      })
-    });
+    return s.copy({[directoryId]: pdState.copy({fullyLoaded: true})});
   })
 );
 
 export const selectPicturesSlice = createFeatureSelector<PicturesSliceState>('pictures');
+
+export const selectPictureById = createSelector(selectPicturesSlice, (s: PicturesSliceState, {pictureId}: SelectPictureByIdProps) =>
+  Object.keys(s).flatMap((k) => s[k].pictures).first(p => p.id === pictureId));
+
 export const selectPictureSet = createSelector(
   selectPicturesSlice,
   (s: PicturesSliceState, {directoryId}: SelectPicturesSetProps) =>

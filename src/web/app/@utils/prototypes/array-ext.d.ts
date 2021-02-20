@@ -6,4 +6,6 @@ interface Array<T> {
   isAtEnd(this: Array<T>, index: number): boolean;
 
   isEmpty(this: Array<T>): boolean;
+
+  first(this: Array<T>, predicate: (value: T, index: number, array: T[]) => unknown): T | null;
 }

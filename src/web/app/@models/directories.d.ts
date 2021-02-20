@@ -5,6 +5,12 @@ interface Directory {
   children: Directory[];
 }
 
+interface DirectoryProps {
+  id: string;
+  location: string;
+  name: string;
+}
+
 interface NewDirectoryDto {
   location: string;
 }

@@ -47,4 +47,13 @@ export default function () {
       return index < 0 || index >= this.length - 1;
     },
   });
+
+  Object.defineProperty(Array.prototype, 'first', {
+    configurable: false,
+    enumerable: false,
+    writable: false,
+    value: function <T>(this: Array<T>, predicate: (value: T, index: number, array: T[]) => unknown) {
+      return this.filter(predicate).pop() || null;
+    },
+  });
 }

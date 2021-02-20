@@ -8,7 +8,10 @@ import io.mockk.junit5.MockKExtension
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.directories.Directory
 import nl.juraji.albums.domain.directories.DirectoryRepository
-import nl.juraji.albums.domain.pictures.*
+import nl.juraji.albums.domain.pictures.Picture
+import nl.juraji.albums.domain.pictures.PictureCreatedEvent
+import nl.juraji.albums.domain.pictures.PictureDeletedEvent
+import nl.juraji.albums.domain.pictures.PictureRepository
 import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
@@ -57,7 +60,7 @@ internal class PictureServiceTest {
     internal fun `should get by directory id`() {
         val directoryId = "dir1"
         val pageable = PageRequest.of(0, 5)
-        val pictures: List<PictureProps> = fixture.next()
+        val pictures: List<Picture> = fixture.next()
 
         every { pictureRepository.findPageByDirectoryId(any(), any()) } returnsFluxOf pictures
 

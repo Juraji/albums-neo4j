@@ -1,0 +1,11 @@
+<app-main-navbar></app-main-navbar>
+
+<div class="d-flex">
+  <div class="container-fluid flex-grow-1 clear-navbar">
+    <pre>{{picture$ | async | json}}</pre>
+  </div>
+  <div class="container-fluid side-bar">
+    <app-picture-properties [picture]="picture$ | async"></app-picture-properties>
+    <app-picture-tags [picture]="picture$ | async"></app-picture-tags>
+  </div>
+</div>

@@ -6,7 +6,7 @@
      [infiniteScrollDistance]="1"
      [infiniteScrollThrottle]="150"
      (scrolled)="loadMore()">
-  <a [routerLink]="['pictures', p.id]"  *ngFor="let p of directoryPictures$ | async">
+  <a [routerLink]="['/pictures', p.id]"  *ngFor="let p of directoryPictures$ | async">
     <img src="" alt="" appPictureCard [picture]="p"/>
   </a>
 </div>

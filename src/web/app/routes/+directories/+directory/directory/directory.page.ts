@@ -8,7 +8,7 @@ import {isPictureSetFullyLoaded, selectPicturesRange} from '@reducers/pictures';
 import {insurePictureRange} from '@actions/pictures.actions';
 import {environment} from '@environment';
 import {untilDestroyed} from '@utils/until-destroyed';
-import {filterAsync} from '@utils/filter-async.rx-pipe';
+import {filterAsync} from '@utils/rx/filter-async';
 
 @Component({
   templateUrl: './directory.page.html',

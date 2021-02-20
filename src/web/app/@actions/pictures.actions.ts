@@ -15,3 +15,7 @@ export const insurePictureRange = createAction(
   props<SelectPictureRangeProps>()
 );
 
+export const fetchPicture = createAction(
+  '[Pictures] Fetch picture',
+  props<FetchPictureProps>()
+);

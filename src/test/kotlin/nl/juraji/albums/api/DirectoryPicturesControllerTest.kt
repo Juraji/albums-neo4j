@@ -5,10 +5,12 @@ import com.marcellogalhardo.fixture.next
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
+import nl.juraji.albums.api.dto.PictureProps
+import nl.juraji.albums.api.dto.toPictureProps
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.DirectoryService
 import nl.juraji.albums.domain.PictureService
-import nl.juraji.albums.domain.pictures.PictureProps
+import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
 import org.junit.jupiter.api.Test
@@ -40,13 +42,14 @@ internal class DirectoryPicturesControllerTest {
     @Test
     fun `should get pictures by directory id`() {
         val directoryId = fixture.nextString()
-        val pictures: List<PictureProps> = fixture.next()
+        val pictures: List<Picture> = fixture.next()
+        val expected = pictures.map(Picture::toPictureProps)
 
         every { pictureService.getByDirectoryId(any(), any()) } returnsFluxOf pictures
 
         webTestClient
             .get()
-            .uri{ uriBuilder ->
+            .uri { uriBuilder ->
                 uriBuilder
                     .path("/directories/$directoryId/pictures")
                     .queryParam("page", "1")
@@ -57,7 +60,7 @@ internal class DirectoryPicturesControllerTest {
             .exchange()
             .expectStatus().isOk
             .expectBodyList<PictureProps>()
-            .contains(*pictures.toTypedArray())
+            .contains(*expected.toTypedArray())
 
         verify {
             pictureService.getByDirectoryId(directoryId, PageRequest.of(1, 50))

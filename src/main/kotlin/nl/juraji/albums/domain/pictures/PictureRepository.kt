@@ -12,7 +12,7 @@ interface PictureRepository : ReactiveNeo4jRepository<Picture, String> {
 
     fun existsByLocation(location: String): Mono<Boolean>
 
-    fun findPageByDirectoryId(directoryId: String, pageable: Pageable): Flux<PictureProps>
+    fun findPageByDirectoryId(directoryId: String, pageable: Pageable): Flux<Picture>
 
     @Query("MATCH (p:Picture {id: $ id}) RETURN p.location")
     fun findImageLocationById(id:String): Mono<String>

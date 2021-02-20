@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {PicturesService} from '@services/pictures.service';
-import {insurePictureRange, loadPicturesSuccess, setAllPicturesLoaded} from '@actions/pictures.actions';
+import {fetchPicture, insurePictureRange, loadPicturesSuccess, setAllPicturesLoaded} from '@actions/pictures.actions';
 import {Store} from '@ngrx/store';
 import {map, switchMap} from 'rxjs/operators';
 import {selectLoadedPictureCount} from '@reducers/pictures';
 import {EffectMarker} from '@utils/effect-marker.annotation';
-import {filterAsync} from '@utils/filter-async.rx-pipe';
+import {filterAsync} from '@utils/rx/filter-async';
 
 
 @Injectable()
@@ -27,6 +27,15 @@ export class PicturesEffects {
         return loadPicturesSuccess(props);
       }
     })
+  ));
+
+  @EffectMarker
+  fetchPicture$ = createEffect(() => this.actions$.pipe(
+    ofType(fetchPicture),
+    switchMap(({pictureId}) =>
+      this.picturesService.getPicture(pictureId)
+        .pipe(map(picture => ({directoryId: picture.directory.id, pictures: [picture]})))),
+    map((props) => loadPicturesSuccess(props))
   ));
 
   constructor(

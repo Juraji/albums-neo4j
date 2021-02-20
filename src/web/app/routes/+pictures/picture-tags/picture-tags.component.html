@@ -1,0 +1,12 @@
+<div class="card shadow mb-2" *ngIf="!!picture">
+  <div class="card-header d-flex justify-content-between">
+    <h4 class="my-0">Tags</h4>
+  </div>
+  <div class="card-body">
+    <ul class="list-unstyled">
+      <li *ngFor="let t of picture.tags">
+        <span class="badge" [style.backgroundColor]="t.color">{{t.label}}</span>
+      </li>
+    </ul>
+  </div>
+</div>

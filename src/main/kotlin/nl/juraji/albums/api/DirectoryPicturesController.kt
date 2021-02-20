@@ -1,8 +1,10 @@
 package nl.juraji.albums.api
 
+import nl.juraji.albums.api.dto.PictureProps
+import nl.juraji.albums.api.dto.toPictureProps
 import nl.juraji.albums.domain.DirectoryService
 import nl.juraji.albums.domain.PictureService
-import nl.juraji.albums.domain.pictures.PictureProps
+import nl.juraji.albums.domain.pictures.Picture
 import org.springframework.data.domain.PageRequest
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
@@ -22,6 +24,7 @@ class DirectoryPicturesController(
         @RequestParam("size") pageSize: Int
     ): Flux<PictureProps> = pictureService
         .getByDirectoryId(directoryId, PageRequest.of(pageIndex, pageSize))
+        .map(Picture::toPictureProps)
 
     @PostMapping("/update")
     fun updateDirectoryPictures(

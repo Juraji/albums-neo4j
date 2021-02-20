@@ -1,5 +1,7 @@
 package nl.juraji.albums.api
 
+import nl.juraji.albums.api.dto.DuplicatedByProps
+import nl.juraji.albums.api.dto.toDuplicatedByProps
 import nl.juraji.albums.domain.DuplicatesService
 import nl.juraji.albums.domain.duplicates.DuplicatedBy
 import org.springframework.web.bind.annotation.GetMapping
@@ -16,5 +18,7 @@ class PictureDuplicatesController(
     @GetMapping
     fun getDuplicatedByPicture(
         @PathVariable pictureId: String
-    ): Flux<DuplicatedBy> = duplicatesService.findByPictureId(pictureId)
+    ): Flux<DuplicatedByProps> = duplicatesService
+        .findByPictureId(pictureId)
+        .map(DuplicatedBy::toDuplicatedByProps)
 }

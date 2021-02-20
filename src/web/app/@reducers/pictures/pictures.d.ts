@@ -13,3 +13,11 @@ interface SelectPictureRangeProps extends SelectPicturesSetProps {
   page: number;
   size: number;
 }
+
+interface SelectPictureByIdProps {
+  pictureId: string;
+}
+
+interface FetchPictureProps {
+  pictureId: string;
+}
