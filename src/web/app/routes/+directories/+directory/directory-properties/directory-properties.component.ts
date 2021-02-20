@@ -14,7 +14,7 @@ export class DirectoryPropertiesComponent {
   @Input()
   directory: Directory | null = null;
 
-  readonly closed$ = new BooleanToggle(true);
+  readonly closed$ = new BooleanToggle();
 
   constructor(
     private readonly router: Router,

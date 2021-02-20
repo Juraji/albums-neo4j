@@ -44,11 +44,8 @@ export class DirectoryPage implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     fromEvent<KeyboardEvent>(document, 'keydown')
-      .pipe(
-        untilDestroyed(this),
-        filter(e => e.key === 'End')
-      )
-      .subscribe(() => this.loadMore());
+      .pipe(untilDestroyed(this), filter(e => e.key === 'End'))
+      .subscribe(this.loadMore);
   }
 
   ngOnDestroy(): void {

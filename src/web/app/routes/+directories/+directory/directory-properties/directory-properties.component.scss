@@ -1,14 +1,21 @@
 .directory-properties-card {
-  width: 20rem;
   position: fixed;
-  top: 5.5rem;
-  right: 2rem;
-  z-index: 500;
+  width: 20rem;
+  top: 3.5rem;
+  bottom: 0;
+  right: 0;
+  transition: right 300ms ease-out;
+
+  &.collapsed {
+    right: -20rem;
+  }
 }
 
-.show-directory-properties-btn {
-  position: fixed;
-  top: 5rem;
-  right: 2rem;
-  z-index: 500;
+.properties-sidebar-toggler {
+  position: absolute;
+  top: .5rem;
+  left: -2.4rem;
+  border-right: 0;
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
 }
