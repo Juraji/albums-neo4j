@@ -1,36 +1,36 @@
 interface Picture {
-  id: string
-  location: string
-  name: string
-  width: number
-  height: number
-  fileSize: number
-  fileType: FileType
-  lastModified: string
-  directory: Directory
-  tags: Tag[]
+  id: string;
+  location: string;
+  name: string;
+  width: number;
+  height: number;
+  fileSize: number;
+  fileType: FileType;
+  lastModified: string;
+  directory: Directory;
+  tags: Tag[];
 }
 
 interface PictureProps {
-  id: string
-  location: string
-  name: string
-  width: number
-  height: number
-  fileSize: number
-  fileType: FileType
-  lastModified: string
+  id: string;
+  location: string;
+  name: string;
+  width: number;
+  height: number;
+  fileSize: number;
+  fileType: FileType;
+  lastModified: string;
 }
 
 interface NewPictureDto {
-  location: string
-  name?: string
+  location: string;
+  name?: string;
 }
 
-type FileType = "JPEG" | "BMP" | "GIF" | "PNG" | "TIFF" | "UNKNOWN"
+type FileType = 'JPEG' | 'BMP' | 'GIF' | 'PNG' | 'TIFF' | 'UNKNOWN';
 
 interface PictureCreatedEvent extends AlbumEvent {
-  eventType: "PictureCreatedEvent";
+  eventType: 'PictureCreatedEvent';
   pictureId: string;
   location: string;
   directoryId: string;
@@ -38,12 +38,12 @@ interface PictureCreatedEvent extends AlbumEvent {
 }
 
 interface PictureUpdatedEvent extends AlbumEvent {
-  eventType: "PictureUpdatedEvent";
+  eventType: 'PictureUpdatedEvent';
   pictureId: string;
 }
 
 interface PictureDeletedEvent extends AlbumEvent {
-  eventType: "PictureDeletedEvent";
+  eventType: 'PictureDeletedEvent';
   pictureId: string;
   location: string;
   doDeleteFile: boolean;

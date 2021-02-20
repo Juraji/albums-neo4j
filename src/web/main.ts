@@ -2,10 +2,10 @@ import {enableProdMode} from '@angular/core';
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 
 import {AppModule} from './app/app.module';
-import installExtensions from "./app/@utils/prototypes";
+import installExtensions from './app/@utils/prototypes';
 import {environment} from '@environment';
 
-installExtensions()
+installExtensions();
 
 if (environment.production) {
   enableProdMode();

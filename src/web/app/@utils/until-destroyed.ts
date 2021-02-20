@@ -5,10 +5,8 @@ import {OnDestroy} from '@angular/core';
 
 const untilDestroyedSymbol = Symbol('__untilDestroyed__');
 
-export function untilDestroyed<T extends OnDestroy, U>(
-  instance: T
-): MonoTypeOperatorFunction<U> {
-  return (source: Observable<U>) => {
+export const untilDestroyed = <T extends OnDestroy, U>(instance: T): MonoTypeOperatorFunction<U> =>
+  (source: Observable<U>) => {
     const originalDestroy = instance.ngOnDestroy;
     const hasDestroyFunction = typeof originalDestroy === 'function';
 
@@ -21,7 +19,7 @@ export function untilDestroyed<T extends OnDestroy, U>(
     if (!instance[untilDestroyedSymbol]) {
       instance[untilDestroyedSymbol] = new Subject();
 
-      instance.ngOnDestroy = function (): void {
+      instance.ngOnDestroy = function(): void {
         if (hasDestroyFunction) {
           originalDestroy.apply(this, arguments);
         }
@@ -36,4 +34,3 @@ export function untilDestroyed<T extends OnDestroy, U>(
 
     return source.pipe(takeUntil<U>(instance[untilDestroyedSymbol]));
   };
-}

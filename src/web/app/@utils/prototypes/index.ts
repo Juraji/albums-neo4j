@@ -1,7 +1,7 @@
 import installArrayExt from './array-ext';
 import installObjExt from './object-ext';
 
-export default function installExtensions() {
+export const installExtensions = () => {
   installArrayExt();
   installObjExt();
-}
+};

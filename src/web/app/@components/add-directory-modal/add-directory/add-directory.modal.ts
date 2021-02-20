@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
-import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {ModalRef} from "@juraji/ng-bootstrap-modals";
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {ModalRef} from '@juraji/ng-bootstrap-modals';
 
 @Component({
   templateUrl: './add-directory.modal.html',
@@ -9,18 +9,18 @@ import {ModalRef} from "@juraji/ng-bootstrap-modals";
 export class AddDirectoryModal {
 
   readonly form = new FormGroup({
-    location: new FormControl("", [Validators.required]),
+    location: new FormControl('', [Validators.required]),
     recursive: new FormControl(true)
-  })
+  });
 
   constructor(private readonly modalRef: ModalRef) {
   }
 
   dismiss() {
-    this.modalRef.dismiss()
+    this.modalRef.dismiss();
   }
 
   addDirectory() {
-    this.modalRef.resolve(this.form.value)
+    this.modalRef.resolve(this.form.value);
   }
 }

@@ -1,4 +1,4 @@
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject} from 'rxjs';
 
 export class BooleanToggle extends BehaviorSubject<boolean> {
 
@@ -7,6 +7,6 @@ export class BooleanToggle extends BehaviorSubject<boolean> {
   }
 
   toggle() {
-    this.next(!this.value)
+    this.next(!this.value);
   }
 }

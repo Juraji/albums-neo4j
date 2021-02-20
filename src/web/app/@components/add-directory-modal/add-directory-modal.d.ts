@@ -1,4 +1,4 @@
 interface AddDirectoryModalResult {
-  location: string
-  recursive: boolean
+  location: string;
+  recursive: boolean;
 }

@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from "@angular/router";
-import {BooleanToggle} from "@utils/boolean-toggle";
+import {ActivatedRoute} from '@angular/router';
+import {BooleanToggle} from '@utils/boolean-toggle';
 
 interface Link {
-  label: string
-  url: string
+  label: string;
+  url: string;
 }
 
 @Component({
@@ -19,7 +19,7 @@ export class MainNavbarComponent implements OnInit {
   readonly links: Link[] = [
     {label: 'Directories', url: '/directories'},
     {label: 'Duplicates', url: '/duplicates'},
-  ]
+  ];
 
   constructor(public route: ActivatedRoute) {
   }

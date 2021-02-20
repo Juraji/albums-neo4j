@@ -9,12 +9,7 @@ interface NewDirectoryDto {
   location: string;
 }
 
-interface DirectoryCreatedEvent extends AlbumEvent {
-  eventType: "DirectoryCreatedEvent";
-  directoryId: string;
-}
-
 interface DirectoryTreeUpdatedEvent extends AlbumEvent {
-  eventType: "DirectoryTreeUpdatedEvent";
+  eventType: 'DirectoryTreeUpdatedEvent';
   directoryId: string;
 }

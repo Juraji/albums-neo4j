@@ -1,15 +1,15 @@
-type PicturesSliceState = Record<string, PictureDirectoryState>
+type PicturesSliceState = Record<string, PictureDirectoryState>;
 
 interface PictureDirectoryState {
-  pictures: PictureProps[],
-  fullyLoaded: boolean
+  pictures: PictureProps[];
+  fullyLoaded: boolean;
 }
 
 interface SelectPicturesSetProps {
-  directoryId: string
+  directoryId: string;
 }
 
 interface SelectPictureRangeProps extends SelectPicturesSetProps{
-  page: number
-  size: number
+  page: number;
+  size: number;
 }

@@ -1,13 +1,13 @@
 import {Component} from '@angular/core';
-import {Store} from "@ngrx/store";
-import {Observable} from "rxjs";
-import {Router} from "@angular/router";
-import {selectDirectoryTree} from "@reducers/directories";
-import {AddDirectoryModal} from "@components/add-directory-modal/add-directory/add-directory.modal";
-import {switchMap} from "rxjs/operators";
-import {DirectoriesService} from "@services/directories.service";
-import {loadRootDirectories} from "@actions/directories.actions";
-import {Modals} from "@juraji/ng-bootstrap-modals";
+import {Store} from '@ngrx/store';
+import {Observable} from 'rxjs';
+import {Router} from '@angular/router';
+import {selectDirectoryTree} from '@reducers/directories';
+import {AddDirectoryModal} from '@components/add-directory-modal/add-directory/add-directory.modal';
+import {switchMap} from 'rxjs/operators';
+import {DirectoriesService} from '@services/directories.service';
+import {loadRootDirectories} from '@actions/directories.actions';
+import {Modals} from '@juraji/ng-bootstrap-modals';
 
 @Component({
   templateUrl: './directories.page.html'
@@ -15,7 +15,7 @@ import {Modals} from "@juraji/ng-bootstrap-modals";
 export class DirectoriesPage {
 
   readonly directories$: Observable<Directory[]> =
-    this.store.select(selectDirectoryTree)
+    this.store.select(selectDirectoryTree);
 
   constructor(
     private readonly store: Store<AppState>,
@@ -26,7 +26,7 @@ export class DirectoriesPage {
   }
 
   reloadRoots() {
-    this.store.dispatch(loadRootDirectories())
+    this.store.dispatch(loadRootDirectories());
   }
 
   addDirectory() {
@@ -35,10 +35,10 @@ export class DirectoriesPage {
       .onResolved
       .pipe(switchMap(({location, recursive}) =>
         this.directoriesService.createDirectory({location}, recursive)))
-      .subscribe()
+      .subscribe();
   }
 
   onDirectoryAction(directory: Directory) {
-    this.router.navigate(["directories", directory.id])
+    this.router.navigate(['directories', directory.id]);
   }
 }

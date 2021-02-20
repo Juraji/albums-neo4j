@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {DirectoryPage} from "./directory/directory.page";
+import {DirectoryPage} from './directory/directory.page';
 
 const routes: Routes = [{ path: '', component: DirectoryPage }];
 

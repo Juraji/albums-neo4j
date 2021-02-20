@@ -6,36 +6,36 @@ import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '
   styleUrls: ['./directory-tree.component.scss']
 })
 export class DirectoryTreeComponent implements OnChanges {
-  openedStates: Record<string, boolean> = {}
-  isRoot: boolean = false;
+  openedStates: Record<string, boolean> = {};
+  isRoot = false;
 
   @Input()
-  directories: Directory[] | null = []
+  directories: Directory[] | null = [];
 
   @Input()
-  showRootPaths: boolean = true
+  showRootPaths = true;
 
   @Input()
-  level: number = 0
+  level = 0;
 
   @Output()
-  readonly directoryAction = new EventEmitter<Directory>()
+  readonly directoryAction = new EventEmitter<Directory>();
 
   constructor() {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.isRoot = this.level === 0
+    this.isRoot = this.level === 0;
   }
 
   toggleDirectory(directory: Directory) {
     this.openedStates = this.openedStates
       .copy({
         [directory.id]: !this.openedStates[directory.id]
-      })
+      });
   }
 
   onDirectoryAction(directory: Directory) {
-    this.directoryAction.emit(directory)
+    this.directoryAction.emit(directory);
   }
 }
