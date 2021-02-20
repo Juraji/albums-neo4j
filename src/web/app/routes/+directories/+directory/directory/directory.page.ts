@@ -29,7 +29,7 @@ export class DirectoryPage implements OnInit, OnDestroy {
     switchMap((directoryId) => this.store.select(selectDirectory, {directoryId}))
   );
 
-  readonly directoryPictures$: Observable<PictureProps[]> = combineLatest(this.directoryId$, this.offSetLimitSelection$).pipe(
+  readonly directoryPictures$: Observable<PictureProps[]> = combineLatest([this.directoryId$, this.offSetLimitSelection$]).pipe(
     filterAsync(([directoryId]) => this.store.select(isPictureSetFullyLoaded, {directoryId}).pipe(map(s => !s))),
     map(([directoryId, {page, size}]) => ({directoryId, page, size})),
     tap((props) => this.store.dispatch(insurePictureRange(props))),
