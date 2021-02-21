@@ -1,10 +1,11 @@
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ModalRef} from '@juraji/ng-bootstrap-modals';
 
 @Component({
   templateUrl: './add-directory.modal.html',
-  styleUrls: ['./add-directory.modal.scss']
+  styleUrls: ['./add-directory.modal.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddDirectoryModal {
 

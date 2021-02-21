@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs';
 import {Router} from '@angular/router';
@@ -10,7 +10,8 @@ import {loadRootDirectories} from '@actions/directories.actions';
 import {Modals} from '@juraji/ng-bootstrap-modals';
 
 @Component({
-  templateUrl: './directories.page.html'
+  templateUrl: './directories.page.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DirectoriesPage {
 

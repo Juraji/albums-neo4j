@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {Observable, of} from 'rxjs';
 import {selectAllTags} from '@reducers/tags';
@@ -11,7 +11,8 @@ import {Actions, ofType} from '@ngrx/effects';
 @Component({
   selector: 'app-tag-selector',
   templateUrl: './tag-selector.component.html',
-  styleUrls: ['./tag-selector.component.scss']
+  styleUrls: ['./tag-selector.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TagSelectorComponent implements OnInit {
 

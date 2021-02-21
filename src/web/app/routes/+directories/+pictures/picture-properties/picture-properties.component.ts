@@ -1,8 +1,9 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-picture-properties',
   templateUrl: './picture-properties.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PicturePropertiesComponent implements OnInit {
 

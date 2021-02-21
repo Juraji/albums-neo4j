@@ -1,9 +1,10 @@
-import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 
 @Component({
   selector: 'app-directory-tree',
   templateUrl: './directory-tree.component.html',
-  styleUrls: ['./directory-tree.component.scss']
+  styleUrls: ['./directory-tree.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DirectoryTreeComponent implements OnChanges {
   openedStates: Record<string, boolean> = {};

@@ -1,10 +1,11 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {addTagToPicture, removeTagFromPicture} from '@actions/pictures.actions';
 
 @Component({
   selector: 'app-picture-tags',
   templateUrl: './picture-tags.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PictureTagsComponent implements OnInit {
 
