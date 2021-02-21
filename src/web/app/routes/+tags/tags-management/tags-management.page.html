@@ -1,0 +1,28 @@
+<app-main-navbar></app-main-navbar>
+
+<div class="container clear-navbar">
+  <div class="btn-toolbar justify-content-end mb-2">
+    <button class="btn btn-primary" (click)="onCreateTag()">
+      <span class="fa fa-plus"></span>
+    </button>
+  </div>
+  <ul class="list-group">
+    <li class="list-group-item" *ngIf="tagsIsEmpty$ | async">
+      No tags available
+    </li>
+    <li class="list-group-item d-flex justify-content-between" *ngFor="let tag of tags$ | async">
+      <span appTag [tag]="tag" fontSize="1rem"></span>
+      <div class="btn-group btn-group-sm">
+        <a class="btn btn-primary" title="View pictures with this tag" [routerLink]="[tag.id, 'pictures']">
+          <span class="fa fa-search"></span>
+        </a>
+        <button class="btn btn-outline-primary" title="Edit tag" (click)="onEditTag(tag)">
+          <span class="fa fa-edit"></span>
+        </button>
+        <button class="btn btn-outline-danger" title="Delete tag" (click)="onDeleteTag(tag)">
+          <span class="fa fa-trash"></span>
+        </button>
+      </div>
+    </li>
+  </ul>
+</div>

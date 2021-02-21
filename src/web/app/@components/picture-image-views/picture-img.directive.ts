@@ -30,7 +30,7 @@ export abstract class PictureImgDirective implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.hasOwnProperty('picture')) {
+    if (changes.hasOwnProperty('picture') && !!changes.picture.currentValue) {
       this.hostSrc = this.getSanitizedSrc(changes.picture.currentValue);
       this.hostTitle = changes.picture.currentValue.name;
     }

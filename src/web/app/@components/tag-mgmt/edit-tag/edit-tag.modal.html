@@ -1,0 +1,59 @@
+<form [formGroup]="form" (submit)="onFormSubmit()">
+  <div class="modal-header">
+    <ng-container [ngSwitch]="isEditTag">
+      <h4 class="modal-title" *ngSwitchCase="true">Edit tag</h4>
+      <h4 class="modal-title" *ngSwitchCase="false">Create new tag</h4>
+    </ng-container>
+
+    <button type="button" class="close" aria-label="Close" (click)="onDismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group mb-3">
+      <label for="location-input" class="form-label">Label</label>
+      <input type="text" class="form-control" id="location-input" aria-describedby="location-input-help"
+               formControlName="label" ngbmodAutoFocus>
+        <div id="location-input-help" class="form-text small text-muted">Label name.</div>
+    </div>
+
+    <div class="row">
+      <div class="col-6">
+        <div class="form-group">
+          <label for="color-input">Tag color</label>
+          <color-twitter
+            id="color-input"
+            class="tag-color-picker"
+            width="100%"
+            triangle="hide"
+            [color]="form.value.color"
+            (onChangeComplete)="onColorChange('color', $event)"
+          ></color-twitter>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="form-group">
+          <label for="text-color-picker">Text color</label>
+          <color-twitter
+            id="text-color-picker"
+            class="tag-color-picker"
+            width="100%"
+            triangle="hide"
+            [color]="form.value.textColor"
+            (onChangeComplete)="onColorChange('textColor', $event)"
+            [colors]="['#000000', '#ffffff']"
+          ></color-twitter>
+        </div>
+
+        <div class="form-group">
+          <label>Example:</label><br/>
+          <span appTag [tag]="form.value" fontSize="1rem"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-danger" (click)="onDismiss()">Close</button>
+    <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Add</button>
+  </div>
+</form>

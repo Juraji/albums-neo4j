@@ -6,6 +6,7 @@ const routes: Routes = [
     path: 'directories',
     loadChildren: () => import('./routes/+directories/directories.module').then(m => m.DirectoriesModule)
   },
+  {path: 'tags', loadChildren: () => import('./routes/+tags/tags.module').then(m => m.TagsModule)},
   {path: '**', redirectTo: 'directories'}
 ];
 

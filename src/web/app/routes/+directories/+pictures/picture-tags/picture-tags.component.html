@@ -7,7 +7,7 @@
     <ul class="list-unstyled">
       <li *ngFor="let t of picture.tags">
         <div ngbDropdown>
-          <span class="badge" role="button" ngbDropdownToggle [style.backgroundColor]="t.color">{{t.label}}</span>
+          <span role="button" ngbDropdownToggle appTag [tag]="t"></span>
           <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
             <button ngbDropdownItem [routerLink]="['/tags', t.id, 'pictures']">
               <span class="fa fa-search"></span>&nbsp;View others like this

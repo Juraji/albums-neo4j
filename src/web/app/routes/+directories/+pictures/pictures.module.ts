@@ -7,9 +7,9 @@ import {MainNavbarModule} from '@components/main-navbar/main-navbar.module';
 import {PicturePropertiesComponent} from './picture-properties/picture-properties.component';
 import {FsPipesModule} from '@components/fs-pipes/fs-pipes.module';
 import {PictureTagsComponent} from './picture-tags/picture-tags.component';
-import {TagSelectorModule} from '@components/tag-selector/tag-selector.module';
 import {NgbDropdownModule} from '@ng-bootstrap/ng-bootstrap';
 import {PictureImageViewsModule} from '@components/picture-image-views/picture-image-views.module';
+import {TagMgmtModule} from '@components/tag-mgmt';
 
 
 @NgModule({
@@ -19,7 +19,7 @@ import {PictureImageViewsModule} from '@components/picture-image-views/picture-i
     PicturesRoutingModule,
     MainNavbarModule,
     FsPipesModule,
-    TagSelectorModule,
+    TagMgmtModule,
     NgbDropdownModule,
     PictureImageViewsModule
   ]

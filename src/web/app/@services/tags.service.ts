@@ -20,4 +20,12 @@ export class TagsService {
   createTag(newTag: NewTagDto): Observable<Tag> {
     return this.httpClient.post<Tag>(`${environment.apiBaseUri}/tags`, newTag);
   }
+
+  updateTag(tag: Tag): Observable<Tag> {
+    return this.httpClient.put<Tag>(`${environment.apiBaseUri}/tags`, tag);
+  }
+
+  deleteTag(tag: Tag): Observable<void> {
+    return this.httpClient.delete<void>(`${environment.apiBaseUri}/tags/${tag.id}`);
+  }
 }

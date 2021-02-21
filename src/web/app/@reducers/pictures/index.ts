@@ -6,6 +6,7 @@ import {
   removeTagFromPictureSuccess,
   setDirectoryLoadState,
 } from '@actions/pictures.actions';
+import {deleteTagSuccess} from '@actions/tags.actions';
 
 
 const initialState: PicturesSliceState = {
@@ -28,6 +29,13 @@ export const reducer = createReducer(
   on(setDirectoryLoadState, (s, {directoryId, state}) => {
     const directoryLoadStates = s.directoryLoadStates.copy({[directoryId]: state});
     return s.copy({directoryLoadStates});
+  }),
+  on(deleteTagSuccess, (s, tag) => {
+    const pictures: PictureMap = Object.entries(s.pictures)
+      .map(([id, picture]) => ({[id]: picture.copy({tags: picture.tags.filter(t => t.id !== tag.id)})}))
+      .reduce((acc, next) => Object.assign(acc, next), {});
+
+    return s.copy({pictures});
   })
 );
 

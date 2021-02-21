@@ -1,11 +1,12 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {Store} from '@ngrx/store';
-import {Observable, of} from 'rxjs';
-import {selectAllTags} from '@reducers/tags';
-import {sideEffect} from '@utils/rx';
+import {Observable} from 'rxjs';
+import {selectAllTags, selectTagsLoaded} from '@reducers/tags';
+import {conditionalSideEffect, not, sideEffect} from '@utils/rx';
 import {createTag, createTagSuccess, loadAllTags} from '@actions/tags.actions';
-import {filter, map, shareReplay} from 'rxjs/operators';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {filter, map, shareReplay, switchMap} from 'rxjs/operators';
+import {Modals} from '@juraji/ng-bootstrap-modals';
+import {EditTagModal} from '../edit-tag/edit-tag.modal';
 import {Actions, ofType} from '@ngrx/effects';
 
 @Component({
@@ -16,15 +17,10 @@ import {Actions, ofType} from '@ngrx/effects';
 })
 export class TagSelectorComponent implements OnInit {
 
-  readonly createTagForm = new FormGroup({
-    label: new FormControl('', [Validators.required]),
-    color: new FormControl('#00ff00', [Validators.required])
-  });
-
   readonly tags$: Observable<Tag[]> = this.store.select(selectAllTags)
     .pipe(
-      sideEffect(
-        (t) => of(t.isEmpty()),
+      conditionalSideEffect(
+        () => this.store.select(selectTagsLoaded).pipe(not()),
         () => this.store.dispatch(loadAllTags())
       ),
       shareReplay(1)
@@ -37,6 +33,7 @@ export class TagSelectorComponent implements OnInit {
 
   constructor(
     private readonly store: Store<AppState>,
+    private readonly modals: Modals,
     private readonly actions$: Actions,
   ) {
   }
@@ -48,14 +45,13 @@ export class TagSelectorComponent implements OnInit {
     this.tagSelected.emit(tag);
   }
 
-  onCreateTagSubmit() {
-    const newTag: NewTagDto = this.createTagForm.value;
-    this.store.dispatch(createTag(newTag));
-    this.actions$
+  onCreateTag() {
+    this.modals.open<any, Tag>(EditTagModal)
+      .onResolved
       .pipe(
-        ofType(createTagSuccess),
-        filter(t => t.label === newTag.label)
+        sideEffect(tag => this.store.dispatch(createTag(tag))),
+        switchMap(tag => this.actions$.pipe(ofType(createTagSuccess), filter(t => t.label === tag.label)))
       )
-      .subscribe(() => this.createTagForm.reset({label: '', color: ''}));
+      .subscribe(tag => this.onTagSelected(tag));
   }
 }

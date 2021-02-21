@@ -1,8 +1,15 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {EffectMarker} from '@utils/effect-marker.annotation';
-import {createTag, createTagSuccess, loadAllTags, loadAllTagsSuccess} from '@actions/tags.actions';
-import {map, switchMap} from 'rxjs/operators';
+import {
+  createTag,
+  createTagSuccess,
+  deleteTag,
+  deleteTagSuccess,
+  loadAllTags,
+  loadAllTagsSuccess, updateTag, updateTagSuccess
+} from '@actions/tags.actions';
+import {map, mapTo, switchMap} from 'rxjs/operators';
 import {TagsService} from '@services/tags.service';
 
 
@@ -21,6 +28,20 @@ export class TagsEffects {
     ofType(createTag),
     switchMap((newTag) => this.tagsService.createTag(newTag)),
     map((tag) => createTagSuccess(tag))
+  ));
+
+  @EffectMarker
+  updateTag$ = createEffect(() => this.actions$.pipe(
+    ofType(updateTag),
+    switchMap((tag) => this.tagsService.updateTag(tag)),
+    map((tag) => updateTagSuccess(tag))
+  ));
+
+  @EffectMarker
+  deleteTag$ = createEffect(() => this.actions$.pipe(
+    ofType(deleteTag),
+    switchMap((tag) => this.tagsService.deleteTag(tag).pipe(mapTo(tag))),
+    map((tag) => deleteTagSuccess(tag))
   ));
 
   constructor(
