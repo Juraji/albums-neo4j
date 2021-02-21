@@ -8,6 +8,7 @@ import { PicturePropertiesComponent } from './picture-properties/picture-propert
 import {FsPipesModule} from '@components/fs-pipes/fs-pipes.module';
 import { PictureTagsComponent } from './picture-tags/picture-tags.component';
 import {TagSelectorModule} from '@components/tag-selector/tag-selector.module';
+import {NgbDropdownModule} from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import {TagSelectorModule} from '@components/tag-selector/tag-selector.module';
     PicturesRoutingModule,
     MainNavbarModule,
     FsPipesModule,
-    TagSelectorModule
+    TagSelectorModule,
+    NgbDropdownModule
   ]
 })
 export class PicturesModule {
