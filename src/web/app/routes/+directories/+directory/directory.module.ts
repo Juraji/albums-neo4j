@@ -7,17 +7,18 @@ import {MainNavbarModule} from '@components/main-navbar/main-navbar.module';
 import {DirectoryPropertiesComponent} from './directory-properties/directory-properties.component';
 import {DirectoryTreeModule} from '@components/directory-tree/directory-tree.module';
 import {InfiniteScrollModule} from 'ngx-infinite-scroll';
-import {PictureCardDirective} from './picture-card.directive';
+import {PictureImageViewsModule} from '@components/picture-image-views/picture-image-views.module';
 
 
 @NgModule({
-  declarations: [DirectoryPage, DirectoryPropertiesComponent, PictureCardDirective],
+  declarations: [DirectoryPage, DirectoryPropertiesComponent],
   imports: [
     CommonModule,
     DirectoryRoutingModule,
     MainNavbarModule,
     DirectoryTreeModule,
-    InfiniteScrollModule
+    InfiniteScrollModule,
+    PictureImageViewsModule
   ]
 })
 export class DirectoryModule {

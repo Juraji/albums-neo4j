@@ -1,7 +1,7 @@
+import {DomSanitizer} from '@angular/platform-browser';
 import {
   Directive,
-  ElementRef,
-  HostBinding,
+  ElementRef, HostBinding,
   Input,
   OnChanges,
   OnInit,
@@ -9,25 +9,15 @@ import {
   SecurityContext,
   SimpleChanges
 } from '@angular/core';
-import {DomSanitizer} from '@angular/platform-browser';
 import {environment} from '@environment';
 
-@Directive({
-  selector: 'img[appPictureCard]'
-})
-export class PictureCardDirective implements OnInit, OnChanges {
-  private static readonly staticClassList = ['rounded', 'shadow', 'border', 'img-fluid', 'picture-card'];
+@Directive()
+export abstract class PictureImgDirective implements OnInit, OnChanges {
+  @Input() picture: PictureProps | null = null;
+  @HostBinding('src') hostSrc: string | null = null;
+  @HostBinding('title') hostTitle: string | null = null;
 
-  @Input()
-  picture: PictureProps | null = null;
-
-  @HostBinding('src')
-  hostSrc: string | null = null;
-
-  @HostBinding('title')
-  hostTitle: string | null = null;
-
-  constructor(
+  protected constructor(
     private readonly domSanitizer: DomSanitizer,
     private readonly elementRef: ElementRef,
     private readonly renderer: Renderer2,
@@ -35,7 +25,7 @@ export class PictureCardDirective implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    PictureCardDirective.staticClassList.forEach(cn =>
+    this.staticClassList().forEach(cn =>
       this.renderer.addClass(this.elementRef.nativeElement, cn));
   }
 
@@ -45,6 +35,8 @@ export class PictureCardDirective implements OnInit, OnChanges {
       this.hostTitle = changes.picture.currentValue.name;
     }
   }
+
+  abstract staticClassList(): string[];
 
   private getSanitizedSrc(picture: PictureProps) {
     return this.domSanitizer.sanitize(

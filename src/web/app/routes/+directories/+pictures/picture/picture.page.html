@@ -2,7 +2,7 @@
 
 <div class="d-flex">
   <div class="container-fluid flex-grow-1 clear-navbar">
-    <pre>{{picture$ | async | json}}</pre>
+    <img src="" alt="" class="d-block mx-auto" appPictureFullView [picture]="picture$ | async"/>
   </div>
   <div class="container-fluid side-bar">
     <app-picture-properties [picture]="picture$ | async"></app-picture-properties>

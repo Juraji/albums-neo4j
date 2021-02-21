@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {ActivatedRoute} from '@angular/router';
 import {filter, map, shareReplay, switchMap} from 'rxjs/operators';
@@ -8,12 +8,12 @@ import {selectDirectoryLoadState, selectDirectoryPicturesRange} from '@reducers/
 import {environment} from '@environment';
 import {untilDestroyed} from '@utils/until-destroyed';
 import {fetchDirectoryPictures} from '@actions/pictures.actions';
-import {sideEffect} from '@utils/rx/side-effect';
-import {not} from '@utils/rx/not';
+import {not, sideEffect} from '@utils/rx';
 
 @Component({
   templateUrl: './directory.page.html',
-  styleUrls: ['./directory.page.scss']
+  styleUrls: ['./directory.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DirectoryPage implements OnInit, OnDestroy {
   private readonly offSetLimitSelection$ = new BehaviorSubject<{ page: number; size: number }>({

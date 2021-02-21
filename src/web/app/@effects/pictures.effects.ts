@@ -16,8 +16,7 @@ import {Store} from '@ngrx/store';
 import {map, mapTo, switchMap} from 'rxjs/operators';
 import {selectDirectoryLoadState} from '@reducers/pictures';
 import {EffectMarker} from '@utils/effect-marker.annotation';
-import {filterAsync} from '@utils/rx/filter-async';
-import {not} from '@utils/rx/not';
+import {filterAsync, not} from '@utils/rx';
 
 
 @Injectable()
@@ -61,7 +60,7 @@ export class PicturesEffects {
     switchMap(({picture, tag}) => this.picturesService
       .removeTag(picture.id, tag.id).pipe(mapTo({picture, tag}))),
     map(({picture, tag}) => removeTagFromPictureSuccess(
-      picture.copy({tags: picture.tags.filter(t => t.id === tag.id)})))
+      picture.copy({tags: picture.tags.filter(t => t.id !== tag.id)})))
   ));
 
   constructor(

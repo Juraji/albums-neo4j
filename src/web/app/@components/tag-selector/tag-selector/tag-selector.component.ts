@@ -2,7 +2,7 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {Observable, of} from 'rxjs';
 import {selectAllTags} from '@reducers/tags';
-import {sideEffect} from '@utils/rx/side-effect';
+import {sideEffect} from '@utils/rx';
 import {createTag, createTagSuccess, loadAllTags} from '@actions/tags.actions';
 import {filter, map, shareReplay} from 'rxjs/operators';
 import {FormControl, FormGroup, Validators} from '@angular/forms';

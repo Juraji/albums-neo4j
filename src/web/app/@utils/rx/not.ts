@@ -1,4 +1,4 @@
-import {MonoTypeOperatorFunction} from 'rxjs';
+import {OperatorFunction} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-export const not = <T>(): MonoTypeOperatorFunction<boolean> => map((v) => !v);
+export const not = <T>(): OperatorFunction<T, boolean> => map((v) => !v);

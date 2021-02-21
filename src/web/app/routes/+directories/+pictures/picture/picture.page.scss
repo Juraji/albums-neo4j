@@ -6,4 +6,8 @@
     height: calc(100vh - 3.5rem);
     overflow-y: auto;
   }
+
+  .picture-full-view {
+    max-height: calc(100vh - 5.5rem);
+  }
 }

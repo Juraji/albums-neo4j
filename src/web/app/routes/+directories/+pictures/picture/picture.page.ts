@@ -1,15 +1,16 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {Observable, of} from 'rxjs';
+import {Observable} from 'rxjs';
 import {filter, map, shareReplay, switchMap} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {selectPictureById} from '@reducers/pictures';
-import {sideEffect} from '@utils/rx/side-effect';
+import {not, sideEffect} from '@utils/rx';
 import {fetchPicture} from '@actions/pictures.actions';
 
 @Component({
   templateUrl: './picture.page.html',
-  styleUrls: ['./picture.page.scss']
+  styleUrls: ['./picture.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PicturePage implements OnInit {
 
@@ -19,12 +20,12 @@ export class PicturePage implements OnInit {
   );
 
   readonly picture$: Observable<PictureProps | null> = this.pictureId$.pipe(
+    sideEffect(
+      (pictureId) => this.store.select(selectPictureById, pictureId).pipe(not()),
+      (pictureId) => this.store.dispatch(fetchPicture({pictureId}))
+    ),
     switchMap(pictureId => this.store.select(selectPictureById, pictureId)
       .pipe(map((picture) => ({pictureId, picture})))),
-    sideEffect(
-      ({picture}) => of(!picture),
-      ({pictureId}) => this.store.dispatch(fetchPicture({pictureId}))
-    ),
     map(({picture}) => picture),
     shareReplay(1)
   );
