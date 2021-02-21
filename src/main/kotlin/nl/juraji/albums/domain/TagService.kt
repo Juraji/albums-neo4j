@@ -21,5 +21,21 @@ class TagService(
         .map { Tag(label = it, color = color, textColor = textColor) }
         .flatMap(tagRepository::save)
 
+    fun updateTag(id: String, updatedTag: Tag): Mono<Tag> = tagRepository
+        .findById(updatedTag.id!!)
+        .validateAsync {
+            unless(it.label == updatedTag.label) {
+                isFalse(tagRepository.existsByLabel(updatedTag.label)) { "Tag with label ${updatedTag.label} already exists" }
+            }
+        }
+        .map {
+            it.copy(
+                label = updatedTag.label,
+                color = updatedTag.color,
+                textColor = updatedTag.textColor
+            )
+        }
+        .flatMap(tagRepository::save)
+
     fun deleteTag(tagId: String): Mono<Unit> = tagRepository.deleteById(tagId).mapToUnit()
 }

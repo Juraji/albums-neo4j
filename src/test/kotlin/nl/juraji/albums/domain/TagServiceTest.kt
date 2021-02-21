@@ -16,6 +16,7 @@ import nl.juraji.albums.util.returnsMonoOf
 import nl.juraji.reactor.validations.ValidationException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import reactor.kotlin.test.expectError
 import reactor.kotlin.test.verifyError
 import reactor.test.StepVerifier
 
@@ -46,7 +47,7 @@ internal class TagServiceTest {
         every { tagRepository.existsByLabel(tag.label) } returnsMonoOf false
         every { tagRepository.save(tag) } returnsMonoOf tag
 
-        StepVerifier.create(tagService.createTag(tag.label, tag.color))
+        StepVerifier.create(tagService.createTag(tag.label, tag.color, tag.textColor))
             .expectNext(tag)
             .verifyComplete()
 
@@ -59,10 +60,49 @@ internal class TagServiceTest {
 
         every { tagRepository.existsByLabel(tag.label) } returnsMonoOf true
 
-        StepVerifier.create(tagService.createTag(tag.label, tag.color))
+        StepVerifier.create(tagService.createTag(tag.label, tag.color, tag.textColor))
             .verifyError<ValidationException>()
 
         verify { tagRepository.save(tag) wasNot Called }
+    }
+
+    @Test
+    internal fun `should update tag`() {
+        val tag = fixture.next<Tag>()
+        val updatedTag = fixture.next<Tag>().copy(id = tag.id)
+
+        every { tagRepository.findById(any<String>()) } returnsMonoOf tag
+        every { tagRepository.existsByLabel(any()) } returnsMonoOf false
+        every { tagRepository.save(any()) } returnsMonoOf updatedTag
+
+        StepVerifier.create(tagService.updateTag(updatedTag.id!!, updatedTag))
+            .expectNext(updatedTag)
+            .verifyComplete()
+
+        verify {
+            tagRepository.findById(updatedTag.id!!)
+            tagRepository.existsByLabel(updatedTag.label)
+            tagRepository.save(updatedTag)
+        }
+    }
+
+    @Test
+    internal fun `should not update tag when updated label already exists`() {
+        val tag = fixture.next<Tag>()
+        val updatedTag = fixture.next<Tag>().copy(id = tag.id)
+
+        every { tagRepository.findById(any<String>()) } returnsMonoOf tag
+        every { tagRepository.existsByLabel(any()) } returnsMonoOf true
+
+        StepVerifier.create(tagService.updateTag(updatedTag.id!!, updatedTag))
+            .expectError<ValidationException>()
+            .verify()
+
+        verify {
+            tagRepository.findById(updatedTag.id!!)
+            tagRepository.existsByLabel(updatedTag.label)
+            tagRepository.save(updatedTag) wasNot Called
+        }
     }
 
     @Test

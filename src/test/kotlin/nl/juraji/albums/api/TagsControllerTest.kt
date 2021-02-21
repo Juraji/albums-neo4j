@@ -4,7 +4,10 @@ import com.marcellogalhardo.fixture.Fixture
 import com.marcellogalhardo.fixture.next
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import io.mockk.verify
 import nl.juraji.albums.api.dto.NewTagDto
+import nl.juraji.albums.api.dto.UpdateTagDto
+import nl.juraji.albums.api.dto.toTag
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.TagService
 import nl.juraji.albums.domain.tags.Tag
@@ -57,7 +60,7 @@ internal class TagsControllerTest {
         val postedTag = fixture.next<NewTagDto>()
         val tag = fixture.next<Tag>()
 
-        every { tagService.createTag(postedTag.label, postedTag.color, postedTag.textColor) } returnsMonoOf tag
+        every { tagService.createTag(any(), any(), any()) } returnsMonoOf tag
 
         webTestClient
             .post()
@@ -67,6 +70,27 @@ internal class TagsControllerTest {
             .expectStatus().isOk
             .expectBody<Tag>()
             .isEqualTo(tag)
+
+        verify { tagService.createTag(postedTag.label, postedTag.color, postedTag.textColor) }
+    }
+
+    @Test
+    internal fun `should update tag`() {
+        val postedTag = fixture.next<UpdateTagDto>()
+        val tag = fixture.next<Tag>()
+
+        every { tagService.updateTag(any(), any()) } returnsMonoOf tag
+
+        webTestClient
+            .put()
+            .uri("/tags/${postedTag.id}")
+            .body(Mono.just(postedTag), NewTagDto::class.java)
+            .exchange()
+            .expectStatus().isOk
+            .expectBody<Tag>()
+            .isEqualTo(tag)
+
+        verify { tagService.updateTag(postedTag.id, postedTag.toTag()) }
     }
 
     @Test
