@@ -8,7 +8,7 @@ import {selectDirectoryLoadState, selectDirectoryPicturesRange} from '@reducers/
 import {environment} from '@environment';
 import {untilDestroyed} from '@utils/until-destroyed';
 import {fetchDirectoryPictures} from '@actions/pictures.actions';
-import {not, conditionalSideEffect} from '@utils/rx';
+import {not, sideEffect} from '@utils/rx';
 
 @Component({
   templateUrl: './directory.page.html',
@@ -32,10 +32,9 @@ export class DirectoryPage implements OnInit, OnDestroy {
 
   readonly directoryPictures$: Observable<PictureProps[]> = combineLatest([this.directoryId$, this.offSetLimitSelection$]).pipe(
     map(([directoryId, {page, size}]) => ({directoryId, page, size})),
-    conditionalSideEffect(
-      ({directoryId}) => this.store.select(selectDirectoryLoadState, directoryId).pipe(not()),
-      (props) => this.store.dispatch(fetchDirectoryPictures(props))
-    ),
+    sideEffect(
+      (props) => this.store.dispatch(fetchDirectoryPictures(props)),
+      ({directoryId}) => this.store.select(selectDirectoryLoadState, directoryId).pipe(not())),
     switchMap((props) => this.store.select(selectDirectoryPicturesRange, props)
       .pipe(map((pictures) => ({props, pictures})))),
     map(({pictures}) => pictures),

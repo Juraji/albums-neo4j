@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {selectAllTags, selectTagsLoaded} from '@reducers/tags';
-import {not, conditionalSideEffect} from '@utils/rx';
+import {not, sideEffect} from '@utils/rx';
 import {createTag, deleteTag, loadAllTags, updateTag} from '@actions/tags.actions';
 import {map, shareReplay} from 'rxjs/operators';
 import {Modals} from '@juraji/ng-bootstrap-modals';
@@ -15,10 +15,9 @@ export class TagsManagementPage implements OnInit {
 
   readonly tags$ = this.store.select(selectAllTags)
     .pipe(
-      conditionalSideEffect(
-        () => this.store.select(selectTagsLoaded).pipe(not()),
-        () => this.store.dispatch(loadAllTags())
-      ),
+      sideEffect(
+        () => this.store.dispatch(loadAllTags()),
+        () => this.store.select(selectTagsLoaded).pipe(not())),
       shareReplay(1)
     );
 

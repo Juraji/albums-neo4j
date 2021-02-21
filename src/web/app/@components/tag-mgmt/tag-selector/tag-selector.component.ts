@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '
 import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs';
 import {selectAllTags, selectTagsLoaded} from '@reducers/tags';
-import {conditionalSideEffect, not, sideEffect} from '@utils/rx';
+import {not, sideEffect} from '@utils/rx';
 import {createTag, createTagSuccess, loadAllTags} from '@actions/tags.actions';
 import {filter, map, shareReplay, switchMap} from 'rxjs/operators';
 import {Modals} from '@juraji/ng-bootstrap-modals';
@@ -19,10 +19,9 @@ export class TagSelectorComponent implements OnInit {
 
   readonly tags$: Observable<Tag[]> = this.store.select(selectAllTags)
     .pipe(
-      conditionalSideEffect(
-        () => this.store.select(selectTagsLoaded).pipe(not()),
-        () => this.store.dispatch(loadAllTags())
-      ),
+      sideEffect(
+        () => this.store.dispatch(loadAllTags()),
+        () => this.store.select(selectTagsLoaded).pipe(not())),
       shareReplay(1)
     );
 
