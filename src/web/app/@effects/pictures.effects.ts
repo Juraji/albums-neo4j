@@ -4,34 +4,37 @@ import {PicturesService} from '@services/pictures.service';
 import {
   addTagToPicture,
   addTagToPictureSuccess,
+  fetchDirectoryPictures,
+  fetchDirectoryPicturesSuccess,
   fetchPicture,
-  insurePictureRange,
-  loadPicturesSuccess, removeTagFromPicture, removeTagFromPictureSuccess,
-  setAllPicturesLoaded
+  fetchPictureSuccess,
+  removeTagFromPicture,
+  removeTagFromPictureSuccess,
+  setDirectoryLoadState,
 } from '@actions/pictures.actions';
 import {Store} from '@ngrx/store';
 import {map, mapTo, switchMap} from 'rxjs/operators';
-import {selectLoadedPictureCount} from '@reducers/pictures';
+import {selectDirectoryLoadState} from '@reducers/pictures';
 import {EffectMarker} from '@utils/effect-marker.annotation';
 import {filterAsync} from '@utils/rx/filter-async';
+import {not} from '@utils/rx/not';
 
 
 @Injectable()
 export class PicturesEffects {
 
   @EffectMarker
-  insurePictureSetRange$ = createEffect(() => this.actions$.pipe(
-    ofType(insurePictureRange),
-    filterAsync((p) => this.store.select(selectLoadedPictureCount, p)
-      .pipe(map((c) => c < (p.page * p.size) + p.size))),
+  fetchDirectoryPictures$ = createEffect(() => this.actions$.pipe(
+    ofType(fetchDirectoryPictures),
+    filterAsync((p) => this.store.select(selectDirectoryLoadState, p.directoryId).pipe(not())),
     switchMap(({directoryId, page, size}) =>
       this.picturesService.getPicturesByDirectory(directoryId, page, size)
         .pipe(map((pictures) => ({directoryId, pictures})))),
-    map((props) => {
-      if (props.pictures.length === 0) {
-        return setAllPicturesLoaded(props);
+    map(({directoryId, pictures}) => {
+      if (pictures.isEmpty()) {
+        return setDirectoryLoadState({directoryId, state: true});
       } else {
-        return loadPicturesSuccess(props);
+        return fetchDirectoryPicturesSuccess({pictures});
       }
     })
   ));
@@ -39,24 +42,26 @@ export class PicturesEffects {
   @EffectMarker
   fetchPicture$ = createEffect(() => this.actions$.pipe(
     ofType(fetchPicture),
-    switchMap(({pictureId}) =>
-      this.picturesService.getPicture(pictureId)
-        .pipe(map(picture => ({directoryId: picture.directory.id, pictures: [picture]})))),
-    map((props) => loadPicturesSuccess(props))
+    switchMap(({pictureId}) => this.picturesService.getPicture(pictureId)),
+    map((picture) => fetchPictureSuccess(picture))
   ));
 
   @EffectMarker
   addTagToPicture$ = createEffect(() => this.actions$.pipe(
     ofType(addTagToPicture),
-    switchMap(({picture, tag}) => this.picturesService.addTag(picture.id, tag.id).pipe(mapTo({picture, tag}))),
-    map((props) => addTagToPictureSuccess(props))
+    switchMap(({picture, tag}) => this.picturesService
+      .addTag(picture.id, tag.id).pipe(mapTo({picture, tag}))),
+    map(({picture, tag}) => addTagToPictureSuccess(
+      picture.copy({tags: [...picture.tags, tag]})))
   ));
 
   @EffectMarker
   removeTagFromPicture$ = createEffect(() => this.actions$.pipe(
     ofType(removeTagFromPicture),
-    switchMap(({picture, tag}) => this.picturesService.removeTag(picture.id, tag.id).pipe(mapTo({picture, tag}))),
-    map((props) => removeTagFromPictureSuccess(props))
+    switchMap(({picture, tag}) => this.picturesService
+      .removeTag(picture.id, tag.id).pipe(mapTo({picture, tag}))),
+    map(({picture, tag}) => removeTagFromPictureSuccess(
+      picture.copy({tags: picture.tags.filter(t => t.id === tag.id)})))
   ));
 
   constructor(

@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {filter, map, shareReplay, switchMap} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {selectPictureById} from '@reducers/pictures';
@@ -19,10 +19,10 @@ export class PicturePage implements OnInit {
   );
 
   readonly picture$: Observable<PictureProps | null> = this.pictureId$.pipe(
-    switchMap(pictureId => this.store.select(selectPictureById, {pictureId})
+    switchMap(pictureId => this.store.select(selectPictureById, pictureId)
       .pipe(map((picture) => ({pictureId, picture})))),
     sideEffect(
-      ({picture}) => !picture,
+      ({picture}) => of(!picture),
       ({pictureId}) => this.store.dispatch(fetchPicture({pictureId}))
     ),
     map(({picture}) => picture),

@@ -1,14 +1,15 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {ActivatedRoute} from '@angular/router';
-import {filter, map, switchMap, tap} from 'rxjs/operators';
+import {filter, map, shareReplay, switchMap} from 'rxjs/operators';
 import {selectDirectory} from '@reducers/directories';
 import {BehaviorSubject, combineLatest, fromEvent, Observable} from 'rxjs';
-import {isPictureSetFullyLoaded, selectPicturesRange} from '@reducers/pictures';
-import {insurePictureRange} from '@actions/pictures.actions';
+import {selectDirectoryLoadState, selectDirectoryPicturesRange} from '@reducers/pictures';
 import {environment} from '@environment';
 import {untilDestroyed} from '@utils/until-destroyed';
-import {filterAsync} from '@utils/rx/filter-async';
+import {fetchDirectoryPictures} from '@actions/pictures.actions';
+import {sideEffect} from '@utils/rx/side-effect';
+import {not} from '@utils/rx/not';
 
 @Component({
   templateUrl: './directory.page.html',
@@ -30,10 +31,15 @@ export class DirectoryPage implements OnInit, OnDestroy {
   );
 
   readonly directoryPictures$: Observable<PictureProps[]> = combineLatest([this.directoryId$, this.offSetLimitSelection$]).pipe(
-    filterAsync(([directoryId]) => this.store.select(isPictureSetFullyLoaded, {directoryId}).pipe(map(s => !s))),
     map(([directoryId, {page, size}]) => ({directoryId, page, size})),
-    tap((props) => this.store.dispatch(insurePictureRange(props))),
-    switchMap((props) => this.store.select(selectPicturesRange, props))
+    sideEffect(
+      ({directoryId}) => this.store.select(selectDirectoryLoadState, directoryId).pipe(not()),
+      (props) => this.store.dispatch(fetchDirectoryPictures(props))
+    ),
+    switchMap((props) => this.store.select(selectDirectoryPicturesRange, props)
+      .pipe(map((pictures) => ({props, pictures})))),
+    map(({pictures}) => pictures),
+    shareReplay(1)
   );
 
   constructor(

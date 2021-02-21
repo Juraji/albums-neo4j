@@ -1,6 +1,6 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {Store} from '@ngrx/store';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {selectAllTags} from '@reducers/tags';
 import {sideEffect} from '@utils/rx/side-effect';
 import {createTag, createTagSuccess, loadAllTags} from '@actions/tags.actions';
@@ -23,7 +23,7 @@ export class TagSelectorComponent implements OnInit {
   readonly tags$: Observable<Tag[]> = this.store.select(selectAllTags)
     .pipe(
       sideEffect(
-        (t) => t.isEmpty(),
+        (t) => of(t.isEmpty()),
         () => this.store.dispatch(loadAllTags())
       ),
       shareReplay(1)
