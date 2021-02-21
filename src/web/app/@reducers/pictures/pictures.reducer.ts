@@ -13,13 +13,13 @@ const pictureSelectors = picturesEntityAdapter.getSelectors();
 
 export const picturesReducer = createReducer(
   picturesEntityAdapter.getInitialState(),
-  on(fetchPictureSuccess, (s, picture) =>
+  on(fetchPictureSuccess, (s, {picture}) =>
     picturesEntityAdapter.addOne(picture, s)),
   on(fetchDirectoryPicturesSuccess, (s, {pictures}) =>
     picturesEntityAdapter.addMany(pictures, s)),
-  on(addTagToPictureSuccess, (s, picture) =>
+  on(addTagToPictureSuccess, (s, {picture}) =>
     picturesEntityAdapter.updateOne({id: picture.id, changes: picture}, s)),
-  on(removeTagFromPictureSuccess, (s, picture) =>
+  on(removeTagFromPictureSuccess, (s, {picture}) =>
     picturesEntityAdapter.updateOne({id: picture.id, changes: picture}, s)),
   on(deleteTagSuccess, (s, {id: tagId}) => {
     const updatedPictures: Update<PictureProps>[] = Object.values(s.entities)

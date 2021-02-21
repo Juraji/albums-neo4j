@@ -33,7 +33,7 @@ export class DirectoryPage implements OnInit, OnDestroy {
   readonly directoryPictures$: Observable<PictureProps[]> = combineLatest([this.directoryId$, this.offSetLimitSelection$]).pipe(
     map(([directoryId, {page, size}]) => ({directoryId, page, size})),
     sideEffect(
-      (props) => this.store.dispatch(fetchDirectoryPictures(props)),
+      ({directoryId, page, size}) => this.store.dispatch(fetchDirectoryPictures(directoryId, page, size)),
       ({directoryId}) => this.store.select(selectDirectoryLoadState(directoryId)).pipe(not())),
     switchMap(({directoryId, page, size}) => this.store.select(selectDirectoryPicturesRange(directoryId, page, size))),
     map((pictures) => pictures),

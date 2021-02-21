@@ -21,7 +21,7 @@ export class PicturePage implements OnInit {
 
   readonly picture$: Observable<PictureProps> = this.pictureId$.pipe(
     sideEffect(
-      (pictureId) => this.store.dispatch(fetchPicture({pictureId})),
+      (pictureId) => this.store.dispatch(fetchPicture(pictureId)),
       (pictureId) => this.store.select(selectPictureById(pictureId)).pipe(not())),
     switchMap(pictureId => this.store.select(selectPictureById(pictureId))
       .pipe(filterEmpty(), map((picture) => ({pictureId, picture})))),

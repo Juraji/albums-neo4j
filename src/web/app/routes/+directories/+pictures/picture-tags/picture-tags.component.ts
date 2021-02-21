@@ -22,13 +22,13 @@ export class PictureTagsComponent implements OnInit {
 
   onAddTag(tag: Tag) {
     if (!!this.picture) {
-      this.store.dispatch(addTagToPicture({picture: this.picture, tag}));
+      this.store.dispatch(addTagToPicture(this.picture, tag));
     }
   }
 
   onRemoveTag(tag: Tag) {
     if (!!this.picture) {
-      this.store.dispatch(removeTagFromPicture({picture: this.picture, tag}));
+      this.store.dispatch(removeTagFromPicture(this.picture, tag));
     }
   }
 }

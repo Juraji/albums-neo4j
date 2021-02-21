@@ -31,9 +31,9 @@ export class PicturesEffects {
         .pipe(map((pictures) => ({directoryId, pictures})))),
     map(({directoryId, pictures}) => {
       if (pictures.isEmpty()) {
-        return setDirectoryLoadState({directoryId, state: true});
+        return setDirectoryLoadState(directoryId);
       } else {
-        return fetchDirectoryPicturesSuccess({pictures});
+        return fetchDirectoryPicturesSuccess(pictures);
       }
     })
   ));
@@ -51,7 +51,7 @@ export class PicturesEffects {
     switchMap(({picture, tag}) => this.picturesService
       .addTag(picture.id, tag.id).pipe(mapTo({picture, tag}))),
     map(({picture, tag}) => addTagToPictureSuccess(
-      picture.copy({tags: [...picture.tags, tag]})))
+      picture.copy({tags: [...picture.tags, tag]}), tag))
   ));
 
   @EffectMarker
@@ -60,7 +60,7 @@ export class PicturesEffects {
     switchMap(({picture, tag}) => this.picturesService
       .removeTag(picture.id, tag.id).pipe(mapTo({picture, tag}))),
     map(({picture, tag}) => removeTagFromPictureSuccess(
-      picture.copy({tags: picture.tags.filter(t => t.id !== tag.id)})))
+      picture.copy({tags: picture.tags.filter(t => t.id !== tag.id)}), tag))
   ));
 
   constructor(
