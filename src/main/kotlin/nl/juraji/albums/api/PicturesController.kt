@@ -31,19 +31,19 @@ class PicturesController(
 
     @DeleteMapping("/{pictureId}")
     fun deletePicture(
-        @PathVariable pictureId: String,
+        @PathVariable("pictureId") pictureId: String,
         @RequestParam("deleteFile", required = false) deleteFile: Boolean?
     ): Mono<Unit> = pictureService.deletePicture(pictureId, deleteFile ?: false)
 
     @PostMapping("/{pictureId}/tags/{tagId}")
     fun tagPictureBy(
         @PathVariable("pictureId") pictureId: String,
-        @PathVariable tagId: String,
+        @PathVariable("tagId") tagId: String,
     ): Mono<Unit> = pictureService.addTag(pictureId, tagId)
 
     @DeleteMapping("/{pictureId}/tags/{tagId}")
     fun removeTagFromPicture(
-        @PathVariable pictureId: String,
-        @PathVariable tagId: String
+        @PathVariable("pictureId") pictureId: String,
+        @PathVariable("tagId") tagId: String
     ): Mono<Unit> = pictureService.removeTag(pictureId, tagId)
 }

@@ -7,6 +7,7 @@ import {MainNavbarModule} from '@components/main-navbar/main-navbar.module';
 import { PicturePropertiesComponent } from './picture-properties/picture-properties.component';
 import {FsPipesModule} from '@components/fs-pipes/fs-pipes.module';
 import { PictureTagsComponent } from './picture-tags/picture-tags.component';
+import {TagSelectorModule} from '@components/tag-selector/tag-selector.module';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { PictureTagsComponent } from './picture-tags/picture-tags.component';
     CommonModule,
     PicturesRoutingModule,
     MainNavbarModule,
-    FsPipesModule
+    FsPipesModule,
+    TagSelectorModule
   ]
 })
 export class PicturesModule {

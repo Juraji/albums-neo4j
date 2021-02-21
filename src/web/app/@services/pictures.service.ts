@@ -23,4 +23,12 @@ export class PicturesService {
         .append('size', `${size}`)
     });
   }
+
+  addTag(pictureId: string, tagId: string): Observable<void> {
+    return this.httpClient.post<void>(`${environment.apiBaseUri}/pictures/${pictureId}/tags/${tagId}`, null);
+  }
+
+  removeTag(pictureId: string, tagId: string): Observable<void> {
+    return this.httpClient.delete<void>(`${environment.apiBaseUri}/pictures/${pictureId}/tags/${tagId}`);
+  }
 }

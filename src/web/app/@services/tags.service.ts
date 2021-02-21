@@ -10,9 +10,14 @@ export class TagsService {
 
   constructor(
     private readonly httpClient: HttpClient
-  ) { }
+  ) {
+  }
 
   getAllTags(): Observable<Tag[]> {
     return this.httpClient.get<Tag[]>(`${environment.apiBaseUri}/tags`);
+  }
+
+  createTag(newTag: NewTagDto): Observable<Tag> {
+    return this.httpClient.post<Tag>(`${environment.apiBaseUri}/tags`, newTag);
   }
 }

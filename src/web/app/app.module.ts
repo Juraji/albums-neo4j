@@ -3,7 +3,6 @@ import {BrowserModule} from '@angular/platform-browser';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
-import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {StoreModule} from '@ngrx/store';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {environment} from '@environment';
@@ -17,6 +16,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {hostWindowFactory, WINDOW} from '@services/provided/window.injection-token';
 import {ROOT_EM_SIZE, rootEmSizeFactory} from '@services/provided/rem-size.injection-token';
 import {DOCUMENT} from '@angular/common';
+import {TagsEffects} from '@effects/tags.effects';
 
 @NgModule({
   declarations: [
@@ -27,11 +27,10 @@ import {DOCUMENT} from '@angular/common';
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    NgbModule,
     NgbmodModalsModule.forRoot(),
     StoreModule.forRoot(reducers, {metaReducers}),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
-    EffectsModule.forRoot([DirectoriesEffects, PicturesEffects])
+    EffectsModule.forRoot([DirectoriesEffects, PicturesEffects, TagsEffects])
   ],
   providers: [
     {provide: WINDOW, useFactory: hostWindowFactory},

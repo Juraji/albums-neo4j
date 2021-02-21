@@ -1,5 +1,5 @@
 import {createFeatureSelector, createReducer, createSelector, on} from '@ngrx/store';
-import {loadAllTagsSuccess} from '@actions/tags.actions';
+import {createTagSuccess, loadAllTagsSuccess} from '@actions/tags.actions';
 
 const initialState: TagsSliceState = {
   tags: []
@@ -7,7 +7,8 @@ const initialState: TagsSliceState = {
 
 export const reducer = createReducer(
   initialState,
-  on(loadAllTagsSuccess, (s, props) => s.copy(props))
+  on(loadAllTagsSuccess, (s, props) => s.copy(props)),
+  on(createTagSuccess, (s, tag) => s.copy({tags: [...s.tags, tag]}))
 );
 
 export const selectTagsSlice = createFeatureSelector<TagsSliceState>('tags');

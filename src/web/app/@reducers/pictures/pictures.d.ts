@@ -21,3 +21,8 @@ interface SelectPictureByIdProps {
 interface FetchPictureProps {
   pictureId: string;
 }
+
+interface AddTagToPictureProps {
+  picture: PictureProps;
+  tag: Tag;
+}

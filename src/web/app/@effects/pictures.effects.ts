@@ -1,9 +1,16 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {PicturesService} from '@services/pictures.service';
-import {fetchPicture, insurePictureRange, loadPicturesSuccess, setAllPicturesLoaded} from '@actions/pictures.actions';
+import {
+  addTagToPicture,
+  addTagToPictureSuccess,
+  fetchPicture,
+  insurePictureRange,
+  loadPicturesSuccess, removeTagFromPicture, removeTagFromPictureSuccess,
+  setAllPicturesLoaded
+} from '@actions/pictures.actions';
 import {Store} from '@ngrx/store';
-import {map, switchMap} from 'rxjs/operators';
+import {map, mapTo, switchMap} from 'rxjs/operators';
 import {selectLoadedPictureCount} from '@reducers/pictures';
 import {EffectMarker} from '@utils/effect-marker.annotation';
 import {filterAsync} from '@utils/rx/filter-async';
@@ -36,6 +43,20 @@ export class PicturesEffects {
       this.picturesService.getPicture(pictureId)
         .pipe(map(picture => ({directoryId: picture.directory.id, pictures: [picture]})))),
     map((props) => loadPicturesSuccess(props))
+  ));
+
+  @EffectMarker
+  addTagToPicture$ = createEffect(() => this.actions$.pipe(
+    ofType(addTagToPicture),
+    switchMap(({picture, tag}) => this.picturesService.addTag(picture.id, tag.id).pipe(mapTo({picture, tag}))),
+    map((props) => addTagToPictureSuccess(props))
+  ));
+
+  @EffectMarker
+  removeTagFromPicture$ = createEffect(() => this.actions$.pipe(
+    ofType(removeTagFromPicture),
+    switchMap(({picture, tag}) => this.picturesService.removeTag(picture.id, tag.id).pipe(mapTo({picture, tag}))),
+    map((props) => removeTagFromPictureSuccess(props))
   ));
 
   constructor(

@@ -1,5 +1,10 @@
 import {createFeatureSelector, createReducer, createSelector, on} from '@ngrx/store';
-import {loadPicturesSuccess, setAllPicturesLoaded} from '@actions/pictures.actions';
+import {
+  addTagToPictureSuccess,
+  loadPicturesSuccess,
+  removeTagFromPictureSuccess,
+  setAllPicturesLoaded
+} from '@actions/pictures.actions';
 
 
 const initialState: PicturesSliceState = {};
@@ -23,6 +28,24 @@ export const reducer = createReducer(
   on(setAllPicturesLoaded, (s, {directoryId}) => {
     const pdState = s[directoryId] || initialPictureDirectoryState.copy();
     return s.copy({[directoryId]: pdState.copy({fullyLoaded: true})});
+  }),
+  on(addTagToPictureSuccess, (s, {picture, tag}) => {
+    const pdState = s[picture.directory.id] || initialPictureDirectoryState.copy();
+    return s.copy({
+      [picture.directory.id]: pdState.copy({
+        pictures: pdState.pictures
+          .map((p) => p.id === picture.id ? p.copy({tags: [...p.tags, tag]}) : p)
+      })
+    });
+  }),
+  on(removeTagFromPictureSuccess, (s, {picture, tag}) => {
+    const pdState = s[picture.directory.id] || initialPictureDirectoryState.copy();
+    return s.copy({
+      [picture.directory.id]: pdState.copy({
+        pictures: pdState.pictures
+          .map((p) => p.id === picture.id ? p.copy({tags: p.tags.filter((t) => t.id !== tag.id)}) : p)
+      })
+    });
   })
 );
 
