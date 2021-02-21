@@ -1,10 +1,7 @@
 interface PicturesSliceState {
-  pictures: PictureMap;
-  directoryLoadStates: StateMap;
+  pictures: EntityState<PictureProps>;
+  directoryLoadStates: Record<string, boolean>;
 }
-
-type PictureMap = Record<string, PictureProps>;
-type StateMap = Record<string, boolean>;
 
 interface FetchPictureProps {
   pictureId: string;
@@ -23,15 +20,6 @@ interface FetchDirectoryPicturesSuccessProps {
 interface AddTagToPictureProps {
   picture: PictureProps;
   tag: Tag;
-}
-
-interface SelectDirectoryPicturesProps {
-  directoryId: string;
-}
-
-interface SelectDirectoryPicturesRangeProps extends SelectDirectoryPicturesProps {
-  page: number;
-  size: number;
 }
 
 interface SetDirectoryLoadStateProps {

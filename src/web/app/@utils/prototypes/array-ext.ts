@@ -13,23 +13,6 @@ export default function () {
     },
   });
 
-  Object.defineProperty(Array.prototype, 'withinBounds', {
-    configurable: false,
-    enumerable: false,
-    writable: false,
-    value: function <T>(
-      this: Array<T>,
-      index: number,
-      startExclusive: boolean = false,
-      endExclusive: boolean = false
-    ): boolean {
-      const innerBound = startExclusive ? 1 : 0;
-      const outerBound = Math.max(endExclusive ? this.length - 2 : this.length - 1, 0);
-
-      return index >= innerBound && index <= outerBound;
-    },
-  });
-
   Object.defineProperty(Array.prototype, 'isEmpty', {
     configurable: false,
     enumerable: false,
@@ -39,21 +22,21 @@ export default function () {
     },
   });
 
-  Object.defineProperty(Array.prototype, 'isAtEnd', {
-    configurable: false,
-    enumerable: false,
-    writable: false,
-    value: function <T>(this: Array<T>, index: number) {
-      return index < 0 || index >= this.length - 1;
-    },
-  });
-
   Object.defineProperty(Array.prototype, 'first', {
     configurable: false,
     enumerable: false,
     writable: false,
     value: function <T>(this: Array<T>, predicate: (value: T, index: number, array: T[]) => unknown) {
       return this.filter(predicate).pop() || null;
+    },
+  });
+
+  Object.defineProperty(Array.prototype, 'filterEmpty', {
+    configurable: false,
+    enumerable: false,
+    writable: false,
+    value: function <T>(this: Array<T>) {
+      return this.filter(v => !(v === null || v === undefined));
     },
   });
 }

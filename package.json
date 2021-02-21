@@ -23,6 +23,7 @@
     "@juraji/ng-bootstrap-modals": "0.0.4",
     "@ng-bootstrap/ng-bootstrap": "9.x.x",
     "@ngrx/effects": "11.x.x",
+    "@ngrx/entity": "^11.0.1",
     "@ngrx/schematics": "11.x.x",
     "@ngrx/store": "11.x.x",
     "@ngrx/store-devtools": "11.x.x",
