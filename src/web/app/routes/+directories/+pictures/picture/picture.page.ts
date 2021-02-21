@@ -4,7 +4,7 @@ import {Observable} from 'rxjs';
 import {filter, map, shareReplay, switchMap} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {selectPictureById} from '@reducers/pictures';
-import {not, sideEffect} from '@utils/rx';
+import {filterEmpty, not, sideEffect} from '@utils/rx';
 import {fetchPicture} from '@actions/pictures.actions';
 
 @Component({
@@ -19,12 +19,12 @@ export class PicturePage implements OnInit {
     map((m) => m.get('pictureId') as string)
   );
 
-  readonly picture$: Observable<PictureProps | null> = this.pictureId$.pipe(
+  readonly picture$: Observable<PictureProps> = this.pictureId$.pipe(
     sideEffect(
       (pictureId) => this.store.dispatch(fetchPicture({pictureId})),
-      (pictureId) => this.store.select(selectPictureById, pictureId).pipe(not())),
-    switchMap(pictureId => this.store.select(selectPictureById, pictureId)
-      .pipe(map((picture) => ({pictureId, picture})))),
+      (pictureId) => this.store.select(selectPictureById(pictureId)).pipe(not())),
+    switchMap(pictureId => this.store.select(selectPictureById(pictureId))
+      .pipe(filterEmpty(), map((picture) => ({pictureId, picture})))),
     map(({picture}) => picture),
     shareReplay(1)
   );

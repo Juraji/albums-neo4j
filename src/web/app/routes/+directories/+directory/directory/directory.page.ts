@@ -34,10 +34,9 @@ export class DirectoryPage implements OnInit, OnDestroy {
     map(([directoryId, {page, size}]) => ({directoryId, page, size})),
     sideEffect(
       (props) => this.store.dispatch(fetchDirectoryPictures(props)),
-      ({directoryId}) => this.store.select(selectDirectoryLoadState, directoryId).pipe(not())),
-    switchMap((props) => this.store.select(selectDirectoryPicturesRange, props)
-      .pipe(map((pictures) => ({props, pictures})))),
-    map(({pictures}) => pictures),
+      ({directoryId}) => this.store.select(selectDirectoryLoadState(directoryId)).pipe(not())),
+    switchMap(({directoryId, page, size}) => this.store.select(selectDirectoryPicturesRange(directoryId, page, size))),
+    map((pictures) => pictures),
     shareReplay(1)
   );
 

@@ -25,7 +25,7 @@ export class PicturesEffects {
   @EffectMarker
   fetchDirectoryPictures$ = createEffect(() => this.actions$.pipe(
     ofType(fetchDirectoryPictures),
-    filterAsync((p) => this.store.select(selectDirectoryLoadState, p.directoryId).pipe(not())),
+    filterAsync((p) => this.store.select(selectDirectoryLoadState(p.directoryId)).pipe(not())),
     switchMap(({directoryId, page, size}) =>
       this.picturesService.getPicturesByDirectory(directoryId, page, size)
         .pipe(map((pictures) => ({directoryId, pictures})))),
