@@ -6,11 +6,8 @@ export const sideEffect = <T>(
   predicate?: (value: T) => Observable<boolean>
 ): MonoTypeOperatorFunction<T> => {
   if (!!predicate) {
-    return tap((v) => predicate(v)
-      .pipe(
-        take(1),
-        filter(b => b),
-      )
+    return tap(v => predicate(v)
+      .pipe(take(1), filter(b => b))
       .subscribe(() => action(v)));
   } else {
     return tap(action);

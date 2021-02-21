@@ -1,4 +1,4 @@
-import {createAction, props} from '@ngrx/store';
+import {createAction} from '@ngrx/store';
 
 export const loadRootDirectories = createAction(
   '[Directories] Load Root Directories'
@@ -6,5 +6,5 @@ export const loadRootDirectories = createAction(
 
 export const loadRootDirectoriesSuccess = createAction(
   '[Directories] Load Root Directories Success',
-  props<{ tree: Directory[] }>()
+  (tree: Directory[]) => ({tree})
 );

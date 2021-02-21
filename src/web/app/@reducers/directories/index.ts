@@ -20,7 +20,7 @@ export const reducer = createReducer(
 
 export const selectDirectoriesState = createFeatureSelector<DirectoriesSliceState>('directories');
 export const selectDirectoryTree = createSelector(selectDirectoriesState, (s) => s.tree);
-export const selectDirectory = createSelector(
+export const selectDirectory = (directoryId: string) => createSelector(
   selectDirectoriesState,
-  (s: DirectoriesSliceState, {directoryId}: SelectDirectoryProps) => s.directories[directoryId]
+  s => s.directories[directoryId]
 );

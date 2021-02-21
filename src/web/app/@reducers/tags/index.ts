@@ -12,9 +12,9 @@ export const reducer = createReducer(
     const mergeMap = tags.reduce((acc, t) => ({...acc, [t.id]: t}), {});
     return s.copy({tags: mergeMap, tagsLoaded: true});
   }),
-  on(createTagSuccess, (s, tag) => s.copy({tags: s.tags.copy({[tag.id]: tag})})),
-  on(updateTagSuccess, (s, tag) => s.copy({tags: s.tags.copy({[tag.id]: tag})})),
-  on(deleteTagSuccess, (s, tag) => s.copy({tags: s.tags.copy({[tag.id]: undefined})})),
+  on(createTagSuccess, (s, {tag}) => s.copy({tags: s.tags.copy({[tag.id]: tag})})),
+  on(updateTagSuccess, (s, {tag}) => s.copy({tags: s.tags.copy({[tag.id]: tag})})),
+  on(deleteTagSuccess, (s, {tag}) => s.copy({tags: s.tags.copy({[tag.id]: undefined})})),
 );
 
 export const selectTagsSlice = createFeatureSelector<TagsSliceState>('tags');

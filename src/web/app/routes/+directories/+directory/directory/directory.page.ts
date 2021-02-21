@@ -27,7 +27,7 @@ export class DirectoryPage implements OnInit, OnDestroy {
   );
 
   readonly directoryProps$: Observable<Directory> = this.directoryId$.pipe(
-    switchMap((directoryId) => this.store.select(selectDirectory, {directoryId}))
+    switchMap((directoryId) => this.store.select(selectDirectory(directoryId)))
   );
 
   readonly directoryPictures$: Observable<PictureProps[]> = combineLatest([this.directoryId$, this.offSetLimitSelection$]).pipe(

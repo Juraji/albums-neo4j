@@ -7,7 +7,9 @@ import {
   deleteTag,
   deleteTagSuccess,
   loadAllTags,
-  loadAllTagsSuccess, updateTag, updateTagSuccess
+  loadAllTagsSuccess,
+  updateTag,
+  updateTagSuccess
 } from '@actions/tags.actions';
 import {map, mapTo, switchMap} from 'rxjs/operators';
 import {TagsService} from '@services/tags.service';
@@ -20,27 +22,27 @@ export class TagsEffects {
   loadAllTags$ = createEffect(() => this.actions$.pipe(
     ofType(loadAllTags),
     switchMap(() => this.tagsService.getAllTags()),
-    map((tags) => loadAllTagsSuccess({tags}))
+    map((tags) => loadAllTagsSuccess(tags))
   ));
 
   @EffectMarker
   createTag$ = createEffect(() => this.actions$.pipe(
     ofType(createTag),
-    switchMap((newTag) => this.tagsService.createTag(newTag)),
+    switchMap(({newTag}) => this.tagsService.createTag(newTag)),
     map((tag) => createTagSuccess(tag))
   ));
 
   @EffectMarker
   updateTag$ = createEffect(() => this.actions$.pipe(
     ofType(updateTag),
-    switchMap((tag) => this.tagsService.updateTag(tag)),
+    switchMap(({tag}) => this.tagsService.updateTag(tag)),
     map((tag) => updateTagSuccess(tag))
   ));
 
   @EffectMarker
   deleteTag$ = createEffect(() => this.actions$.pipe(
     ofType(deleteTag),
-    switchMap((tag) => this.tagsService.deleteTag(tag).pipe(mapTo(tag))),
+    switchMap(({tag}) => this.tagsService.deleteTag(tag).pipe(mapTo(tag))),
     map((tag) => deleteTagSuccess(tag))
   ));
 

@@ -1,4 +1,4 @@
-import {createAction, props} from '@ngrx/store';
+import {createAction} from '@ngrx/store';
 
 export const loadAllTags = createAction(
   '[Tags] Load all tags'
@@ -6,36 +6,36 @@ export const loadAllTags = createAction(
 
 export const loadAllTagsSuccess = createAction(
   '[Tags] Load all tags success',
-  props<LoadAllTagsSuccessProps>()
+  (tags: Tag[]) => ({tags})
 );
 
 export const createTag = createAction(
   '[Tags] Create tag',
-  props<NewTagDto>()
+  (newTag: NewTagDto) => ({newTag})
 );
 
 export const createTagSuccess = createAction(
   '[Tags] Create tag success',
-  props<Tag>()
+  (tag: Tag) => ({tag})
 );
 
 export const updateTag = createAction(
   '[Tags] Update tag',
-  props<Tag>()
+  (tag: Tag) => ({tag})
 );
 
 export const updateTagSuccess = createAction(
   '[Tags] Update tag success',
-  props<Tag>()
+  (tag: Tag) => ({tag})
 );
 
 export const deleteTag = createAction(
   '[Tags] deleteTag',
-  props<Tag>()
+  (tag: Tag) => ({tag})
 );
 
 
 export const deleteTagSuccess = createAction(
   '[Tags] deleteTag success',
-  props<Tag>()
+  (tag: Tag) => ({tag})
 );

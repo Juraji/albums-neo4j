@@ -8,6 +8,7 @@ import {filter, map, shareReplay, switchMap} from 'rxjs/operators';
 import {Modals} from '@juraji/ng-bootstrap-modals';
 import {EditTagModal} from '../edit-tag/edit-tag.modal';
 import {Actions, ofType} from '@ngrx/effects';
+import {unwrap} from '@utils/rx/unwrap';
 
 @Component({
   selector: 'app-tag-selector',
@@ -49,7 +50,10 @@ export class TagSelectorComponent implements OnInit {
       .onResolved
       .pipe(
         sideEffect(tag => this.store.dispatch(createTag(tag))),
-        switchMap(tag => this.actions$.pipe(ofType(createTagSuccess), filter(t => t.label === tag.label)))
+        switchMap(tag => this.actions$.pipe(
+          ofType(createTagSuccess),
+          unwrap('tag'),
+          filter(t => t.label === tag.label)))
       )
       .subscribe(tag => this.onTagSelected(tag));
   }

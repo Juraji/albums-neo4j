@@ -4,7 +4,3 @@ interface TagsSliceState {
 }
 
 type TagMap = Record<string, Tag>;
-
-interface LoadAllTagsSuccessProps {
-  tags: Tag[];
-}

@@ -14,7 +14,7 @@ export class DirectoriesEffects {
   readonly loadRoots$ = createEffect(() => this.actions$.pipe(
     ofType(loadRootDirectories),
     switchMap(() => this.directoriesService.getRoots()),
-    map((tree) => loadRootDirectoriesSuccess({tree}))
+    map((tree) => loadRootDirectoriesSuccess(tree))
   ));
 
   @EffectMarker

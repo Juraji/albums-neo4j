@@ -21,7 +21,7 @@ export const picturesReducer = createReducer(
     picturesEntityAdapter.updateOne({id: picture.id, changes: picture}, s)),
   on(removeTagFromPictureSuccess, (s, {picture}) =>
     picturesEntityAdapter.updateOne({id: picture.id, changes: picture}, s)),
-  on(deleteTagSuccess, (s, {id: tagId}) => {
+  on(deleteTagSuccess, (s, {tag: {id: tagId}}) => {
     const updatedPictures: Update<PictureProps>[] = Object.values(s.entities)
       .filterEmpty()
       .filter(p => p.tags.some(t => t.id === tagId))
