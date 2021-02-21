@@ -57,7 +57,7 @@ internal class TagsControllerTest {
         val postedTag = fixture.next<NewTagDto>()
         val tag = fixture.next<Tag>()
 
-        every { tagService.createTag(postedTag.label, postedTag.color) } returnsMonoOf tag
+        every { tagService.createTag(postedTag.label, postedTag.color, postedTag.textColor) } returnsMonoOf tag
 
         webTestClient
             .post()
@@ -86,7 +86,8 @@ internal class TagsControllerTest {
     internal fun `should validate NewTagDto on post`() {
         val tagDto = NewTagDto(
             label = "",
-            color = "invalid_color"
+            color = "invalid_color",
+            textColor = "#000000"
         )
 
         webTestClient

@@ -9,4 +9,6 @@ data class NewTagDto(
     val label: String,
     @field:Pattern(regexp = Patterns.HEX_COLOR)
     val color: String,
+    @field:Pattern(regexp = Patterns.HEX_COLOR)
+    val textColor: String,
 )

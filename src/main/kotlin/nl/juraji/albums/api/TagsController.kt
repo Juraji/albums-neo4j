@@ -20,7 +20,7 @@ class TagsController(
     @PostMapping
     fun createTag(
         @Valid @RequestBody tag: NewTagDto
-    ): Mono<Tag> = tagService.createTag(tag.label, tag.color)
+    ): Mono<Tag> = tagService.createTag(tag.label, tag.color, tag.textColor)
 
     @DeleteMapping("/{tagId}")
     fun deleteTag(

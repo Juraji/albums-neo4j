@@ -10,5 +10,6 @@ data class Tag(
     @Id @GeneratedValue(UUIDStringGenerator::class)
     val id: String? = null,
     val label: String,
-    val color: String
+    val color: String,
+    val textColor: String,
 )
