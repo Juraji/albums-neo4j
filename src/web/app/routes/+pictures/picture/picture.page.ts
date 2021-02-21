@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Observable} from 'rxjs';
-import {filter, map, switchMap} from 'rxjs/operators';
+import {filter, map, shareReplay, switchMap} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {selectPictureById} from '@reducers/pictures';
 import {sideEffect} from '@utils/rx/side-effect';
@@ -25,7 +25,8 @@ export class PicturePage implements OnInit {
       ({picture}) => !picture,
       ({pictureId}) => this.store.dispatch(fetchPicture({pictureId}))
     ),
-    map(({picture}) => picture)
+    map(({picture}) => picture),
+    shareReplay(1)
   );
 
   constructor(

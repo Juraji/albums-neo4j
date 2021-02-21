@@ -4,7 +4,7 @@ import {Observable} from 'rxjs';
 import {selectAllTags} from '@reducers/tags';
 import {sideEffect} from '@utils/rx/side-effect';
 import {createTag, createTagSuccess, loadAllTags} from '@actions/tags.actions';
-import {filter, map} from 'rxjs/operators';
+import {filter, map, shareReplay} from 'rxjs/operators';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Actions, ofType} from '@ngrx/effects';
 
@@ -26,6 +26,7 @@ export class TagSelectorComponent implements OnInit {
         (t) => t.isEmpty(),
         () => this.store.dispatch(loadAllTags())
       ),
+      shareReplay(1)
     );
 
   readonly tagsIsEmpty$ = this.tags$.pipe(map(arr => arr.isEmpty()));
