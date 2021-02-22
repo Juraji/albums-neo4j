@@ -6,7 +6,9 @@ export class BooleanToggle extends BehaviorSubject<boolean> {
     super(state);
   }
 
-  toggle() {
+  toggle(): boolean {
+    const next = !this.value;
     this.next(!this.value);
+    return next;
   }
 }

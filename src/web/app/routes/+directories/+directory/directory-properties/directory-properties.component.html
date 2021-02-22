@@ -17,7 +17,7 @@
                         (directoryAction)="onDirectoryAction($event)"></app-directory-tree>
   </div>
   <button type="button" class="btn btn-primary shadow-sm properties-sidebar-toggler"
-          (click)="closed$.toggle()" title="Toggle side bar">
+          (click)="onToggleSideBar()" title="Toggle side bar">
     <ng-container [ngSwitch]="closed$ | async">
       <span *ngSwitchCase="true" class="fa fa-chevron-left"></span>
       <span *ngSwitchCase="false" class="fa fa-chevron-right"></span>
