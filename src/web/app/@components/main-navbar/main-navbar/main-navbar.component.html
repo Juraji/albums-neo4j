@@ -1,14 +1,14 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3 fixed-top shadow">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">Albums</a>
+    <a class="navbar-brand" routerLink="/">Albums</a>
     <button class="navbar-toggler" type="button" (click)="opened$.toggle()"
             aria-controls="navbarSupportedContent" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" [class.show]="opened$ | async" id="navbarSupportedContent">
-      <ul ngbNav [activeId]="route.fragment | async" class="navbar-nav">
-        <li [ngbNavItem]="link.url" *ngFor="let link of links">
-          <a ngbNavLink [routerLink]="link.url" routerLinkActive="active">{{ link.label }}</a>
+      <ul class="navbar-nav">
+        <li class="nav-item" *ngFor="let link of links">
+          <a class="nav-link" [routerLink]="link.url" routerLinkActive="active">{{ link.label }}</a>
         </li>
       </ul>
     </div>

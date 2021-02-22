@@ -1,5 +1,4 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
 import {BooleanToggle} from '@utils/boolean-toggle';
 
 interface Link {
@@ -22,7 +21,7 @@ export class MainNavbarComponent implements OnInit {
     {label: 'Tags', url: '/tags'},
   ];
 
-  constructor(public route: ActivatedRoute) {
+  constructor() {
   }
 
   ngOnInit(): void {
