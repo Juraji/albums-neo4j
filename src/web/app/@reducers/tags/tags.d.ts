@@ -1,6 +1,4 @@
 interface TagsSliceState {
-  tags: TagMap;
+  tags: EntityState<Tag>;
   tagsLoaded: boolean;
 }
-
-type TagMap = Record<string, Tag>;

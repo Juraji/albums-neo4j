@@ -22,7 +22,7 @@ export class TagsService {
   }
 
   updateTag(tag: Tag): Observable<Tag> {
-    return this.httpClient.put<Tag>(`${environment.apiBaseUri}/tags`, tag);
+    return this.httpClient.put<Tag>(`${environment.apiBaseUri}/tags/${tag.id}`, tag);
   }
 
   deleteTag(tag: Tag): Observable<void> {

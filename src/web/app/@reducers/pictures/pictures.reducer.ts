@@ -1,4 +1,4 @@
-import {createEntityAdapter, EntityAdapter, Update} from '@ngrx/entity';
+import {createEntityAdapter, Update} from '@ngrx/entity';
 import {createFeatureSelector, createReducer, createSelector, on} from '@ngrx/store';
 import {
   addTagToPictureSuccess,
@@ -6,9 +6,9 @@ import {
   fetchPictureSuccess,
   removeTagFromPictureSuccess
 } from '@actions/pictures.actions';
-import {deleteTagSuccess} from '@actions/tags.actions';
+import {deleteTagSuccess, updateTagSuccess} from '@actions/tags.actions';
 
-const picturesEntityAdapter: EntityAdapter<PictureProps> = createEntityAdapter();
+const picturesEntityAdapter = createEntityAdapter<PictureProps>();
 const pictureSelectors = picturesEntityAdapter.getSelectors();
 
 export const picturesReducer = createReducer(
@@ -21,12 +21,24 @@ export const picturesReducer = createReducer(
     picturesEntityAdapter.updateOne({id: picture.id, changes: picture}, s)),
   on(removeTagFromPictureSuccess, (s, {picture}) =>
     picturesEntityAdapter.updateOne({id: picture.id, changes: picture}, s)),
+  on(updateTagSuccess, (s, {tag}) => {
+    const updatedPictures: Update<PictureProps>[] = pictureSelectors
+      .selectAll(s)
+      .filter(({tags}) => tags.some(t => t.id === tag.id))
+      .map(p => {
+        const tagIdx = p.tags.findIndex(t => t.id === tag.id);
+        return p.copy({tags: p.tags.replace(tagIdx, tag)});
+      })
+      .map(({id, ...changes}) => ({id, changes}));
+
+    return picturesEntityAdapter.updateMany(updatedPictures, s);
+  }),
   on(deleteTagSuccess, (s, {tag: {id: tagId}}) => {
-    const updatedPictures: Update<PictureProps>[] = Object.values(s.entities)
-      .filterEmpty()
-      .filter(p => p.tags.some(t => t.id === tagId))
+    const updatedPictures: Update<PictureProps>[] = pictureSelectors
+      .selectAll(s)
+      .filter(({tags}) => tags.some(t => t.id === tagId))
       .map(p => p.copy({tags: p.tags.filter(t => t.id !== tagId)}))
-      .map(p => ({id: p.id, changes: p}));
+      .map(({id, ...changes}) => ({id, changes}));
 
     return picturesEntityAdapter.updateMany(updatedPictures, s);
   }),
@@ -35,10 +47,7 @@ export const picturesReducer = createReducer(
 const selectPicturesSlice = createFeatureSelector<PicturesSliceState>('pictures');
 const selectPicturesEntityState = createSelector(selectPicturesSlice, s => s.pictures as EntityState<PictureProps>);
 
-const selectPictureEntities = createSelector(
-  selectPicturesEntityState,
-  pictureSelectors.selectEntities
-);
+const selectPictureEntities = createSelector(selectPicturesEntityState, pictureSelectors.selectEntities);
 
 export const selectPictureById = (id: string) => createSelector(
   selectPictureEntities,

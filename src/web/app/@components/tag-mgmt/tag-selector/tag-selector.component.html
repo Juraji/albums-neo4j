@@ -5,8 +5,7 @@
   <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
     <button *ngIf="tagsIsEmpty$ | async" disabled>No tags available</button>
     <button ngbDropdownItem *ngFor="let tag of tags$ | async" (click)="onTagSelected(tag)">
-      <span class="fa fa-plus"></span>&nbsp;
-      <span class="badge" [style.backgroundColor]="tag.color">{{tag.label}}</span>
+      +&nbsp;<span appTag [tag]="tag"></span>
     </button>
     <button ngbDropdownItem (click)="onCreateTag()">Create new tag</button>
   </div>
