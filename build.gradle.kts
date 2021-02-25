@@ -53,6 +53,7 @@ tasks.withType<KotlinCompile> {
             "-Xopt-in=kotlin.io.path.ExperimentalPathApi"
         )
         jvmTarget = java.targetCompatibility.majorVersion
+        useIR = true
     }
 }
 
