@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/events")
-class SseController(
+class EventsController(
     private val sseEventListener: SseEventListener
 ) {
 

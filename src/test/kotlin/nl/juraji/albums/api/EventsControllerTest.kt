@@ -8,7 +8,6 @@ import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.events.AlbumEvent
 import nl.juraji.albums.eventListeners.SseEventListener
 import nl.juraji.albums.util.returnsFluxOf
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
@@ -21,10 +20,10 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.returnResult
 import reactor.test.StepVerifier
 
-@WebFluxTest(SseController::class)
+@WebFluxTest(EventsController::class)
 @AutoConfigureWebTestClient
 @Import(TestFixtureConfiguration::class)
-internal class SseControllerTest {
+internal class EventsControllerTest {
 
     @MockkBean
     private lateinit var sseEventListener: SseEventListener
