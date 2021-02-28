@@ -109,11 +109,11 @@ internal class PictureServiceTest {
         every { fileOperations.exists(any()) } returnsMonoOf true
         every { pictureRepository.existsByLocation(location) } returnsMonoOf false
         every { pictureRepository.save(any()) } returnsMonoOf savedPicture
-        every { directoryRepository.existsByLocation(any()) } returnsMonoOf true
-        every { directoryRepository.findByLocation(any()) } returnsMonoOf directory
+        every { directoryRepository.existsById(any<String>()) } returnsMonoOf true
+        every { directoryRepository.findById(any<String>()) } returnsMonoOf directory
         every { applicationEventPublisher.publishEvent(any<PictureCreatedEvent>()) } just runs
 
-        StepVerifier.create(pictureService.addPicture(location, name))
+        StepVerifier.create(pictureService.addPicture(directory.id!!, location, name))
             .expectNextCount(1)
             .verifyComplete()
 
@@ -130,10 +130,10 @@ internal class PictureServiceTest {
     internal fun `should not add picture when file not exists`() {
         every { fileOperations.exists(any()) } returnsMonoOf false
         every { pictureRepository.existsByLocation(any()) } returnsMonoOf false
-        every { directoryRepository.existsByLocation(any()) } returnsMonoOf true
-        every { directoryRepository.findByLocation(any()) }.returnsEmptyMono()
+        every { directoryRepository.existsById(any<String>()) } returnsMonoOf true
+        every { directoryRepository.findById(any<String>()) }.returnsEmptyMono()
 
-        StepVerifier.create(pictureService.addPicture("/some/location", "name"))
+        StepVerifier.create(pictureService.addPicture("some_id", "/some/location", "name"))
             .verifyError<ValidationException>()
 
         verify { pictureRepository.save(any()) wasNot Called }
@@ -143,10 +143,10 @@ internal class PictureServiceTest {
     internal fun `should not add picture when location already in db`() {
         every { fileOperations.exists(any()) } returnsMonoOf true
         every { pictureRepository.existsByLocation(any()) } returnsMonoOf true
-        every { directoryRepository.existsByLocation(any()) } returnsMonoOf true
-        every { directoryRepository.findByLocation(any()) }.returnsEmptyMono()
+        every { directoryRepository.existsById(any<String>()) } returnsMonoOf true
+        every { directoryRepository.findById(any<String>()) }.returnsEmptyMono()
 
-        StepVerifier.create(pictureService.addPicture("/some/location", "name"))
+        StepVerifier.create(pictureService.addPicture("some_id", "/some/location", "name"))
             .verifyError<ValidationException>()
 
         verify { pictureRepository.save(any()) wasNot Called }

@@ -63,7 +63,7 @@ class DirectoryService(
                     .filterWhen { p -> pictureService.existsByLocation(p.toString()).not() }
                     .map { p -> dir to p }
             }
-            .flatMap { (dir, path) -> pictureService.addPicture(path, null, dir) }
+            .flatMap { (dir, path) -> pictureService.addPicture(dir, path, null) }
             .last()
             .mapToUnit()
     }

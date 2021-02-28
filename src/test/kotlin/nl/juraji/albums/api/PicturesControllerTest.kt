@@ -10,7 +10,6 @@ import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.PictureService
 import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.util.returnsEmptyMono
-import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
 import nl.juraji.albums.util.uriBuilder
 import org.junit.jupiter.api.Test
@@ -20,8 +19,6 @@ import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
 import org.springframework.context.annotation.Import
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
-import org.springframework.test.web.reactive.server.expectBodyList
-import reactor.core.publisher.Mono
 
 @WebFluxTest(PicturesController::class)
 @AutoConfigureWebTestClient
@@ -45,24 +42,6 @@ internal class PicturesControllerTest {
         webTestClient
             .get()
             .uri("/pictures/${picture.id}")
-            .exchange()
-            .expectStatus().isOk
-            .expectBody<Picture>()
-            .isEqualTo(picture)
-    }
-
-    @Test
-    internal fun `should add picture`() {
-        val postBody = fixture.next<NewPictureDto>()
-        val picture = fixture.next<Picture>()
-
-
-        every { pictureService.addPicture(postBody.location, postBody.name) } returnsMonoOf picture
-
-        webTestClient
-            .post()
-            .uri("/pictures")
-            .body(Mono.just(postBody), Picture::class.java)
             .exchange()
             .expectStatus().isOk
             .expectBody<Picture>()
@@ -117,20 +96,5 @@ internal class PicturesControllerTest {
             .expectStatus().isOk
 
         verify { pictureService.removeTag(pictureId, tagId) }
-    }
-
-    @Test
-    internal fun `should validate NewPictureDto on post`() {
-        val pictureDto = NewPictureDto(
-            location = "|some invalid path?",
-            name = ""
-        )
-
-        webTestClient
-            .post()
-            .uri("/pictures")
-            .bodyValue(pictureDto)
-            .exchange()
-            .expectStatus().isBadRequest
     }
 }

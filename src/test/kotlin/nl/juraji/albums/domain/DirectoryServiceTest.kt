@@ -195,7 +195,7 @@ internal class DirectoryServiceTest {
         every { fileOperations.listFiles(any()) } returnsFluxOf paths
         every { pictureService.existsByLocation(any()) } returnsMonoOf false
         every { pictureService.existsByLocation(paths[3].toString()) } returnsMonoOf true
-        every { pictureService.addPicture(any<Path>(), any(), any()) } returnsMonoOf fixture.next()
+        every { pictureService.addPicture(any(), any<Path>(), any()) } returnsMonoOf fixture.next()
 
         StepVerifier.create(directoryService.updatePicturesFromDisk(directory.id!!))
             .verifyComplete()
@@ -207,8 +207,8 @@ internal class DirectoryServiceTest {
             pictureService.existsByLocation(paths[1].toString()) wasNot Called
             pictureService.existsByLocation(paths[2].toString())
             pictureService.existsByLocation(paths[3].toString()) wasNot Called
-            pictureService.addPicture(paths[0], null, directory)
-            pictureService.addPicture(paths[2], null, directory)
+            pictureService.addPicture(directory, paths[0], null)
+            pictureService.addPicture(directory, paths[2], null)
         }
     }
 }

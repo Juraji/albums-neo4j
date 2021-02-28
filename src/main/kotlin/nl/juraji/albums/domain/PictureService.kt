@@ -32,19 +32,16 @@ class PictureService(
 
     fun existsByLocation(location: String): Mono<Boolean> = pictureRepository.existsByLocation(location)
 
-    fun addPicture(location: String, name: String?): Mono<Picture> = Mono.just(location.toPath())
+    fun addPicture(directoryId: String, location: String, name: String?): Mono<Picture> = Mono.just(location.toPath())
         .validateAsync { path ->
             isTrue(fileOperations.exists(path)) { "File with path $path does not exist on your system or it is not readable" }
             isFalse(pictureRepository.existsByLocation(path.toString())) { "File with path $path was already added" }
-            isTrue(directoryRepository.existsByLocation(path.parent.toString())) { "No parent directory exists for $path" }
+            isTrue(directoryRepository.existsById(directoryId)) { "No parent directory exists for $path by id $directoryId" }
         }
-        .zipWhen { directoryRepository.findByLocation(it.parent.toString()) }
-        .flatMap { (path, parentDir) -> addPicture(path, name, parentDir) }
+        .zipWith(directoryRepository.findById(directoryId))
+        .flatMap { (path, parentDir) -> addPicture(parentDir, path, name) }
 
-    fun addPicture(location: String, name: String?, parentDirectory: Directory): Mono<Picture> =
-        addPicture(location.toPath(), name, parentDirectory)
-
-    fun addPicture(location: Path, name: String?, parentDirectory: Directory): Mono<Picture> = Mono.just(location)
+    fun addPicture(parentDirectory: Directory, location: Path, name: String?): Mono<Picture> = Mono.just(location)
         .map { path ->
             Picture(
                 location = path.toString(),
