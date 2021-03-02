@@ -20,7 +20,7 @@
     "@angular/platform-browser-dynamic": "11.x.x",
     "@angular/router": "11.x.x",
     "@fortawesome/fontawesome-free": "5.x.x",
-    "@juraji/ng-bootstrap-modals": "0.0.4",
+    "@juraji/ng-bootstrap-modals": "1.x.x",
     "@ng-bootstrap/ng-bootstrap": "9.x.x",
     "@ngrx/effects": "11.x.x",
     "@ngrx/entity": "^11.0.1",

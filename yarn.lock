@@ -1224,10 +1224,10 @@
     merge-source-map "^1.1.0"
     schema-utils "^2.7.0"
 
-"@juraji/ng-bootstrap-modals@0.0.4":
-  version "0.0.4"
-  resolved "https://npm.pkg.github.com/download/@juraji/ng-bootstrap-modals/0.0.4/f99aeda22ff5ebe3451561f6eb1cc381cc2e26d8a2ec92147b17ea890c6f020c#65d88d25919b4046f0e2ad2fb8a0a50cc5b3cd6e"
-  integrity sha512-cxH5oYP0ezPE/C9MzBe/kb6oH21wTYqWdtoLDrLBKA7OdHYooYR5VZCA+dNkmG0nj/o15EwnEZsj48ho8OspRg==
+"@juraji/ng-bootstrap-modals@1.x.x":
+  version "1.1.0"
+  resolved "https://npm.pkg.github.com/download/@juraji/ng-bootstrap-modals/1.1.0/8cf1fc8a9c03afa98213156a46f986117fe393d2b98fae5aac3eb27bc52f4054#7b9f10d76c2ff6852da26c20a19f68d678bbca29"
+  integrity sha1-e58Q12wv9oUtomwgoZ9o1ni7yik=
   dependencies:
     tslib "2.x.x"
 
