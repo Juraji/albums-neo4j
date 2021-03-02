@@ -46,7 +46,7 @@ export class TagSelectorComponent implements OnInit {
   }
 
   onCreateTag() {
-    this.modals.open<any, Tag>(EditTagModal)
+    this.modals.open<Tag>(EditTagModal)
       .onResolved
       .pipe(
         sideEffect(tag => this.store.dispatch(createTag(tag))),

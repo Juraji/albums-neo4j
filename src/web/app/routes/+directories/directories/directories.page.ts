@@ -32,7 +32,7 @@ export class DirectoriesPage {
 
   addDirectory() {
     this.modalService
-      .open<any, AddDirectoryModalResult>(AddDirectoryModal)
+      .open<AddDirectoryModalResult>(AddDirectoryModal)
       .onResolved
       .pipe(switchMap(({location, recursive}) =>
         this.directoriesService.createDirectory({location}, recursive)))
