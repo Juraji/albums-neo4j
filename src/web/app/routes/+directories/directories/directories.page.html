@@ -21,7 +21,7 @@
             No directories registered yet.
             Use the "<span class="fa fa-folder-open"></span>" button to register a directory!
           </div>
-          <app-directory-tree [directories]="directories$ | async"
+          <app-directory-tree [initOpen]="true" [directories]="directories$ | async"
                               (directoryAction)="onDirectoryAction($event)"></app-directory-tree>
         </div>
       </div>

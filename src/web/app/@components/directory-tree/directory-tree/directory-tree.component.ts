@@ -17,6 +17,9 @@ export class DirectoryTreeComponent implements OnChanges {
   showRootPaths = true;
 
   @Input()
+  initOpen = false;
+
+  @Input()
   level = 0;
 
   @Output()
@@ -27,6 +30,11 @@ export class DirectoryTreeComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     this.isRoot = this.level === 0;
+
+    if (this.initOpen && !!changes.directories) {
+      this.openedStates = changes.directories.currentValue
+        .reduce((acc: Record<string, boolean>, next: Directory) => acc.copy({[next.id]: true}), {});
+    }
   }
 
   toggleDirectory(directory: Directory) {
