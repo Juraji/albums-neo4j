@@ -15,7 +15,6 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/directories/{directoryId}")
 class DirectoryPicturesController(
-    private val directoryService: DirectoryService,
     private val pictureService: PictureService
 ) {
 
@@ -35,9 +34,4 @@ class DirectoryPicturesController(
     ): Mono<PictureProps> = pictureService
         .addPicture(directoryId, picture.location, picture.name)
         .map(Picture::toPictureProps)
-
-    @PostMapping("/update")
-    fun updateDirectoryPictures(
-        @PathVariable directoryId: String
-    ): Mono<Unit> = directoryService.updatePicturesFromDisk(directoryId)
 }

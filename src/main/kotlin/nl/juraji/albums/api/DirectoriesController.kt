@@ -27,4 +27,9 @@ class DirectoriesController(
     fun deleteDirectory(
         @PathVariable directoryId: String
     ): Mono<Unit> = directoryService.deleteDirectory(directoryId)
+
+    @PostMapping("/{directoryId}/update")
+    fun updateDirectoryPictures(
+        @PathVariable directoryId: String
+    ): Mono<Unit> = directoryService.updatePicturesFromDisk(directoryId)
 }

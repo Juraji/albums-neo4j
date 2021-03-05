@@ -95,4 +95,21 @@ internal class DirectoriesControllerTest {
             .exchange()
             .expectStatus().isBadRequest
     }
+
+    @Test
+    internal fun `should update directory pictures`() {
+        val directoryId = fixture.nextString()
+
+        every { directoryService.updatePicturesFromDisk(any()) }.returnsEmptyMono()
+
+        webTestClient.post()
+            .uri("/directories/$directoryId/update")
+            .exchange()
+            .expectStatus().isOk
+
+
+        verify {
+            directoryService.updatePicturesFromDisk(directoryId)
+        }
+    }
 }

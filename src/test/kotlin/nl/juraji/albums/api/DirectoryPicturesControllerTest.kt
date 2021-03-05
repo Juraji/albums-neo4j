@@ -34,9 +34,6 @@ internal class DirectoryPicturesControllerTest {
     @MockkBean
     private lateinit var pictureService: PictureService
 
-    @MockkBean
-    private lateinit var directoryService: DirectoryService
-
     @Autowired
     private lateinit var webTestClient: WebTestClient
 
@@ -105,22 +102,5 @@ internal class DirectoryPicturesControllerTest {
             .bodyValue(pictureDto)
             .exchange()
             .expectStatus().isBadRequest
-    }
-
-    @Test
-    internal fun `should update directory pictures`() {
-        val directoryId = fixture.nextString()
-
-        every { directoryService.updatePicturesFromDisk(any()) }.returnsEmptyMono()
-
-        webTestClient.post()
-            .uri("/directories/$directoryId/update")
-            .exchange()
-            .expectStatus().isOk
-
-
-        verify {
-            directoryService.updatePicturesFromDisk(directoryId)
-        }
     }
 }
