@@ -1,8 +1,11 @@
 package nl.juraji.albums.api
 
 import nl.juraji.albums.api.dto.NewDirectoryDto
+import nl.juraji.albums.api.dto.PictureProps
+import nl.juraji.albums.api.dto.toPictureProps
 import nl.juraji.albums.domain.DirectoryService
 import nl.juraji.albums.domain.directories.Directory
+import nl.juraji.albums.domain.pictures.Picture
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -31,5 +34,7 @@ class DirectoriesController(
     @PostMapping("/{directoryId}/update")
     fun updateDirectoryPictures(
         @PathVariable directoryId: String
-    ): Mono<Unit> = directoryService.updatePicturesFromDisk(directoryId)
+    ): Flux<PictureProps> = directoryService
+        .updatePicturesFromDisk(directoryId)
+        .map(Picture::toPictureProps)
 }

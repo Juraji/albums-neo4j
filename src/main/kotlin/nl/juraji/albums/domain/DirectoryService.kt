@@ -2,6 +2,7 @@ package nl.juraji.albums.domain
 
 import nl.juraji.albums.domain.directories.*
 import nl.juraji.albums.domain.pictures.FileType
+import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.util.mapToUnit
 import nl.juraji.albums.util.toPath
 import nl.juraji.reactor.validations.validateAsync
@@ -53,7 +54,7 @@ class DirectoryService(
         .doOnComplete { applicationEventPublisher.publishEvent(DirectoryTreeUpdatedEvent(directoryId)) }
         .mapToUnit()
 
-    fun updatePicturesFromDisk(directoryId: String): Mono<Unit> {
+    fun updatePicturesFromDisk(directoryId: String): Flux<Picture> {
         return directoryRepository
             .findById(directoryId)
             .flatMapMany { dir ->
@@ -64,8 +65,6 @@ class DirectoryService(
                     .map { p -> dir to p }
             }
             .flatMap { (dir, path) -> pictureService.addPicture(dir, path, null) }
-            .last()
-            .mapToUnit()
     }
 
     private fun addDirectory(location: Path) = Mono.just(location)
