@@ -7,6 +7,8 @@ import {switchMapTo, take, tap} from 'rxjs/operators';
 import {BooleanToggle} from '@utils/boolean-toggle';
 import {selectSetting} from '@reducers/settings';
 import {untilDestroyed} from '@utils/until-destroyed';
+import {Modals} from '@juraji/ng-bootstrap-modals';
+import {EMPTY} from 'rxjs';
 
 @Component({
   selector: 'app-directory-properties',
@@ -24,7 +26,8 @@ export class DirectoryPropertiesComponent implements OnInit, OnDestroy {
   constructor(
     private readonly router: Router,
     private readonly store: Store<AppState>,
-    private readonly directoryService: DirectoriesService
+    private readonly directoryService: DirectoriesService,
+    private readonly modals: Modals,
   ) {
   }
 
@@ -50,9 +53,11 @@ export class DirectoryPropertiesComponent implements OnInit, OnDestroy {
 
   onUpdateDirectoryPictures() {
     if (!!this.directory?.id) {
+      const shadeRef = this.modals.shade(`Updating "${this.directory.name}..."`, EMPTY);
+
       this.directoryService
         .updateDirectoryPictures(this.directory.id)
-        .subscribe();
+        .subscribe({complete: () => shadeRef.dismiss()});
     }
   }
 
