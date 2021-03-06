@@ -29,6 +29,7 @@ interface PictureCreatedEvent extends AlbumEvent {
 interface PictureUpdatedEvent extends AlbumEvent {
   eventType: 'PictureUpdatedEvent';
   pictureId: string;
+  directoryId?: string;
 }
 
 interface PictureDeletedEvent extends AlbumEvent {

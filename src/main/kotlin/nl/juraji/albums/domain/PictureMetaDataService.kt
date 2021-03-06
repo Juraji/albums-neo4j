@@ -48,5 +48,5 @@ class PictureMetaDataService(
                 }
         }
         .flatMap(pictureRepository::save)
-        .doOnNext { applicationEventPublisher.publishEvent(PictureUpdatedEvent(pictureId)) }
+        .doOnNext { applicationEventPublisher.publishEvent(PictureUpdatedEvent(pictureId, it.directory.id)) }
 }

@@ -12,10 +12,10 @@ import {
   removeTagFromPictureSuccess,
 } from '@actions/pictures.actions';
 import {Store} from '@ngrx/store';
-import {bufferTime, filter, map, mapTo, mergeMap, switchMap} from 'rxjs/operators';
+import {bufferWhen, debounceTime, map, mapTo, mergeMap, switchMap} from 'rxjs/operators';
 import {EffectMarker} from '@utils/effect-marker.annotation';
 import {AlbumEventsService} from '@services/album-events.service';
-import {merge, of} from 'rxjs';
+import {iif, merge, of} from 'rxjs';
 
 
 @Injectable()
@@ -38,17 +38,29 @@ export class PicturesEffects {
 
   @EffectMarker
   onPictureUpdates$ = createEffect(() => {
-      const created$ = this.albumEventsService.ofType<PictureCreatedEvent>('PictureCreatedEvent');
-      const updated = this.albumEventsService.ofType<PictureUpdatedEvent>('PictureUpdatedEvent');
+      const onCreated$ = this.albumEventsService.ofType<PictureCreatedEvent>('PictureCreatedEvent');
+      const onUpdated$ = this.albumEventsService.ofType<PictureUpdatedEvent>('PictureUpdatedEvent');
+      const updates$ = merge(onCreated$, onUpdated$);
+      const bufferEnd$ = updates$.pipe(debounceTime(1000));
 
-      return merge(created$, updated).pipe(
-        bufferTime(1000),
-        filter(updates => updates.length < 20),
-        map(updates => updates
-          .map(u => u.pictureId)
-          .unique()
-          .map(id => fetchPicture(id))),
-        mergeMap(actions => of(...actions))
+      return updates$.pipe(
+        bufferWhen(() => bufferEnd$),
+        switchMap(updates => iif(
+          () => updates.length < 20,
+          of(...updates.map(u => u.pictureId).unique().map(id => fetchPicture(id))),
+          merge(
+            of(...updates
+              .map(u => u.directoryId)
+              .filterEmpty()
+              .unique()
+              .map(id => fetchDirectoryPictures(id))),
+            of(...updates
+              .filter(u => !u.directoryId)
+              .map(u => u.pictureId)
+              .unique()
+              .map(id => fetchPicture(id))),
+          )
+        )),
       );
     }
   );
