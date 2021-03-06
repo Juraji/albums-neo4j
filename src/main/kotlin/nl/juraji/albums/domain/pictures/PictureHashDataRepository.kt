@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository
 import reactor.core.publisher.Mono
 
 @Repository
-interface HashDataRepository : ReactiveNeo4jRepository<HashData, String> {
-    fun findByPictureId(pictureId: String): Mono<HashData>
+interface PictureHashDataRepository : ReactiveNeo4jRepository<PictureHash, String> {
+    fun findByPictureId(pictureId: String): Mono<PictureHash>
 }

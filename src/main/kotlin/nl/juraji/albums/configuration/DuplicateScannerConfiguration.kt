@@ -7,5 +7,6 @@ import org.springframework.boot.context.properties.ConstructorBinding
 @ConfigurationProperties("duplicate-scanner")
 data class DuplicateScannerConfiguration(
     val hashSampleSize: Int = 100,
-    val hashSize: Int = hashSampleSize * hashSampleSize
+    val hashSize: Int = hashSampleSize * hashSampleSize,
+    val similarityThreshold: Double = 0.82
 )

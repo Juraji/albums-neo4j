@@ -12,8 +12,10 @@ import {
   removeTagFromPictureSuccess,
 } from '@actions/pictures.actions';
 import {Store} from '@ngrx/store';
-import {map, mapTo, switchMap} from 'rxjs/operators';
+import {bufferTime, filter, map, mapTo, mergeMap, switchMap} from 'rxjs/operators';
 import {EffectMarker} from '@utils/effect-marker.annotation';
+import {AlbumEventsService} from '@services/album-events.service';
+import {merge, of} from 'rxjs';
 
 
 @Injectable()
@@ -30,9 +32,26 @@ export class PicturesEffects {
   @EffectMarker
   fetchPicture$ = createEffect(() => this.actions$.pipe(
     ofType(fetchPicture),
-    switchMap(({pictureId}) => this.picturesService.getPicture(pictureId)),
+    mergeMap(({pictureId}) => this.picturesService.getPicture(pictureId)),
     map((picture) => fetchPictureSuccess(picture))
   ));
+
+  @EffectMarker
+  onPictureUpdates$ = createEffect(() => {
+      const created$ = this.albumEventsService.ofType<PictureCreatedEvent>('PictureCreatedEvent');
+      const updated = this.albumEventsService.ofType<PictureUpdatedEvent>('PictureUpdatedEvent');
+
+      return merge(created$, updated).pipe(
+        bufferTime(1000),
+        filter(updates => updates.length < 20),
+        map(updates => updates
+          .map(u => u.pictureId)
+          .unique()
+          .map(id => fetchPicture(id))),
+        mergeMap(actions => of(...actions))
+      );
+    }
+  );
 
   @EffectMarker
   addTagToPicture$ = createEffect(() => this.actions$.pipe(
@@ -56,6 +75,7 @@ export class PicturesEffects {
     private actions$: Actions,
     private store: Store<AppState>,
     private picturesService: PicturesService,
+    private albumEventsService: AlbumEventsService
   ) {
   }
 

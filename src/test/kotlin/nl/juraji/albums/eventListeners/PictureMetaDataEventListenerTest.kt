@@ -5,6 +5,7 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
 import nl.juraji.albums.configurations.TestFixtureConfiguration
+import nl.juraji.albums.domain.PictureHashService
 import nl.juraji.albums.domain.PictureMetaDataService
 import nl.juraji.albums.domain.pictures.PictureCreatedEvent
 import nl.juraji.albums.util.returnsMonoOf
@@ -23,19 +24,22 @@ internal class PictureMetaDataEventListenerTest {
     @MockkBean
     private lateinit var pictureMetaDataService: PictureMetaDataService
 
+    @MockkBean
+    private lateinit var pictureHashService: PictureHashService
+
     @Test
     fun `should update picture meta data`() {
         val location = "/some/location"
         val event = fixture.next<PictureCreatedEvent>().copy(location = location)
 
         every { pictureMetaDataService.updateMetaData(any()) } returnsMonoOf fixture.next()
-        every { pictureMetaDataService.updatePictureHash(any()) } returnsMonoOf fixture.next()
+        every { pictureHashService.updatePictureHash(any()) } returnsMonoOf fixture.next()
 
         publisher.publishEvent(event)
 
         verify {
             pictureMetaDataService.updateMetaData(event.pictureId)
-            pictureMetaDataService.updatePictureHash(event.pictureId)
+            pictureHashService.updatePictureHash(event.pictureId)
         }
     }
 }

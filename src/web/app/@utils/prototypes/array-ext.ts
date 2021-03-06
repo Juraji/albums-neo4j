@@ -66,4 +66,14 @@ export default function () {
       }
     },
   });
+
+  Object.defineProperty(Array.prototype, 'unique', {
+    configurable: false,
+    enumerable: false,
+    writable: false,
+    value: function <T>(this: Array<T>) {
+      const uqSet = this.reduce((acc, next) => acc.add(next), new Set<T>());
+      return Array.from(uqSet.values());
+    },
+  });
 }

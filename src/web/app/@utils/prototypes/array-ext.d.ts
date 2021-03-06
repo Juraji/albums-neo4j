@@ -29,4 +29,9 @@ interface Array<T> {
    * Rotate this array in 2d
    */
   transpose2d<U>(this: Array<T>): T extends U[] ? Array<T> : never;
+
+  /**
+   * Uses an internal Set to remove duplicated values from this array
+   */
+  unique(this: Array<T>): Array<T>;
 }

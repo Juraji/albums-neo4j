@@ -8,7 +8,7 @@ import org.springframework.data.neo4j.core.support.UUIDStringGenerator
 
 @Node
 @Suppress("ArrayInDataClass")
-data class HashData(
+data class PictureHash(
     @Id @GeneratedValue(UUIDStringGenerator::class)
     val id: String? = null,
     val hash: String,

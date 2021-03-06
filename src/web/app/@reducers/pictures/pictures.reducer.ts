@@ -14,9 +14,9 @@ const pictureSelectors = picturesEntityAdapter.getSelectors();
 export const picturesReducer = createReducer(
   picturesEntityAdapter.getInitialState(),
   on(fetchPictureSuccess, (s, {picture}) =>
-    picturesEntityAdapter.addOne(picture, s)),
+    picturesEntityAdapter.upsertOne(picture, s)),
   on(fetchDirectoryPicturesSuccess, (s, {pictures}) =>
-    picturesEntityAdapter.addMany(pictures, s)),
+    picturesEntityAdapter.upsertMany(pictures, s)),
   on(addTagToPictureSuccess, (s, {picture}) =>
     picturesEntityAdapter.updateOne({id: picture.id, changes: picture}, s)),
   on(removeTagFromPictureSuccess, (s, {picture}) =>
