@@ -15,6 +15,9 @@ export class PageSizeSelectorComponent implements OnInit {
   @Input()
   sizeOptions: number[] | null = DEFAULT_SIZE_OPTS;
 
+  @Input()
+  collectionSize: number | null = null;
+
   @Output()
   readonly selectedSize: Observable<number> = this.selectedSize$;
 

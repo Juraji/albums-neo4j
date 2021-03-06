@@ -1,21 +1,23 @@
-.directory-properties-card {
-  position: fixed;
-  width: 20rem;
-  top: 3.5rem;
-  bottom: 0;
-  right: 0;
-  transition: right 300ms ease-out;
+:host {
+  .directory-properties-card {
+    position: fixed;
+    width: 20rem;
+    top: 3.5rem;
+    bottom: 0;
+    right: 0;
+    transition: right 300ms ease-out;
 
-  &.collapsed {
-    right: -20rem;
+    &.collapsed {
+      right: -20rem;
+    }
   }
-}
 
-.properties-sidebar-toggler {
-  position: absolute;
-  top: .5rem;
-  left: -2.4rem;
-  border-right: 0;
-  border-bottom-right-radius: 0;
-  border-top-right-radius: 0;
+  .properties-sidebar-toggler {
+    position: absolute;
+    top: .5rem;
+    left: -2.2rem;
+    border-right: 0;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+  }
 }

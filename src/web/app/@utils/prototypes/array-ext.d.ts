@@ -19,4 +19,14 @@ interface Array<T> {
    * Ensures that the TypeScript compiler will not complain about nullable values.
    */
   filterEmpty(this: Array<T>): Array<T extends null | undefined ? never : T>;
+
+  /**
+   * Split this array into chunks of {@param chunkSize}
+   */
+  chunks(this: Array<T>, chunkSize: number): Array<T[]>;
+
+  /**
+   * Rotate this array in 2d
+   */
+  transpose2d<U>(this: Array<T>): T extends U[] ? Array<T> : never;
 }

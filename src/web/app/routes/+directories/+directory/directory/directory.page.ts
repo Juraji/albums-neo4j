@@ -37,7 +37,8 @@ export class DirectoryPage implements OnInit, OnDestroy {
     this.pageSize$.pipe(startWith(50))
   ]).pipe(
     distinctUntilChangedArrayExact(),
-    switchMap(([id, page, size]) => this.store.select(selectDirectoryPicturesRange(id, page, size)))
+    switchMap(([id, page, size]) => this.store.select(selectDirectoryPicturesRange(id, page, size))),
+    map(props => props.chunks(4).transpose2d())
   );
 
   constructor(
