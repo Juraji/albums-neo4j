@@ -10,13 +10,10 @@ import {
   fetchPictureSuccess,
   removeTagFromPicture,
   removeTagFromPictureSuccess,
-  setDirectoryLoadState,
 } from '@actions/pictures.actions';
 import {Store} from '@ngrx/store';
 import {map, mapTo, switchMap} from 'rxjs/operators';
-import {selectDirectoryLoadState} from '@reducers/pictures';
 import {EffectMarker} from '@utils/effect-marker.annotation';
-import {filterAsync, not} from '@utils/rx';
 
 
 @Injectable()
@@ -25,17 +22,9 @@ export class PicturesEffects {
   @EffectMarker
   fetchDirectoryPictures$ = createEffect(() => this.actions$.pipe(
     ofType(fetchDirectoryPictures),
-    filterAsync((p) => this.store.select(selectDirectoryLoadState(p.directoryId)).pipe(not())),
-    switchMap(({directoryId, page, size}) =>
-      this.picturesService.getPicturesByDirectory(directoryId, page, size)
-        .pipe(map((pictures) => ({directoryId, pictures})))),
-    map(({directoryId, pictures}) => {
-      if (pictures.isEmpty()) {
-        return setDirectoryLoadState(directoryId);
-      } else {
-        return fetchDirectoryPicturesSuccess(pictures);
-      }
-    })
+    switchMap(({directoryId}) =>
+      this.picturesService.getPicturesByDirectory(directoryId)),
+    map((pictures) => fetchDirectoryPicturesSuccess(pictures))
   ));
 
   @EffectMarker

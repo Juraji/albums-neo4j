@@ -9,6 +9,7 @@ import nl.juraji.albums.api.dto.NewDirectoryDto
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.DirectoryService
 import nl.juraji.albums.domain.directories.Directory
+import nl.juraji.albums.util.returnsEmptyFlux
 import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
@@ -100,7 +101,7 @@ internal class DirectoriesControllerTest {
     internal fun `should update directory pictures`() {
         val directoryId = fixture.nextString()
 
-        every { directoryService.updatePicturesFromDisk(any()) }.returnsEmptyMono()
+        every { directoryService.updatePicturesFromDisk(any()) }.returnsEmptyFlux()
 
         webTestClient.post()
             .uri("/directories/$directoryId/update")

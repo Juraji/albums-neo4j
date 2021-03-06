@@ -19,7 +19,6 @@ import nl.juraji.reactor.validations.ValidationException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationEventPublisher
-import org.springframework.data.domain.PageRequest
 import reactor.kotlin.test.verifyError
 import reactor.test.StepVerifier
 import java.nio.file.Paths
@@ -59,16 +58,15 @@ internal class PictureServiceTest {
     @Test
     internal fun `should get by directory id`() {
         val directoryId = "dir1"
-        val pageable = PageRequest.of(0, 5)
         val pictures: List<Picture> = fixture.next()
 
-        every { pictureRepository.findPageByDirectoryId(any(), any()) } returnsFluxOf pictures
+        every { pictureRepository.findPageByDirectoryId(any()) } returnsFluxOf pictures
 
-        StepVerifier.create(pictureService.getByDirectoryId(directoryId, pageable))
+        StepVerifier.create(pictureService.getByDirectoryId(directoryId))
             .expectNextSequence(pictures)
             .verifyComplete()
 
-        verify { pictureRepository.findPageByDirectoryId(directoryId, pageable) }
+        verify { pictureRepository.findPageByDirectoryId(directoryId) }
     }
 
     @Test

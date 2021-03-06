@@ -1,6 +1,5 @@
 package nl.juraji.albums.domain.pictures
 
-import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.repository.ReactiveNeo4jRepository
 import org.springframework.data.neo4j.repository.query.Query
 import org.springframework.stereotype.Repository
@@ -12,10 +11,10 @@ interface PictureRepository : ReactiveNeo4jRepository<Picture, String> {
 
     fun existsByLocation(location: String): Mono<Boolean>
 
-    fun findPageByDirectoryId(directoryId: String, pageable: Pageable): Flux<Picture>
+    fun findPageByDirectoryId(directoryId: String): Flux<Picture>
 
     @Query("MATCH (p:Picture {id: $ id}) RETURN p.location")
-    fun findImageLocationById(id:String): Mono<String>
+    fun findImageLocationById(id: String): Mono<String>
 
     @Query(
         """

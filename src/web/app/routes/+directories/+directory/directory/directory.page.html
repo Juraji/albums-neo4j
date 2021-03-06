@@ -1,12 +1,21 @@
 <app-main-navbar></app-main-navbar>
 <app-directory-properties [directory]="directoryProps$ | async"></app-directory-properties>
 
-<div class="container clear-navbar"
-     infiniteScroll
-     [infiniteScrollDistance]="1"
-     [infiniteScrollThrottle]="150"
-     (scrolled)="loadMore()">
-  <a [routerLink]="['pictures', p.id]"  *ngFor="let p of directoryPictures$ | async">
+<div class="container clear-navbar">
+  <a [routerLink]="['pictures', p.id]" *ngFor="let p of pictures$ | async">
     <img src="" alt="" appPictureCard [picture]="p"/>
   </a>
+</div>
+
+<div class="btn-toolbar directory-pagination">
+  <app-pagination
+    (currentPage)="page$.next($event)"
+    [pageSize]="psSelect.selectedSize | async"
+    [collectionSize]="directoryPictureCount$ | async"
+  ></app-pagination>
+  <app-page-size-selector
+    class="ml-2"
+    #psSelect
+    (selectedSize)="pageSize$.next($event)"
+  ></app-page-size-selector>
 </div>

@@ -198,6 +198,7 @@ internal class DirectoryServiceTest {
         every { pictureService.addPicture(any(), any<Path>(), any()) } returnsMonoOf fixture.next()
 
         StepVerifier.create(directoryService.updatePicturesFromDisk(directory.id!!))
+            .expectNextCount(2)
             .verifyComplete()
 
         verify {

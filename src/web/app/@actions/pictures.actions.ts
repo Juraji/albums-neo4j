@@ -12,7 +12,7 @@ export const fetchPictureSuccess = createAction(
 
 export const fetchDirectoryPictures = createAction(
   '[Pictures] Fetch directory pictures',
-  (directoryId: string, page: number, size: number) => ({directoryId, page, size})
+  (directoryId: string) => ({directoryId})
 );
 
 export const fetchDirectoryPicturesSuccess = createAction(
@@ -38,9 +38,4 @@ export const removeTagFromPicture = createAction(
 export const removeTagFromPictureSuccess = createAction(
   '[Pictures] Remove tag from picture success',
   (picture: PictureProps, tag: Tag) => ({picture, tag})
-);
-
-export const setDirectoryLoadState = createAction(
-  '[Pictures] Set directory load state',
-  (directoryId: string, state: boolean = true) => ({directoryId, state})
 );

@@ -9,10 +9,8 @@ import nl.juraji.albums.api.dto.NewPictureDto
 import nl.juraji.albums.api.dto.PictureProps
 import nl.juraji.albums.api.dto.toPictureProps
 import nl.juraji.albums.configurations.TestFixtureConfiguration
-import nl.juraji.albums.domain.DirectoryService
 import nl.juraji.albums.domain.PictureService
 import nl.juraji.albums.domain.pictures.Picture
-import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
 import org.junit.jupiter.api.Test
@@ -20,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
 import org.springframework.context.annotation.Import
-import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
@@ -46,17 +43,11 @@ internal class DirectoryPicturesControllerTest {
         val pictures: List<Picture> = fixture.next()
         val expected = pictures.map(Picture::toPictureProps)
 
-        every { pictureService.getByDirectoryId(any(), any()) } returnsFluxOf pictures
+        every { pictureService.getByDirectoryId(any()) } returnsFluxOf pictures
 
         webTestClient
             .get()
-            .uri { uriBuilder ->
-                uriBuilder
-                    .path("/directories/$directoryId/pictures")
-                    .queryParam("page", "1")
-                    .queryParam("size", "50")
-                    .build()
-            }
+            .uri("/directories/$directoryId/pictures")
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk
@@ -64,7 +55,7 @@ internal class DirectoryPicturesControllerTest {
             .contains(*expected.toTypedArray())
 
         verify {
-            pictureService.getByDirectoryId(directoryId, PageRequest.of(1, 50))
+            pictureService.getByDirectoryId(directoryId)
         }
     }
 

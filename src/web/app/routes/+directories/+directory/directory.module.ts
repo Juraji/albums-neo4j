@@ -6,8 +6,8 @@ import {DirectoryPage} from './directory/directory.page';
 import {MainNavbarModule} from '@components/main-navbar/main-navbar.module';
 import {DirectoryPropertiesComponent} from './directory-properties/directory-properties.component';
 import {DirectoryTreeModule} from '@components/directory-tree/directory-tree.module';
-import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 import {PictureImageViewsModule} from '@components/picture-image-views/picture-image-views.module';
+import {PaginationModule} from '@components/pagination/pagination.module';
 
 
 @NgModule({
@@ -17,8 +17,8 @@ import {PictureImageViewsModule} from '@components/picture-image-views/picture-i
     DirectoryRoutingModule,
     MainNavbarModule,
     DirectoryTreeModule,
-    InfiniteScrollModule,
-    PictureImageViewsModule
+    PictureImageViewsModule,
+    PaginationModule,
   ]
 })
 export class DirectoryModule {

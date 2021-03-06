@@ -64,8 +64,8 @@ export const selectDirectoryPictures = (directoryId: string) => createSelector(
 export const selectDirectoryPicturesRange = (directoryId: string, page: number, size: number) => createSelector(
   selectDirectoryPictures(directoryId),
   directoryPictures => {
-    const start = page * size;
-    const end = start + size;
-    return directoryPictures.slice(0, end);
+    const start = (page - 1) * size;
+    const end = page * size;
+    return directoryPictures.slice(start, end);
   }
 );

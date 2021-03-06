@@ -21,12 +21,11 @@ class PictureService(
     private val pictureRepository: PictureRepository,
     private val fileOperations: FileOperations,
     private val publisher: ApplicationEventPublisher
-
 ) {
     fun getPicture(pictureId: String): Mono<Picture> = pictureRepository.findById(pictureId)
 
-    fun getByDirectoryId(directoryId: String, pageable: Pageable): Flux<Picture> =
-        pictureRepository.findPageByDirectoryId(directoryId, pageable)
+    fun getByDirectoryId(directoryId: String): Flux<Picture> =
+        pictureRepository.findPageByDirectoryId(directoryId)
 
     fun getImageLocationById(id: String): Mono<String> = pictureRepository.findImageLocationById(id)
 

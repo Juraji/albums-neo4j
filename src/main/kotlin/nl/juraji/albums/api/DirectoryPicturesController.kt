@@ -3,7 +3,6 @@ package nl.juraji.albums.api
 import nl.juraji.albums.api.dto.NewPictureDto
 import nl.juraji.albums.api.dto.PictureProps
 import nl.juraji.albums.api.dto.toPictureProps
-import nl.juraji.albums.domain.DirectoryService
 import nl.juraji.albums.domain.PictureService
 import nl.juraji.albums.domain.pictures.Picture
 import org.springframework.data.domain.PageRequest
@@ -20,11 +19,9 @@ class DirectoryPicturesController(
 
     @GetMapping("/pictures")
     fun getPicturesByDirectoryId(
-        @PathVariable directoryId: String,
-        @RequestParam("page") pageIndex: Int,
-        @RequestParam("size") pageSize: Int
+        @PathVariable directoryId: String
     ): Flux<PictureProps> = pictureService
-        .getByDirectoryId(directoryId, PageRequest.of(pageIndex, pageSize))
+        .getByDirectoryId(directoryId)
         .map(Picture::toPictureProps)
 
     @PostMapping("/pictures")
