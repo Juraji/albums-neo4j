@@ -2,10 +2,12 @@ package nl.juraji.albums.api
 
 import com.marcellogalhardo.fixture.Fixture
 import com.marcellogalhardo.fixture.next
+import com.marcellogalhardo.fixture.nextListOf
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.DuplicatesService
+import nl.juraji.albums.domain.duplicates.Duplicate
 import nl.juraji.albums.domain.duplicates.DuplicatedBy
 import nl.juraji.albums.util.returnsFluxOf
 import org.junit.jupiter.api.Test
@@ -42,6 +44,21 @@ internal class PictureDuplicatesControllerTest {
             .exchange()
             .expectStatus().isOk
             .expectBodyList<DuplicatedBy>()
+            .contains(*duplicates.toTypedArray())
+    }
+
+    @Test
+    internal fun `should scan picture duplicates`() {
+        val pictureId = fixture.nextString()
+        val duplicates = fixture.nextListOf<Duplicate>()
+
+        every { duplicatesService.scanDuplicatesForPicture(any()) } returnsFluxOf duplicates
+
+        webTestClient.post()
+            .uri("/pictures/$pictureId/duplicates/scan")
+            .exchange()
+            .expectStatus().isOk
+            .expectBodyList<Duplicate>()
             .contains(*duplicates.toTypedArray())
     }
 }

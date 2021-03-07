@@ -7,6 +7,7 @@ import nl.juraji.albums.domain.duplicates.DuplicatedBy
 import nl.juraji.albums.domain.pictures.PictureHash
 import nl.juraji.albums.domain.pictures.PictureHashDataRepository
 import nl.juraji.albums.domain.pictures.PictureRepository
+import nl.juraji.albums.util.LoggerCompanion
 import nl.juraji.reactor.validations.validateAsync
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
@@ -60,25 +61,31 @@ class DuplicatesService(
 
     fun scanDuplicatesForPicture(pictureId: String): Flux<Duplicate> {
         val pictureHash = pictureHashDataRepository.findByPictureId(pictureId).share()
-        val otherHashes = pictureHashDataRepository.findAll().filterWhen { o -> pictureHash.map { p -> p.id != o.id } }
+        val otherHashes = pictureHashDataRepository.findAll()
 
         return otherHashes
-            .zipWith(pictureHash)
-            .map { (target, source) -> compare(source, target) }
+            .filterWhen { o -> pictureHash.map { p -> p.id != o.id } }
+            .flatMap { target -> pictureHash.map { source -> compare(source, target) } }
             .filter { it.similarity >= configuration.similarityThreshold }
             .flatMap { setDuplicatePicture(pictureId, it.target.id!!, it.similarity) }
+            .onErrorContinue { t, _ -> logger.info(t.localizedMessage) }
     }
 
     private fun compare(source: PictureHash, target: PictureHash): DuplicatedBy {
-        val decoder = Base64.getDecoder();
-        val sourceHash = BitSet.valueOf(decoder.decode(source.hash))
-        val targetHash = BitSet.valueOf(decoder.decode(target.hash))
+        val similarity = if (source.hash == target.hash) {
+            1.0f
+        } else {
+            val decoder = Base64.getDecoder();
+            val sourceHash = BitSet.valueOf(decoder.decode(source.hash))
+            val targetHash = BitSet.valueOf(decoder.decode(target.hash))
 
-        sourceHash.xor(targetHash)
+            sourceHash.xor(targetHash)
+            sourceHash.flip(0, sourceHash.length() - 1)
 
-        val total = sourceHash.size().toFloat()
-        val difference = sourceHash.cardinality().toFloat()
-        val similarity = 1.0f - (difference / total)
+            val total = sourceHash.length().toFloat()
+            val difference = sourceHash.cardinality().toFloat()
+            difference / total
+        }
 
         return DuplicatedBy(
             matchedOn = LocalDateTime.now(),
@@ -86,4 +93,6 @@ class DuplicatesService(
             target = target.picture
         )
     }
+
+    companion object : LoggerCompanion(DuplicatesService::class)
 }
