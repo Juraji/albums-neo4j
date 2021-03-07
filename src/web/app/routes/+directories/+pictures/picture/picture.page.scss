@@ -1,6 +1,6 @@
 :host {
   .side-bar{
-    max-width: 25rem;
+    max-width: 30rem;
     margin-top: 3.5rem;
     padding-top: 1rem;
     height: calc(100vh - 3.5rem);
@@ -9,5 +9,6 @@
 
   .picture-full-view {
     max-height: calc(100vh - 5.5rem);
+    max-width: 100%;
   }
 }

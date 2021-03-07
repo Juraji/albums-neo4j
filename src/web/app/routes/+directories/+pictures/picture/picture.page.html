@@ -2,10 +2,11 @@
 
 <div class="d-flex">
   <div class="container-fluid flex-grow-1 clear-navbar">
-    <img src="" alt="" class="d-block mx-auto" appPictureFullView [picture]="picture$ | async"/>
+    <img src="" alt="" class="d-block mx-auto shadow picture-full-view" appPictureImg [picture]="picture$ | async"/>
   </div>
   <div class="container-fluid side-bar">
     <app-picture-properties [picture]="picture$ | async"></app-picture-properties>
     <app-picture-tags [picture]="picture$ | async"></app-picture-tags>
+    <app-picture-duplicates [picture]="picture$ | async"></app-picture-duplicates>
   </div>
 </div>

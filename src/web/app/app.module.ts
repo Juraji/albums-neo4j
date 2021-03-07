@@ -13,10 +13,8 @@ import {DirectoriesEffects} from '@effects/directories.effects';
 import {PicturesEffects} from '@effects/pictures.effects';
 import {NgbmodModalsModule} from '@juraji/ng-bootstrap-modals';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {hostWindowFactory, WINDOW} from '@services/provided/window.injection-token';
-import {ROOT_EM_SIZE, rootEmSizeFactory} from '@services/provided/rem-size.injection-token';
-import {DOCUMENT} from '@angular/common';
 import {TagsEffects} from '@effects/tags.effects';
+import {DuplicatesEffects} from '@effects/duplicates.effects';
 
 @NgModule({
   declarations: [
@@ -30,11 +28,7 @@ import {TagsEffects} from '@effects/tags.effects';
     NgbmodModalsModule.forRoot(),
     StoreModule.forRoot(reducers, {metaReducers}),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
-    EffectsModule.forRoot([DirectoriesEffects, PicturesEffects, TagsEffects])
-  ],
-  providers: [
-    {provide: WINDOW, useFactory: hostWindowFactory},
-    {provide: ROOT_EM_SIZE, useFactory: rootEmSizeFactory, deps: [DOCUMENT]},
+    EffectsModule.forRoot([DirectoriesEffects, PicturesEffects, TagsEffects, DuplicatesEffects])
   ],
   bootstrap: [AppComponent]
 })

@@ -1,19 +1,11 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {PictureCardDirective} from './picture-card.directive';
-import {PictureFullViewDirective} from './picture-full-view.directive';
-
+import {PictureImgDirective} from './picture-img.directive';
 
 @NgModule({
   imports: [CommonModule],
-  declarations: [
-    PictureCardDirective,
-    PictureFullViewDirective
-  ],
-  exports: [
-    PictureCardDirective,
-    PictureFullViewDirective
-  ]
+  declarations: [PictureImgDirective],
+  exports: [PictureImgDirective]
 })
 export class PictureImageViewsModule {
 }

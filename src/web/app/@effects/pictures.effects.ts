@@ -13,7 +13,7 @@ import {
 } from '@actions/pictures.actions';
 import {Store} from '@ngrx/store';
 import {bufferWhen, debounceTime, map, mapTo, mergeMap, switchMap} from 'rxjs/operators';
-import {EffectMarker} from '@utils/effect-marker.annotation';
+import {EffectMarker} from '@utils/decorators';
 import {AlbumEventsService} from '@services/album-events.service';
 import {iif, merge, of} from 'rxjs';
 

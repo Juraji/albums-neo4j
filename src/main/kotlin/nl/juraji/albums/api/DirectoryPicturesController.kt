@@ -5,7 +5,6 @@ import nl.juraji.albums.api.dto.PictureProps
 import nl.juraji.albums.api.dto.toPictureProps
 import nl.juraji.albums.domain.PictureService
 import nl.juraji.albums.domain.pictures.Picture
-import org.springframework.data.domain.PageRequest
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono

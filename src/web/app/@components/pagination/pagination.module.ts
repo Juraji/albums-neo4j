@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { PaginationComponent } from './pagination/pagination.component';
 import { PageSizeSelectorComponent } from './page-size-selector/page-size-selector.component';
 
-
-
 @NgModule({
   declarations: [PaginationComponent, PageSizeSelectorComponent],
   imports: [

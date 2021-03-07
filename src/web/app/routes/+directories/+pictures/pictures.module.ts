@@ -10,10 +10,13 @@ import {PictureTagsComponent} from './picture-tags/picture-tags.component';
 import {NgbDropdownModule} from '@ng-bootstrap/ng-bootstrap';
 import {PictureImageViewsModule} from '@components/picture-image-views/picture-image-views.module';
 import {TagMgmtModule} from '@components/tag-mgmt';
+import {PictureDuplicatesComponent} from './picture-duplicates/picture-duplicates.component';
+import { PictureDuplicateComponent } from './picture-duplicates/picture-duplicate.component';
+import {UtilityPipesModule} from '@components/utility-pipes/utility-pipes.module';
 
 
 @NgModule({
-  declarations: [PicturePage, PicturePropertiesComponent, PictureTagsComponent],
+  declarations: [PicturePage, PicturePropertiesComponent, PictureTagsComponent, PictureDuplicatesComponent, PictureDuplicateComponent],
   imports: [
     CommonModule,
     PicturesRoutingModule,
@@ -21,7 +24,8 @@ import {TagMgmtModule} from '@components/tag-mgmt';
     FsPipesModule,
     TagMgmtModule,
     NgbDropdownModule,
-    PictureImageViewsModule
+    PictureImageViewsModule,
+    UtilityPipesModule,
   ]
 })
 export class PicturesModule {

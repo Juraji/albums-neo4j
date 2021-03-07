@@ -5,7 +5,7 @@
   <div class="row">
     <div class="col col-sm-3" *ngFor="let c of pictures$ | async">
       <a [routerLink]="['pictures', p.id]" *ngFor="let p of c">
-        <img src="" alt="" appPictureCard [picture]="p"/>
+        <img src="" alt="" class="img-fluid shadow mt-3" appPictureImg [picture]="p"/>
       </a>
     </div>
   </div>

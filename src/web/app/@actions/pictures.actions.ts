@@ -20,6 +20,16 @@ export const fetchDirectoryPicturesSuccess = createAction(
   (pictures: PictureProps[]) => ({pictures})
 );
 
+export const deletePicture = createAction(
+  '[Pictures] Delete Picture',
+  (pictureId: string) => ({pictureId})
+);
+
+export const deletePictureSuccess = createAction(
+  '[Pictures] Delete Picture Success',
+  (pictureId: string) => ({pictureId})
+);
+
 export const addTagToPicture = createAction(
   '[Pictures] Add tag to picture',
   (picture: PictureProps, tag: Tag) => ({picture, tag})

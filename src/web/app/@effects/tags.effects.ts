@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
-import {EffectMarker} from '@utils/effect-marker.annotation';
+import {EffectMarker} from '@utils/decorators';
 import {
   createTag,
   createTagSuccess,

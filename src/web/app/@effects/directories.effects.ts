@@ -4,7 +4,7 @@ import {loadRootDirectories, loadRootDirectoriesSuccess} from '@actions/director
 import {debounceTime, map, switchMap} from 'rxjs/operators';
 import {DirectoriesService} from '@services/directories.service';
 import {AlbumEventsService} from '@services/album-events.service';
-import {EffectMarker} from '@utils/effect-marker.annotation';
+import {EffectMarker} from '@utils/decorators';
 
 
 @Injectable()

@@ -1,11 +1,13 @@
 package nl.juraji.albums.api
 
-import nl.juraji.albums.api.dto.DuplicatedByProps
-import nl.juraji.albums.api.dto.toDuplicatedByProps
+import nl.juraji.albums.api.dto.DuplicateProps
+import nl.juraji.albums.api.dto.toDuplicateProps
 import nl.juraji.albums.domain.DuplicatesService
 import nl.juraji.albums.domain.duplicates.Duplicate
-import nl.juraji.albums.domain.duplicates.DuplicatedBy
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 
 @RestController
@@ -13,16 +15,10 @@ import reactor.core.publisher.Flux
 class PictureDuplicatesController(
     private val duplicatesService: DuplicatesService
 ) {
-    @GetMapping
-    fun getDuplicatedByPicture(
-        @PathVariable pictureId: String
-    ): Flux<DuplicatedByProps> = duplicatesService
-        .findByPictureId(pictureId)
-        .map(DuplicatedBy::toDuplicatedByProps)
-
     @PostMapping("scan")
     fun scanPictureDuplicates(
         @PathVariable pictureId: String
-    ): Flux<Duplicate> = duplicatesService
+    ): Flux<DuplicateProps> = duplicatesService
         .scanDuplicatesForPicture(pictureId)
+        .map(Duplicate::toDuplicateProps)
 }
