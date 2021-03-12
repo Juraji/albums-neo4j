@@ -1,6 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const ObserveProperty = (
-  sourcePropertyKey: string | symbol
+  sourcePropertyKey: string | symbol,
+  nullableValues: boolean = false
 ): PropertyDecorator => (
   target: any,
   propertyKey: string | symbol
@@ -13,7 +14,7 @@ export const ObserveProperty = (
       },
       set(value) {
         this[internalKey] = value;
-        if(value !== null && value !== undefined){
+        if (nullableValues || (value !== null && value !== undefined)) {
           this[propertyKey].next(value);
         }
       }

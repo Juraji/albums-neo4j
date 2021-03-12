@@ -1,4 +1,4 @@
-<div class="card shadow directory-properties-card" *ngIf="!!directory" [class.collapsed]="closed$ | async">
+<div class="card shadow directory-properties-card" *ngIf="!!directory">
   <div class="card-header d-flex justify-content-between">
     <h4 class="my-0"><span class="fa fa-folder-open"></span>&nbsp;{{directory.name}}</h4>
     <div class="btn-group btn-group-sm">
@@ -16,11 +16,4 @@
     <app-directory-tree [directories]="directory.children" [showRootPaths]="false"
                         (directoryAction)="onDirectoryAction($event)"></app-directory-tree>
   </div>
-  <button type="button" class="btn btn-primary shadow-sm properties-sidebar-toggler"
-          (click)="onToggleSideBar()" title="Toggle side bar">
-    <ng-container [ngSwitch]="closed$ | async">
-      <span *ngSwitchCase="true" class="fa fa-chevron-left"></span>
-      <span *ngSwitchCase="false" class="fa fa-chevron-right"></span>
-    </ng-container>
-  </button>
 </div>

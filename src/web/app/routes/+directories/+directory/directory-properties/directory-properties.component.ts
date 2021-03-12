@@ -1,27 +1,19 @@
-import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {Router} from '@angular/router';
 import {DirectoriesService} from '@services/directories.service';
 import {Store} from '@ngrx/store';
-import {updateSetting} from '@actions/settings.actions';
-import {switchMapTo, take, tap} from 'rxjs/operators';
-import {BooleanToggle} from '@utils/boolean-toggle';
-import {selectSetting} from '@reducers/settings';
-import {untilDestroyed} from '@utils/until-destroyed';
 import {Modals} from '@juraji/ng-bootstrap-modals';
 import {EMPTY} from 'rxjs';
 
 @Component({
   selector: 'app-directory-properties',
   templateUrl: './directory-properties.component.html',
-  styleUrls: ['./directory-properties.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DirectoryPropertiesComponent implements OnInit, OnDestroy {
+export class DirectoryPropertiesComponent {
 
   @Input()
   directory: Directory | null = null;
-
-  readonly closed$ = new BooleanToggle();
 
   constructor(
     private readonly router: Router,
@@ -29,22 +21,6 @@ export class DirectoryPropertiesComponent implements OnInit, OnDestroy {
     private readonly directoryService: DirectoriesService,
     private readonly modals: Modals,
   ) {
-  }
-
-  ngOnInit(): void {
-    this.store
-      .select(selectSetting('directory-properties-collapsed', false))
-      .pipe(
-        take(1),
-        tap(s => this.closed$.next(s)),
-        switchMapTo(this.closed$),
-        untilDestroyed(this)
-      )
-      .subscribe(state => this.store
-        .dispatch(updateSetting('directory-properties-collapsed', state)));
-  }
-
-  ngOnDestroy(): void {
   }
 
   onDirectoryAction(directory: Directory) {
@@ -59,9 +35,5 @@ export class DirectoryPropertiesComponent implements OnInit, OnDestroy {
         .updateDirectoryPictures(this.directory.id)
         .subscribe({complete: () => shadeRef.dismiss()});
     }
-  }
-
-  onToggleSideBar() {
-    this.closed$.toggle();
   }
 }
