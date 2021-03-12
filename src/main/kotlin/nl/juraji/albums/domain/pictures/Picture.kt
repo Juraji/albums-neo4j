@@ -6,7 +6,6 @@ import org.springframework.data.neo4j.core.schema.GeneratedValue
 import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Relationship
-import org.springframework.data.neo4j.core.schema.Relationship.Direction.OUTGOING
 import org.springframework.data.neo4j.core.support.UUIDStringGenerator
 import java.time.LocalDateTime
 
@@ -21,6 +20,6 @@ data class Picture(
     val fileSize: Long = 0,
     val fileType: FileType? = null,
     val lastModified: LocalDateTime? = null,
-    @Relationship("LOCATED_IN", direction = OUTGOING) val directory: Directory,
+    @Relationship("LOCATED_IN") val directory: Directory,
     @Relationship("TAGGED_BY") val tags: List<Tag> = emptyList()
 )
