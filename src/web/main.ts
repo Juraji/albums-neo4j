@@ -4,8 +4,11 @@ import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import {AppModule} from './app/app.module';
 import {installExtensions} from '@utils/prototypes';
 import {environment} from '@environment';
+import {registerLocaleData} from '@angular/common';
+import localeNl from '@angular/common/locales/nl';
 
 installExtensions();
+registerLocaleData(localeNl, 'nl');
 
 if (environment.production) {
   enableProdMode();

@@ -6,7 +6,9 @@ import {
   unlinkDuplicateSuccess
 } from '@actions/duplicates.actions';
 
-const duplicateEntityAdapter = createEntityAdapter<DuplicateProps>();
+const duplicateEntityAdapter = createEntityAdapter<DuplicateProps>({
+  sortComparer: (a, b) => a.matchedOn.localeCompare(b.matchedOn)
+});
 
 const duplicatesReducer = createReducer(
   duplicateEntityAdapter.getInitialState(),

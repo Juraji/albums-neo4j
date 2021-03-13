@@ -22,7 +22,7 @@ export const fetchDirectoryPicturesSuccess = createAction(
 
 export const deletePicture = createAction(
   '[Pictures] Delete Picture',
-  (pictureId: string) => ({pictureId})
+  (pictureId: string, deleteFile: boolean = true) => ({pictureId, deleteFile})
 );
 
 export const deletePictureSuccess = createAction(

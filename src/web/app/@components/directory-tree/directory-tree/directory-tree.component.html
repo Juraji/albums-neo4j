@@ -5,8 +5,8 @@
               (click)="toggleDirectory(directory);$event.preventDefault()"
               [class.d-hidden]="!directory.children.length">
         <ng-container [ngSwitch]="!!openedStates[directory.id]">
-          <span *ngSwitchCase="true" class="fa fa-minus"></span>
-          <span *ngSwitchCase="false" class="fa fa-plus"></span>
+          <span *ngSwitchCase="true" class="fa fa-folder-minus"></span>
+          <span *ngSwitchCase="false" class="fa fa-folder-plus"></span>
         </ng-container>
       </button>
       <button type="button" class="btn btn-link" (click)="onDirectoryAction(directory)">

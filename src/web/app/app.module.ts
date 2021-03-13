@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {LOCALE_ID, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 
 import {AppRoutingModule} from './app-routing.module';
@@ -30,7 +30,10 @@ import {DuplicatesEffects} from '@effects/duplicates.effects';
     !environment.production ? StoreDevtoolsModule.instrument() : [],
     EffectsModule.forRoot([DirectoriesEffects, PicturesEffects, TagsEffects, DuplicatesEffects])
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  providers: [
+    {provide: LOCALE_ID, useValue: 'nl'}
+  ]
 })
 export class AppModule {
 }

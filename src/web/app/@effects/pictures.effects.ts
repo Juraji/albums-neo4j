@@ -4,6 +4,8 @@ import {PicturesService} from '@services/pictures.service';
 import {
   addTagToPicture,
   addTagToPictureSuccess,
+  deletePicture,
+  deletePictureSuccess,
   fetchDirectoryPictures,
   fetchDirectoryPicturesSuccess,
   fetchPicture,
@@ -81,6 +83,15 @@ export class PicturesEffects {
       .removeTag(picture.id, tag.id).pipe(mapTo({picture, tag}))),
     map(({picture, tag}) => removeTagFromPictureSuccess(
       picture.copy({tags: picture.tags.filter(t => t.id !== tag.id)}), tag))
+  ));
+
+  @EffectMarker
+  deletePicture$ = createEffect(() => this.actions$.pipe(
+    ofType(deletePicture),
+    switchMap(({pictureId, deleteFile}) => this.picturesService
+      .deletePicture(pictureId, deleteFile)
+      .pipe(mapTo(pictureId))),
+    map(pictureId => deletePictureSuccess(pictureId))
   ));
 
   constructor(

@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '@environment';
 
 @Injectable({
@@ -26,5 +26,11 @@ export class PicturesService {
 
   removeTag(pictureId: string, tagId: string): Observable<void> {
     return this.httpClient.delete<void>(`${environment.apiBaseUri}/pictures/${pictureId}/tags/${tagId}`);
+  }
+
+  deletePicture(pictureId: string, deleteFile: boolean): Observable<void> {
+    return this.httpClient.delete<void>(`${environment.apiBaseUri}/pictures/${pictureId}`, {
+      params: new HttpParams().append('deleteFile', deleteFile.toString())
+    });
   }
 }

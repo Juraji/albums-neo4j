@@ -2,6 +2,7 @@ import {createEntityAdapter, Update} from '@ngrx/entity';
 import {createFeatureSelector, createReducer, createSelector, on} from '@ngrx/store';
 import {
   addTagToPictureSuccess,
+  deletePictureSuccess,
   fetchDirectoryPicturesSuccess,
   fetchPictureSuccess,
   removeTagFromPictureSuccess
@@ -17,6 +18,8 @@ export const picturesReducer = createReducer(
     picturesEntityAdapter.upsertOne(picture, s)),
   on(fetchDirectoryPicturesSuccess, (s, {pictures}) =>
     picturesEntityAdapter.upsertMany(pictures, s)),
+  on(deletePictureSuccess, (s, {pictureId}) =>
+    picturesEntityAdapter.removeOne(pictureId, s)),
   on(addTagToPictureSuccess, (s, {picture}) =>
     picturesEntityAdapter.updateOne({id: picture.id, changes: picture}, s)),
   on(removeTagFromPictureSuccess, (s, {picture}) =>
