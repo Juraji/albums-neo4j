@@ -33,6 +33,7 @@ class ApiConfiguration {
         configuration.maxAge = appConfiguration.maxAge
         configuration.allowedOrigins = appConfiguration.allowedOrigins
         configuration.allowedMethods = listOf("GET", "POST", "DELETE")
+        configuration.allowedHeaders = listOf("content-type")
 
         val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", configuration)
