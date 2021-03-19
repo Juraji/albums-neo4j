@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {environment} from '@environment';
-import {filter} from 'rxjs/operators';
+import {filter, share} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +11,7 @@ export class AlbumEventsService {
   readonly events$: Observable<AlbumEvent>;
 
   constructor() {
-    this.events$ = this.createRootSubscription();
+    this.events$ = this.createRootSubscription().pipe(share());
   }
 
   ofType<T extends AlbumEvent, E extends T['eventType'] = any>(eventType: E): Observable<T> {
