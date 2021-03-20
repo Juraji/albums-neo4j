@@ -1,18 +1,17 @@
 package nl.juraji.albums.api.dto
 
 import nl.juraji.albums.domain.tags.Tag
-import nl.juraji.albums.util.Patterns
+import nl.juraji.albums.util.validators.HexColor
 import javax.validation.constraints.NotBlank
-import javax.validation.constraints.Pattern
 
 data class UpdateTagDto(
     @field:NotBlank
     val id: String,
     @field:NotBlank
     val label: String,
-    @field:Pattern(regexp = Patterns.HEX_COLOR)
+    @field:HexColor
     val color: String,
-    @field:Pattern(regexp = Patterns.HEX_COLOR)
+    @field:HexColor
     val textColor: String,
 )
 
