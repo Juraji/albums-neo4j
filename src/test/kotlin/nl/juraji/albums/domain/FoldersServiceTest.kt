@@ -216,11 +216,12 @@ internal class FoldersServiceTest {
     }
 
     @Test
-    fun `should not move folder when folder or target not exists`() {
+    fun `should not move folder when folder does not exist`() {
         val folderId = fixture.nextString()
         val targetId = fixture.nextString()
 
-        every { foldersRepository.existsById(any<String>()) } returnsMonoOf false
+        every { foldersRepository.existsById(folderId) } returnsMonoOf false
+        every { foldersRepository.existsById(targetId) } returnsMonoOf true
 
         val result = foldersService.moveFolder(folderId, targetId)
 
@@ -228,7 +229,29 @@ internal class FoldersServiceTest {
             .expectError<ValidationException>()
             .verify()
 
-        verify(atLeast = 1) { foldersRepository.existsById(any<String>()) }
-        verify { foldersRepository.setParent(folderId, targetId) wasNot Called }
+        verify {
+            foldersRepository.existsById(folderId)
+            foldersRepository.setParent(folderId, targetId) wasNot Called
+        }
+    }
+
+    @Test
+    fun `should not move folder when target does not exist`() {
+        val folderId = fixture.nextString()
+        val targetId = fixture.nextString()
+
+        every { foldersRepository.existsById(folderId) } returnsMonoOf true
+        every { foldersRepository.existsById(targetId) } returnsMonoOf false
+
+        val result = foldersService.moveFolder(folderId, targetId)
+
+        StepVerifier.create(result)
+            .expectError<ValidationException>()
+            .verify()
+
+        verify {
+            foldersRepository.existsById(targetId)
+            foldersRepository.setParent(folderId, targetId) wasNot Called
+        }
     }
 }
