@@ -1,8 +1,7 @@
-package nl.juraji.albums.domain.folders
+package nl.juraji.albums.domain.pictures
 
-import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.util.BaseTestHarnessConfig
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
@@ -11,17 +10,18 @@ import org.springframework.data.neo4j.core.Neo4jClient
 import reactor.test.StepVerifier
 
 @DataNeo4jTest
-class FolderPicturesRepositoryTest {
+class PicturesRepositoryTest {
+
 
     @Autowired
-    private lateinit var folderPicturesRepository: FolderPicturesRepository
+    private lateinit var picturesRepository: PicturesRepository
 
     @Autowired
     private lateinit var neo4jClient: Neo4jClient
 
     @Test
     internal fun `should add picture to folder`() {
-        val returnValue = folderPicturesRepository.addPictureToFolder("root", "picture1")
+        val returnValue = picturesRepository.addPictureToFolder("root", "picture1")
 
         StepVerifier.create(returnValue)
             .expectNextMatches { it.id == "picture1" }
@@ -36,7 +36,7 @@ class FolderPicturesRepositoryTest {
             .fetch()
             .all()
 
-        assertEquals(1, result.size)
+        Assertions.assertEquals(1, result.size)
     }
 
     @TestConfiguration
