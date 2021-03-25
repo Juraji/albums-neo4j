@@ -4,9 +4,14 @@
   <div class="container-fluid flex-grow-1 no-scrollbar pictures-list-view">
     <div class="row">
       <div class="col col-sm-3" *ngFor="let c of pictures$ | async">
-        <a [routerLink]="['pictures', p.id]" *ngFor="let p of c">
-          <img src="" alt="" class="img-fluid shadow mb-3" appPictureImg [picture]="p"/>
-        </a>
+        <div class="picture-container" *ngFor="let p of c">
+          <a [routerLink]="['pictures', p.id]">
+            <img src="" alt="" class="img-fluid shadow mb-3" appPictureImg [picture]="p"/>
+          </a>
+          <div class="tag-orbs">
+            <span *ngFor="let t of p.tags" class="tag-orb" [style.backgroundColor]="t.color" [title]="t.label"></span>
+          </div>
+        </div>
       </div>
     </div>
   </div>

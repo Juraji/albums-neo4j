@@ -8,7 +8,7 @@ import kotlin.reflect.KClass
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FIELD, AnnotationTarget.FUNCTION)
-@Constraint(validatedBy = [ValidFileSystemPathValidator::class])
+@Constraint(validatedBy = [HexColorValidator::class])
 annotation class HexColor(
     val message: String = "Invalid hexadecimal color notation",
     val groups: Array<KClass<*>> = [],
@@ -21,7 +21,7 @@ class HexColorValidator : ConstraintValidator<HexColor, String> {
         value.matches(HEX_COLOR_PATTERN)
 
     companion object {
-        val HEX_COLOR_PATTERN = Regex.fromLiteral("^#[0-9a-f]{6}$")
+        val HEX_COLOR_PATTERN = "^#[0-9a-f]{6}$".toRegex()
     }
 
 }

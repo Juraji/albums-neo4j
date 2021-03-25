@@ -31,7 +31,7 @@ export class DirectoryPage implements OnInit, OnDestroy {
 
   readonly page$ = new Subject<number>();
   readonly pageSize$ = new Subject<number>();
-  readonly pictures$ = combineLatest([
+  readonly pictures$: Observable<PictureProps[][]> = combineLatest([
     this.directoryId$,
     this.page$.pipe(startWith(1)),
     this.pageSize$.pipe(startWith(50))
