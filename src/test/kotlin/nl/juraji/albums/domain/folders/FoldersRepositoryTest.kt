@@ -20,30 +20,49 @@ class FoldersRepositoryTest {
 
     @Test
     internal fun `should set parent`() {
-        val returnValue = foldersRepository.setParent("unlinkedFolder", "root")
+        val returnValue = foldersRepository.setParent("folder2", "root1")
 
         StepVerifier.create(returnValue)
-            .expectNext(Folder(id = "unlinkedFolder", name = "Unlinked folder"))
+            .expectNext(Folder(id = "root1", name = "Root 1"))
             .verifyComplete()
 
         val result = neo4jClient.query(
             """
-            MATCH (:Folder {id: 'root'})-[:HAS_CHILD]->(child)
-            RETURN child
+            MATCH (p:Folder)-[:HAS_CHILD]->(:Folder {id: 'folder2'})
+            RETURN p
             """
         )
             .fetch()
             .all()
 
-        assertEquals(2, result.size)
+        assertEquals(1, result.size)
     }
 
     @Test
     internal fun `should get roots`() {
-        val result = foldersRepository.getRoots()
+        val result = foldersRepository.findRoots()
 
         StepVerifier.create(result)
-            .expectNext(Folder(id = "root", name="Root"))
+            .expectNext(Folder(id = "root1", name="Root 1"))
+            .expectNext(Folder(id = "root2", name="Root 2"))
+            .verifyComplete()
+    }
+
+    @Test
+    fun `should check is empty by id`() {
+        val result = foldersRepository.isEmptyById("folder1")
+
+        StepVerifier.create(result)
+            .expectNext(true)
+            .verifyComplete()
+    }
+
+    @Test
+    fun `should check is not empty by id`() {
+        val result = foldersRepository.isEmptyById("root1")
+
+        StepVerifier.create(result)
+            .expectNext(false)
             .verifyComplete()
     }
 
@@ -51,21 +70,25 @@ class FoldersRepositoryTest {
     class TestHarnessConfig : BaseTestHarnessConfig() {
         // language=Cypher
         override fun withFixtureQuery(): String = """
-            CREATE (root:Folder {
-                id: 'root',
-                name: 'Root'
+            CREATE (root1:Folder {
+                id: 'root1',
+                name: 'Root 1'
             })
             
-            CREATE (linkedFolder:Folder {
-                id: 'linkedFolder',
-                name: 'Linked folder'
+            CREATE (root2:Folder {
+                id: 'root2',
+                name: 'Root 2'
             })
-            MERGE (root)-[:HAS_CHILD]->(linkedFolder)
             
-            CREATE (unlinkedFolder:Folder {
-                id: 'unlinkedFolder',
-                name: 'Unlinked folder'
-            })
+            CREATE (folder1:Folder {
+                id: 'folder1',
+                name: 'Folder 1'
+            })<-[:HAS_CHILD]-(root1)
+            
+            CREATE (folder2:Folder {
+                id: 'folder2',
+                name: 'Folder 2'
+            })<-[:HAS_CHILD]-(root2)
         """.trimIndent()
 
     }
