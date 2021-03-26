@@ -9,6 +9,10 @@ spring:
       allowed-origins:
         - "http://localhost:4200"
 
+file-system:
+  thumbnails-directory: "./data/thumbnails"
+  pictures-directory: "./data/pictures"
+
 logging:
   level:
     nl.juraji: debug

@@ -4,9 +4,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 
 @ConstructorBinding
-@ConfigurationProperties("duplicate-scanner")
-data class DuplicateScannerConfiguration(
-    val hashSampleSize: Int = 100,
+@ConfigurationProperties("image-service")
+data class ImageServiceConfiguration(
+    val hashSampleSize: Int,
     val hashSize: Int = hashSampleSize * hashSampleSize,
-    val similarityThreshold: Double = 0.82
+    val similarityThreshold: Double,
+    val thumbnailsDirectory: String,
+    val picturesDirectory: String,
 )

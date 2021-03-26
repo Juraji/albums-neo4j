@@ -21,15 +21,15 @@ class PicturesRepositoryTest {
 
     @Test
     internal fun `should add picture to folder`() {
-        val returnValue = picturesRepository.addPictureToFolder("root", "picture1")
+        val returnValue = picturesRepository.addPictureToFolder("root", "picture2")
 
         StepVerifier.create(returnValue)
-            .expectNextMatches { it.id == "picture1" }
+            .expectNextMatches { it.id == "picture2" }
             .verifyComplete()
 
         val result = neo4jClient.query(
             """
-            MATCH (:Folder {id:'root'})-[:HAS_PICTURE]->(p:Picture {id:'picture1'})
+            MATCH (:Folder {id:'root'})-[:HAS_PICTURE]->(p:Picture {id:'picture2'})
             RETURN p
         """
         )
@@ -37,6 +37,15 @@ class PicturesRepositoryTest {
             .all()
 
         Assertions.assertEquals(1, result.size)
+    }
+
+    @Test
+    fun `should find all by folder id`(){
+        val result = picturesRepository.findAllByFolderId("root")
+
+        StepVerifier.create(result)
+            .expectNextMatches { it.id == "picture1" }
+            .verifyComplete()
     }
 
     @TestConfiguration
@@ -48,15 +57,24 @@ class PicturesRepositoryTest {
                 name: 'Root'
             })
             
-            CREATE (picture:Picture {
+            CREATE (picture1:Picture {
                 id: 'picture1',
                 name: 'Picture 1',
                 type: 'UNKNOWN',
                 width: 0,
                 height: 0,
                 fileSize: 0,
-                addedOn: localdatetime('2021-03-25T19:49:00'),
-                lastModified: localdatetime('2021-03-25T19:49:00')
+                addedOn: localdatetime('2021-03-25T19:49:00')
+            })<-[:HAS_PICTURE]-(root)
+            
+            CREATE (picture2:Picture {
+                id: 'picture2',
+                name: 'Picture 2',
+                type: 'UNKNOWN',
+                width: 0,
+                height: 0,
+                fileSize: 0,
+                addedOn: localdatetime('2021-03-25T19:49:00')
             })
         """.trimIndent()
 

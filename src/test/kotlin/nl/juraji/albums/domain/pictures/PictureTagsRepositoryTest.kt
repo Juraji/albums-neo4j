@@ -60,8 +60,7 @@ class PictureTagsRepositoryTest {
                 width: 0,
                 height: 0,
                 fileSize: 0,
-                addedOn: localdatetime('2021-03-25T19:49:00'),
-                lastModified: localdatetime('2021-03-25T19:49:00')
+                addedOn: localdatetime('2021-03-25T19:49:00')
             })
             
             CREATE (tag1:Tag {

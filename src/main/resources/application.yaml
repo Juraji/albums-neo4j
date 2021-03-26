@@ -7,3 +7,8 @@ spring:
   webflux:
     base-path: "/api"
 
+image-service:
+  hash-sample-size: 100
+  similarity-threshold: 0.82
+  thumbnails-directory: "/data/thumbnails"
+  pictures-directory: "/data/pictures"
