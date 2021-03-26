@@ -9,7 +9,7 @@ spring:
       allowed-origins:
         - "http://localhost:4200"
 
-file-system:
+image-service:
   thumbnails-directory: "./data/thumbnails"
   pictures-directory: "./data/pictures"
 

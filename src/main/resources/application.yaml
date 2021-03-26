@@ -10,5 +10,6 @@ spring:
 image-service:
   hash-sample-size: 100
   similarity-threshold: 0.82
+  thumbnail-size: 250
   thumbnails-directory: "/data/thumbnails"
   pictures-directory: "/data/pictures"

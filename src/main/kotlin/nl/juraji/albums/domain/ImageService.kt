@@ -38,7 +38,7 @@ class ImageService(
 
     fun saveThumbnail(image: ImmutableImage): Mono<SavedPicture> = deferTo(ioScheduler) {
         val id = UUID.randomUUID().toString()
-        val thumbnailImage = image.cover(250, 250)
+        val thumbnailImage = image.cover(configuration.thumbnailSize, configuration.thumbnailSize)
 
         val path = configuration.thumbnailsDirectory.toPath().resolve("$id.jpg")
         val writer = JpegWriter()

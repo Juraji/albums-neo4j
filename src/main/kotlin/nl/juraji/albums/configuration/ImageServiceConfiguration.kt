@@ -9,6 +9,7 @@ data class ImageServiceConfiguration(
     val hashSampleSize: Int,
     val hashSize: Int = hashSampleSize * hashSampleSize,
     val similarityThreshold: Double,
+    val thumbnailSize: Int,
     val thumbnailsDirectory: String,
     val picturesDirectory: String,
 )
