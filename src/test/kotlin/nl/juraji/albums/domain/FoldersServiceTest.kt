@@ -11,6 +11,7 @@ import io.mockk.verify
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.folders.Folder
 import nl.juraji.albums.domain.folders.FoldersRepository
+import nl.juraji.albums.util.returnsArgumentAsMono
 import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
@@ -128,7 +129,7 @@ internal class FoldersServiceTest {
         val update = fixture.next<Folder>().copy(id = folderId)
 
         every { foldersRepository.findById(any<String>()) } returnsMonoOf existing
-        every { foldersRepository.save(any()) } answers { Mono.just(firstArg()) }
+        every { foldersRepository.save(any()) }.returnsArgumentAsMono()
 
         val result = foldersService.updateFolder(folderId, update)
 

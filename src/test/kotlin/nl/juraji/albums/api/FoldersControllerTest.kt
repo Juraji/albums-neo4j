@@ -9,6 +9,7 @@ import io.mockk.verify
 import nl.juraji.albums.configurations.TestFixtureConfiguration
 import nl.juraji.albums.domain.FoldersService
 import nl.juraji.albums.domain.folders.Folder
+import nl.juraji.albums.util.returnsArgumentAsMono
 import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
@@ -79,7 +80,7 @@ internal class FoldersControllerTest {
     fun `should create folder`() {
         val newFolder = fixture.next<Folder>().copy(id = null)
 
-        every { foldersService.createFolder(any(), any()) } answers { Mono.just(newFolder) }
+        every { foldersService.createFolder(any(), any()) }.returnsArgumentAsMono()
 
         val response = webTestClient
             .post()
@@ -101,7 +102,7 @@ internal class FoldersControllerTest {
         val parentId = fixture.nextString()
         val newFolder = fixture.next<Folder>().copy(id = null)
 
-        every { foldersService.createFolder(any(), any()) } answers { Mono.just(newFolder) }
+        every { foldersService.createFolder(any(), any()) }.returnsArgumentAsMono()
 
         val response = webTestClient
             .post()
@@ -127,7 +128,7 @@ internal class FoldersControllerTest {
         val folderId = fixture.nextString()
         val update = fixture.next<Folder>()
 
-        every { foldersService.updateFolder(any(), any()) } answers { Mono.just(secondArg()) }
+        every { foldersService.updateFolder(any(), any()) }.returnsArgumentAsMono(1)
 
         webTestClient
             .put()

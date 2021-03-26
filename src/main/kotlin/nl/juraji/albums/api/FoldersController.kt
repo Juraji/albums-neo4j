@@ -5,6 +5,7 @@ import nl.juraji.albums.domain.folders.Folder
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/folders")
@@ -23,13 +24,13 @@ class FoldersController(
     @PostMapping
     fun createFolder(
         @RequestParam(name = "parentId", required = false) parentFolderId: String?,
-        @RequestBody folder: Folder,
+        @Valid @RequestBody folder: Folder,
     ): Mono<Folder> = foldersService.createFolder(folder, parentFolderId)
 
     @PutMapping("/{folderId}")
     fun updateFolder(
         @PathVariable folderId: String,
-        @RequestBody folder: Folder,
+        @Valid @RequestBody folder: Folder,
     ): Mono<Folder> = foldersService.updateFolder(folderId, folder)
 
     @DeleteMapping("/{folderId}")
