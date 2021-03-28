@@ -5,7 +5,7 @@ import nl.juraji.albums.domain.pictures.FileType
 import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.domain.pictures.PicturesRepository
 import nl.juraji.albums.util.LoggerCompanion
-import nl.juraji.reactor.validations.ValidationException
+import nl.juraji.reactor.validations.validate
 import nl.juraji.reactor.validations.validateAsync
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.core.io.FileSystemResource
@@ -26,25 +26,34 @@ class PicturesService(
 ) {
     fun getFolderPictures(folderId: String): Flux<Picture> = picturesRepository.findAllByFolderId(folderId)
 
-    fun persistNewPicture(folderId: String, file: FilePart): Mono<Picture> {
-        val contentType = file.headers().contentType?.toString()
-            ?: throw ValidationException("Missing Content-Type header")
-        val fileType = FileType.ofContentType(contentType)
-            ?: throw ValidationException("Unsupported Content-Type: $contentType")
-        val fileName = file.headers().contentDisposition.filename
-            ?: throw ValidationException("Missing file name in content disposition")
+    fun persistNewPicture(folderId: String, file: FilePart): Mono<Picture> = unpackFilePart(file)
+        .validate { (_, contentType, filename) ->
+            isNotNull(contentType) { "Missing Content-Type header" }
+            isNotNull(filename) { "Missing Content-Disposition header or filename is undefined" }
+            isTrue(FileType.supports(contentType)) { "Unsupported Content-Type: $contentType" }
+        }
+        .validateAsync { (_, _, filename) ->
+            isFalse(picturesRepository.existsByNameInFolder(folderId, filename!!)) {
+                "A file with name $filename already exists in folder with id $folderId"
+            }
+        }
+        .map { (file, contentType, filename) ->
+            Triple(
+                file,
+                FileType.ofContentType(contentType!!),
+                filename!!
+            )
+        }
+        .flatMap { (file, fileType, filename) ->
+            logger.info("Incoming file: $filename (as $fileType)")
 
-        logger.info("Incoming file: $fileName ($contentType -> $fileType)")
+            val image = imageService.loadFilePartAsImage(file).share()
+            val savedPicture = image.flatMap { imageService.savePicture(it, fileType) }
+            val savedThumbnail = image.flatMap { imageService.saveThumbnail(it) }
 
-        val image = imageService.loadFilePartAsImage(file).share()
-        val savedPicture = image.flatMap { imageService.savePicture(it, fileType) }
-        val savedThumbnail = image.flatMap { imageService.saveThumbnail(it) }
-
-
-        val picture = Mono.zip(image, savedPicture, savedThumbnail)
-            .map { (image, savedPicture, savedThumbnail) ->
+            Mono.zip(image, savedPicture, savedThumbnail).map { (image, savedPicture, savedThumbnail) ->
                 Picture(
-                    name = fileName,
+                    name = filename,
                     fileSize = savedPicture.filesSize,
                     width = image.width,
                     height = image.height,
@@ -53,17 +62,10 @@ class PicturesService(
                     thumbnailLocation = savedThumbnail.location
                 )
             }
-
-        return validateAsync {
-            isFalse(picturesRepository.existsByNameInFolder(folderId, fileName)) {
-                "A file with name $fileName already exists in folder with id $folderId"
-            }
         }
-            .flatMap { picture }
-            .flatMap(picturesRepository::save)
-            .flatMap { picturesRepository.addPictureToFolder(folderId, it.id!!) }
-            .doOnNext { applicationEventPublisher.publishEvent(PictureAddedEvent(folderId, it)) }
-    }
+        .flatMap(picturesRepository::save)
+        .flatMap { picturesRepository.addPictureToFolder(folderId, it.id!!) }
+        .doOnNext { applicationEventPublisher.publishEvent(PictureAddedEvent(folderId, it)) }
 
     fun getPictureResource(pictureId: String): Mono<Resource> = picturesRepository
         .findById(pictureId)
@@ -72,6 +74,14 @@ class PicturesService(
     fun getThumbnailResource(pictureId: String): Mono<Resource> = picturesRepository
         .findById(pictureId)
         .map { FileSystemResource(it.thumbnailLocation) }
+
+    private fun unpackFilePart(file: FilePart): Mono<Triple<FilePart, String?, String?>> = Mono.just(
+        Triple(
+            file,
+            file.headers().contentType?.toString(),
+            file.headers().contentDisposition.filename
+        )
+    )
 
     companion object : LoggerCompanion(PicturesService::class)
 }

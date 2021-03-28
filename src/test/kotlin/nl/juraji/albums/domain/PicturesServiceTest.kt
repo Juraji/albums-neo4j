@@ -98,7 +98,7 @@ internal class PicturesServiceTest {
         )
         every { imageService.saveThumbnail(any()) } returnsMonoOf ImageService.SavedPicture(
             "saved-thumbnail.jpg",
-            64000
+            0
         )
         every { picturesRepository.existsByNameInFolder(any(), any()) } returnsMonoOf false
         every { picturesRepository.save(any()) } returnsMonoOf expectedAfterSave
@@ -131,9 +131,11 @@ internal class PicturesServiceTest {
             HttpHeaders.CONTENT_DISPOSITION to ContentDisposition.formData().filename("image.jpg").build().toString()
         )
 
-        assertThrows<ValidationException> {
-            picturesService.persistNewPicture(folderId, filePart)
-        }
+        val result = picturesService.persistNewPicture(folderId, filePart)
+
+        StepVerifier.create(result)
+            .expectErrorMessage("Missing Content-Type header")
+            .verify()
     }
 
     @Test
@@ -144,9 +146,11 @@ internal class PicturesServiceTest {
             HttpHeaders.CONTENT_DISPOSITION to ContentDisposition.formData().filename("image.jpg").build().toString()
         )
 
-        assertThrows<ValidationException> {
-            picturesService.persistNewPicture(folderId, filePart)
-        }
+        val result = picturesService.persistNewPicture(folderId, filePart)
+
+        StepVerifier.create(result)
+            .expectErrorMessage("Unsupported Content-Type: application/pdf")
+            .verify()
     }
 
     @Test
@@ -156,9 +160,11 @@ internal class PicturesServiceTest {
             HttpHeaders.CONTENT_TYPE to MediaType.IMAGE_JPEG_VALUE
         )
 
-        assertThrows<ValidationException> {
-            picturesService.persistNewPicture(folderId, filePart)
-        }
+        val result = picturesService.persistNewPicture(folderId, filePart)
+
+        StepVerifier.create(result)
+            .expectErrorMessage("Missing Content-Disposition header or filename is undefined")
+            .verify()
     }
 
     @Test
@@ -169,9 +175,11 @@ internal class PicturesServiceTest {
             HttpHeaders.CONTENT_DISPOSITION to ContentDisposition.formData().build().toString()
         )
 
-        assertThrows<ValidationException> {
-            picturesService.persistNewPicture(folderId, filePart)
-        }
+        val result = picturesService.persistNewPicture(folderId, filePart)
+
+        StepVerifier.create(result)
+            .expectErrorMessage("Missing Content-Disposition header or filename is undefined")
+            .verify()
     }
 
     @Test
@@ -183,7 +191,6 @@ internal class PicturesServiceTest {
         )
 
         every { picturesRepository.existsByNameInFolder(any(), any()) } returnsMonoOf true
-        every { imageService.loadFilePartAsImage(filePart) }.returnsEmptyMono()
 
         StepVerifier.create(picturesService.persistNewPicture(folderId, filePart))
             .expectErrorMessage("A file with name image.jpg already exists in folder with id $folderId")
