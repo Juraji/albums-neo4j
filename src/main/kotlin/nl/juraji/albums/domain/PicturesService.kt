@@ -47,7 +47,7 @@ class PicturesService(
         .flatMap { (file, fileType, filename) ->
             logger.info("Incoming file: $filename (as $fileType)")
 
-            val image = imageService.loadFilePartAsImage(file).share()
+            val image = imageService.loadPartAsImage(file).share()
             val savedPicture = image.flatMap { imageService.savePicture(it, fileType) }
             val savedThumbnail = image.flatMap { imageService.saveThumbnail(it) }
 

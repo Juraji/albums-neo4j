@@ -9,8 +9,10 @@ import nl.juraji.albums.configuration.ImageServiceConfiguration
 import nl.juraji.albums.domain.pictures.FileType
 import nl.juraji.albums.util.deferTo
 import nl.juraji.albums.util.toPath
+import org.springframework.core.io.Resource
 import org.springframework.core.io.buffer.DataBufferUtils
 import org.springframework.http.codec.multipart.FilePart
+import org.springframework.http.codec.multipart.Part
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Scheduler
@@ -32,9 +34,12 @@ class ImageService(
             true
         )
 
-    fun loadFilePartAsImage(file: FilePart): Mono<ImmutableImage> = with(file) { DataBufferUtils.join(content()) }
+    fun loadPartAsImage(file: Part): Mono<ImmutableImage> = with(file) { DataBufferUtils.join(content()) }
         .map { it.asInputStream() }
         .map { ImmutableImage.loader().fromStream(it) }
+
+    fun loadResourceAsImage(resource: Resource) = Mono.just(resource)
+        .map { ImmutableImage.loader().fromStream(it.inputStream) }
 
     fun saveThumbnail(image: ImmutableImage): Mono<SavedPicture> = deferTo(ioScheduler) {
         val id = UUID.randomUUID().toString()
@@ -63,7 +68,7 @@ class ImageService(
         SavedPicture(path.toString(), Files.size(path))
     }
 
-    fun generateHash(image: ImmutableImage): Mono<String> = deferTo(ioScheduler) {
+    fun generateHash(image: ImmutableImage): Mono<BitSet> = deferTo(ioScheduler) {
         val sample = image
             .autocrop(Color.WHITE)
             .autocrop(Color.BLACK)
@@ -78,12 +83,10 @@ class ImageService(
         val pixels = sample.pixels().map { it.average() }.toTypedArray()
         val offsetPixels = pixels.copyOfRange(1, pixels.lastIndex)
 
-        val bytes = offsetPixels.foldIndexed(BitSet(configuration.hashSize)) { idx, acc, pix ->
+        offsetPixels.foldIndexed(BitSet(configuration.hashSize)) { idx, acc, pix ->
             acc.set(idx, pix > pixels[idx])
             acc
-        }.toByteArray()
-
-        Base64.getEncoder().encodeToString(bytes)
+        }
     }
 
     private fun writerForFileType(fileType: FileType): ImageWriter = when (fileType) {

@@ -15,13 +15,10 @@ import nl.juraji.albums.domain.events.PictureAddedEvent
 import nl.juraji.albums.domain.pictures.FileType
 import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.domain.pictures.PicturesRepository
-import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsMonoOf
-import nl.juraji.reactor.validations.ValidationException
 import org.hamcrest.Matchers.samePropertyValuesAs
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.core.io.FileSystemResource
@@ -91,7 +88,7 @@ internal class PicturesServiceTest {
             id = fixture.nextString()
         )
 
-        every { imageService.loadFilePartAsImage(any()) } returnsMonoOf testImage
+        every { imageService.loadPartAsImage(any()) } returnsMonoOf testImage
         every { imageService.savePicture(any(), any()) } returnsMonoOf ImageService.SavedPicture(
             "saved-image.jpg",
             64000
@@ -112,7 +109,7 @@ internal class PicturesServiceTest {
             .verifyComplete()
 
         verify {
-            imageService.loadFilePartAsImage(filePart)
+            imageService.loadPartAsImage(filePart)
             imageService.savePicture(testImage, FileType.JPEG)
             imageService.saveThumbnail(testImage)
             picturesRepository.existsByNameInFolder(folderId, "image.jpg")
