@@ -5,6 +5,8 @@ import nl.juraji.albums.domain.pictures.FileType
 import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.domain.pictures.PicturesRepository
 import nl.juraji.albums.util.LoggerCompanion
+import nl.juraji.reactor.validations.ValidationException
+import nl.juraji.reactor.validations.validateAsync
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.core.io.FileSystemResource
 import org.springframework.core.io.Resource
@@ -15,7 +17,6 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.core.util.function.component1
 import reactor.kotlin.core.util.function.component2
 import reactor.kotlin.core.util.function.component3
-import javax.validation.ValidationException
 
 @Service
 class PicturesService(
@@ -39,6 +40,7 @@ class PicturesService(
         val savedPicture = image.flatMap { imageService.savePicture(it, fileType) }
         val savedThumbnail = image.flatMap { imageService.saveThumbnail(it) }
 
+
         val picture = Mono.zip(image, savedPicture, savedThumbnail)
             .map { (image, savedPicture, savedThumbnail) ->
                 Picture(
@@ -52,7 +54,12 @@ class PicturesService(
                 )
             }
 
-        return picture
+        return validateAsync {
+            isFalse(picturesRepository.existsByNameInFolder(folderId, fileName)) {
+                "A file with name $fileName already exists in folder with id $folderId"
+            }
+        }
+            .flatMap { picture }
             .flatMap(picturesRepository::save)
             .flatMap { picturesRepository.addPictureToFolder(folderId, it.id!!) }
             .doOnNext { applicationEventPublisher.publishEvent(PictureAddedEvent(folderId, it)) }

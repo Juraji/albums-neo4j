@@ -34,6 +34,7 @@ dependencies {
     implementation("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter:0.1.2")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
+    testImplementation("org.hamcrest:hamcrest:2.2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.neo4j.driver:neo4j-java-driver-test-harness-spring-boot-autoconfigure:4.1.1.1")
     testImplementation("org.neo4j.test:neo4j-harness:4.2.0") {
