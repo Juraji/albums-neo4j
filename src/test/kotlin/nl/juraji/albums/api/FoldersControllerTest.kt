@@ -6,7 +6,7 @@ import com.marcellogalhardo.fixture.nextListOf
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
-import nl.juraji.albums.configurations.TestFixtureConfiguration
+import nl.juraji.albums.configuration.TestFixtureConfiguration
 import nl.juraji.albums.domain.FoldersService
 import nl.juraji.albums.domain.folders.Folder
 import nl.juraji.albums.util.returnsArgumentAsMono
@@ -23,7 +23,6 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.test.web.reactive.server.expectBodyList
-import reactor.core.publisher.Mono
 
 @WebFluxTest(FoldersController::class)
 @AutoConfigureWebTestClient

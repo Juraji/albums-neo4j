@@ -24,6 +24,8 @@ class PicturesService(
     private val imageService: ImageService,
     private val applicationEventPublisher: ApplicationEventPublisher
 ) {
+    fun getById(pictureId: String): Mono<Picture> = picturesRepository.findById(pictureId)
+
     fun getFolderPictures(folderId: String): Flux<Picture> = picturesRepository.findAllByFolderId(folderId)
 
     fun persistNewPicture(folderId: String, file: FilePart): Mono<Picture> = unpackFilePart(file)

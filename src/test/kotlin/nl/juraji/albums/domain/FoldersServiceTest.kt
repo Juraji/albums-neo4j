@@ -8,7 +8,7 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
-import nl.juraji.albums.configurations.TestFixtureConfiguration
+import nl.juraji.albums.configuration.TestFixtureConfiguration
 import nl.juraji.albums.domain.folders.Folder
 import nl.juraji.albums.domain.folders.FoldersRepository
 import nl.juraji.albums.util.returnsArgumentAsMono
@@ -18,7 +18,6 @@ import nl.juraji.albums.util.returnsMonoOf
 import nl.juraji.reactor.validations.ValidationException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import reactor.core.publisher.Mono
 import reactor.kotlin.test.expectError
 import reactor.test.StepVerifier
 

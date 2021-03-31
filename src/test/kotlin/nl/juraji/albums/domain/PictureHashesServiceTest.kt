@@ -8,7 +8,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.justRun
 import io.mockk.verify
-import nl.juraji.albums.configurations.TestFixtureConfiguration
+import nl.juraji.albums.configuration.TestFixtureConfiguration
 import nl.juraji.albums.domain.events.AlbumEvent
 import nl.juraji.albums.domain.events.PictureHashGeneratedEvent
 import nl.juraji.albums.domain.pictures.PictureHash

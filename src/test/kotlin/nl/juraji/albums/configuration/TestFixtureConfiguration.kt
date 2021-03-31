@@ -1,4 +1,4 @@
-package nl.juraji.albums.configurations
+package nl.juraji.albums.configuration
 
 import com.marcellogalhardo.fixture.Fixture
 import com.marcellogalhardo.fixture.FixtureConfigs

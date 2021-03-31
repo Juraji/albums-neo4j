@@ -7,6 +7,14 @@ spring:
   webflux:
     base-path: "/api"
 
+org:
+  neo4j:
+    migrations:
+      enabled: true
+      database: "neo4j"
+      locations-to-scan: "classpath:neo4j/migrations"
+
+
 image-service:
   hash-sample-size: 100
   similarity-threshold: 0.82

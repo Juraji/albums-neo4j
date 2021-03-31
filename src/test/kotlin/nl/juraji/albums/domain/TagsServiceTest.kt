@@ -8,7 +8,7 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
-import nl.juraji.albums.configurations.TestFixtureConfiguration
+import nl.juraji.albums.configuration.TestFixtureConfiguration
 import nl.juraji.albums.domain.tags.Tag
 import nl.juraji.albums.domain.tags.TagsRepository
 import nl.juraji.albums.util.returnsArgumentAsMono

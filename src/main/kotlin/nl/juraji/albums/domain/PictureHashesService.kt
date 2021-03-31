@@ -1,5 +1,6 @@
 package nl.juraji.albums.domain
 
+import nl.juraji.albums.configuration.ImageServiceConfiguration
 import nl.juraji.albums.domain.events.PictureAddedEvent
 import nl.juraji.albums.domain.events.PictureHashGeneratedEvent
 import nl.juraji.albums.domain.events.ReactiveEventListener
@@ -38,8 +39,8 @@ class PictureHashesService(
     private fun getOrCreateForPicture(pictureId: String): Mono<PictureHash> = pictureHashesRepository
         .findByPictureId(pictureId)
         .switchIfEmpty {
-            Mono.just(PictureHash(data = BitSet()))
+            picturesService.getById(pictureId)
+                .map { PictureHash(data = BitSet(), picture = it) }
                 .flatMap(pictureHashesRepository::save)
-                .flatMap { pictureHashesRepository.linkToPicture(it.id!!, pictureId) }
         }
 }

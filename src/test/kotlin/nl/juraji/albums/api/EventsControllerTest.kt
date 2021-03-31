@@ -2,7 +2,7 @@ package nl.juraji.albums.api
 
 import com.marcellogalhardo.fixture.Fixture
 import com.marcellogalhardo.fixture.next
-import nl.juraji.albums.configurations.TestFixtureConfiguration
+import nl.juraji.albums.configuration.TestFixtureConfiguration
 import nl.juraji.albums.domain.events.AlbumEvent
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

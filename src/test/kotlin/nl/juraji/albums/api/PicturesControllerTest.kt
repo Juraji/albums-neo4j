@@ -5,9 +5,11 @@ import com.marcellogalhardo.fixture.nextListOf
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
-import nl.juraji.albums.configurations.TestFixtureConfiguration
+import nl.juraji.albums.configuration.TestFixtureConfiguration
+import nl.juraji.albums.domain.DuplicatesService
 import nl.juraji.albums.domain.PicturesService
 import nl.juraji.albums.domain.pictures.Picture
+import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsManyMonoOf
 import nl.juraji.albums.util.returnsMonoOf
@@ -38,6 +40,9 @@ internal class PicturesControllerTest {
 
     @MockkBean
     private lateinit var picturesService: PicturesService
+
+    @MockkBean
+    private lateinit var duplicatesService: DuplicatesService
 
     @Test
     fun getFolderPictures() {
@@ -141,6 +146,23 @@ internal class PicturesControllerTest {
             .isEqualTo(data)
 
         verify { picturesService.getThumbnailResource(pictureId) }
+    }
+
+    @Test
+    fun deleteDuplicateFromPicture() {
+        val folderId = fixture.nextString()
+        val pictureId = fixture.nextString()
+        val targetId = fixture.nextString()
+
+        every { duplicatesService.removeDuplicate(any(), any()) }.returnsEmptyMono()
+
+        webTestClient
+            .delete()
+            .uri("/folders/$folderId/pictures/$pictureId/duplicates/$targetId")
+            .exchange()
+            .expectStatus().isOk
+
+        verify { duplicatesService.removeDuplicate(pictureId, targetId) }
     }
 
     private fun generateData(): ByteArray {

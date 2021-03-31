@@ -1,4 +1,4 @@
-package nl.juraji.albums.configurations
+package nl.juraji.albums.configuration
 
 import org.springframework.boot.autoconfigure.web.WebProperties
 import org.springframework.boot.test.context.TestConfiguration

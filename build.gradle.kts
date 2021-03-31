@@ -1,14 +1,14 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "2.4.2"
+    id("org.springframework.boot") version "2.4.4"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    kotlin("jvm") version "1.4.30"
-    kotlin("plugin.spring") version "1.4.30"
+    kotlin("jvm") version "1.4.32"
+    kotlin("plugin.spring") version "1.4.32"
 }
 
-group = "nl.juraji"
-version = "3.0.1-SNAPSHOT"
+val group = "nl.juraji"
+val version = "3.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_14
 java.targetCompatibility = JavaVersion.VERSION_14
 

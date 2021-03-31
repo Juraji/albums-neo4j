@@ -6,7 +6,7 @@ import com.marcellogalhardo.fixture.nextListOf
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
-import nl.juraji.albums.configurations.TestFixtureConfiguration
+import nl.juraji.albums.configuration.TestFixtureConfiguration
 import nl.juraji.albums.domain.TagsService
 import nl.juraji.albums.domain.tags.Tag
 import nl.juraji.albums.util.returnsEmptyMono
@@ -21,7 +21,6 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.test.web.reactive.server.expectBodyList
-import java.util.*
 
 @WebFluxTest(TagsController::class)
 @AutoConfigureWebTestClient
