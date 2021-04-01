@@ -26,4 +26,12 @@ interface PictureTagsRepository : ReactiveNeo4jRepository<Tag, String> {
     """
     )
     fun addTagToPicture(pictureId: String, tagId: String): Mono<Tag>
+
+    @Query(
+        """
+            MATCH (:Picture {id: $ pictureId})-[rel:HAS_TAG]->(:Tag {id: $ tagId})
+            DELETE rel
+        """
+    )
+    fun removeTagFromPicture(pictureId: String, tagId: String): Mono<Void>
 }

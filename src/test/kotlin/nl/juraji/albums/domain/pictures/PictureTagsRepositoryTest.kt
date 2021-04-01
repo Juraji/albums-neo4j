@@ -2,6 +2,7 @@ package nl.juraji.albums.domain.pictures
 
 import nl.juraji.albums.util.BaseTestHarnessConfig
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
@@ -19,6 +20,7 @@ class PictureTagsRepositoryTest {
     private lateinit var neo4jClient: Neo4jClient
 
     @Test
+    @Order(1)
     fun `should find picture tags`() {
         val result = pictureTagsRepository.findPictureTags("picture1")
 
@@ -30,6 +32,7 @@ class PictureTagsRepositoryTest {
     }
 
     @Test
+    @Order(2)
     fun `should add tag to picture`() {
         val returnValue = pictureTagsRepository.addTagToPicture("picture1", "tag3")
 
@@ -47,6 +50,26 @@ class PictureTagsRepositoryTest {
             .all()
 
         assertEquals(1, result.size)
+    }
+
+    @Test
+    @Order(3)
+    fun `should remove tag from picture`() {
+        val returnValue = pictureTagsRepository.removeTagFromPicture("picture1", "tag2")
+
+        StepVerifier.create(returnValue)
+            .verifyComplete()
+
+        val result = neo4jClient.query(
+            """
+            MATCH (:Picture {id: 'picture1'})-[:HAS_TAG]->(t:Tag {id: 'tag2'})
+            RETURN t
+        """
+        )
+            .fetch()
+            .all()
+
+        assertEquals(0, result.size)
     }
 
     @TestConfiguration
