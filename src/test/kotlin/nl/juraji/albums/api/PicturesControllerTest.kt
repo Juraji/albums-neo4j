@@ -1,17 +1,13 @@
 package nl.juraji.albums.api
 
 import com.marcellogalhardo.fixture.Fixture
-import com.marcellogalhardo.fixture.nextListOf
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
 import nl.juraji.albums.configuration.TestFixtureConfiguration
 import nl.juraji.albums.domain.DuplicatesService
 import nl.juraji.albums.domain.PicturesService
-import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.util.returnsEmptyMono
-import nl.juraji.albums.util.returnsFluxOf
-import nl.juraji.albums.util.returnsManyMonoOf
 import nl.juraji.albums.util.returnsMonoOf
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,12 +15,8 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
 import org.springframework.context.annotation.Import
 import org.springframework.core.io.ByteArrayResource
-import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.test.web.reactive.server.WebTestClient
-import org.springframework.test.web.reactive.server.WebTestClient.ListBodySpec
 import org.springframework.test.web.reactive.server.expectBody
-import org.springframework.test.web.reactive.server.expectBodyList
-import org.springframework.web.reactive.function.BodyInserters
 import java.util.concurrent.ThreadLocalRandom
 
 @WebFluxTest(PicturesController::class)
@@ -45,74 +37,7 @@ internal class PicturesControllerTest {
     private lateinit var duplicatesService: DuplicatesService
 
     @Test
-    fun getFolderPictures() {
-        val folderId = fixture.nextString()
-        val pictures = fixture.nextListOf<Picture>()
-        val expected = pictures.map {
-            it.copy(
-                pictureLocation = "",
-                thumbnailLocation = "",
-            )
-        }
-
-        every { picturesService.getFolderPictures(any()) } returnsFluxOf pictures
-
-        webTestClient
-            .get()
-            .uri("/folders/$folderId/pictures")
-            .exchange()
-            .expectStatus().isOk
-            .expectBodyList<Picture>()
-            .isEqualTo<ListBodySpec<Picture>>(expected)
-
-        verify { picturesService.getFolderPictures(folderId) }
-    }
-
-    @Test
-    fun `should upload picture`() {
-        val folderId = fixture.nextString()
-        val expected = fixture.nextListOf<Picture>(3).map {
-            it.copy(
-                pictureLocation = "",
-                thumbnailLocation = "",
-            )
-        }
-
-        val body = MultipartBodyBuilder().apply {
-            part("files[]", object : ByteArrayResource(generateData()) {
-                override fun getFilename(): String {
-                    return "name"
-                }
-            })
-            part("files[]", object : ByteArrayResource(generateData()) {
-                override fun getFilename(): String {
-                    return "name"
-                }
-            })
-            part("files[]", object : ByteArrayResource(generateData()) {
-                override fun getFilename(): String {
-                    return "name"
-                }
-            })
-        }.build()
-
-        every { picturesService.persistNewPicture(any(), any()) } returnsManyMonoOf expected
-
-        webTestClient
-            .post()
-            .uri("/folders/$folderId/pictures/upload")
-            .body(BodyInserters.fromMultipartData(body))
-            .exchange()
-            .expectStatus().isOk
-            .expectBodyList<Picture>()
-            .isEqualTo<ListBodySpec<Picture>>(expected)
-
-        verify(exactly = 3) { picturesService.persistNewPicture(folderId, any()) }
-    }
-
-    @Test
     fun `should download picture`() {
-        val folderId = fixture.nextString()
         val pictureId = fixture.nextString()
         val data = generateData()
 
@@ -120,7 +45,7 @@ internal class PicturesControllerTest {
 
         webTestClient
             .get()
-            .uri("/folders/$folderId/pictures/$pictureId/download")
+            .uri("/pictures/$pictureId/download")
             .exchange()
             .expectStatus().isOk
             .expectBody<ByteArray>()
@@ -131,7 +56,6 @@ internal class PicturesControllerTest {
 
     @Test
     fun `should download thumbnail`() {
-        val folderId = fixture.nextString()
         val pictureId = fixture.nextString()
         val data = generateData()
 
@@ -139,7 +63,7 @@ internal class PicturesControllerTest {
 
         webTestClient
             .get()
-            .uri("/folders/$folderId/pictures/$pictureId/thumbnail")
+            .uri("/pictures/$pictureId/thumbnail")
             .exchange()
             .expectStatus().isOk
             .expectBody<ByteArray>()
@@ -150,7 +74,6 @@ internal class PicturesControllerTest {
 
     @Test
     fun deleteDuplicateFromPicture() {
-        val folderId = fixture.nextString()
         val pictureId = fixture.nextString()
         val targetId = fixture.nextString()
 
@@ -158,7 +81,7 @@ internal class PicturesControllerTest {
 
         webTestClient
             .delete()
-            .uri("/folders/$folderId/pictures/$pictureId/duplicates/$targetId")
+            .uri("/pictures/$pictureId/duplicates/$targetId")
             .exchange()
             .expectStatus().isOk
 

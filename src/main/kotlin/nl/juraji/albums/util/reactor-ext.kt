@@ -5,9 +5,6 @@ import reactor.core.publisher.Mono
 import reactor.core.scheduler.Scheduler
 import java.util.*
 
-fun Mono<out Any>.mapToUnit(): Mono<Unit> = this.flatMap { Mono.empty() }
-fun Flux<out Any>.mapToUnit(): Flux<Unit> = this.flatMap { Mono.empty() }
-
 fun <T> deferTo(scheduler: Scheduler, supplier: () -> T?): Mono<T> =
     Mono.defer { Mono.justOrEmpty(supplier()) }.subscribeOn(scheduler)
 
