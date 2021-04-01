@@ -9,6 +9,7 @@ import io.mockk.verify
 import nl.juraji.albums.configuration.TestFixtureConfiguration
 import nl.juraji.albums.domain.FoldersService
 import nl.juraji.albums.domain.folders.Folder
+import nl.juraji.albums.domain.folders.FolderTreeView
 import nl.juraji.albums.util.returnsArgumentAsMono
 import nl.juraji.albums.util.returnsEmptyMono
 import nl.juraji.albums.util.returnsFluxOf
@@ -40,9 +41,9 @@ internal class FoldersControllerTest {
 
     @Test
     fun `should get roots`() {
-        val folders = fixture.nextListOf<Folder>()
+        val folders = fixture.nextListOf<Folder>().map { FolderTreeView(it.id!!, it.name, emptyList()) }
 
-        every { foldersService.getRoots() } returnsFluxOf folders
+        every { foldersService.getTree() } returnsFluxOf folders
 
         webTestClient
             .get()
@@ -50,29 +51,10 @@ internal class FoldersControllerTest {
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk
-            .expectBodyList<Folder>()
+            .expectBodyList<FolderTreeView>()
             .contains(*folders.toTypedArray())
 
-        verify { foldersService.getRoots() }
-    }
-
-    @Test
-    fun `should get folder children`() {
-        val folderId = fixture.nextString()
-        val folders = fixture.nextListOf<Folder>()
-
-        every { foldersService.getFolderChildren(any()) } returnsFluxOf folders
-
-        webTestClient
-            .get()
-            .uri("/folders/$folderId/children")
-            .accept(MediaType.APPLICATION_JSON)
-            .exchange()
-            .expectStatus().isOk
-            .expectBodyList<Folder>()
-            .contains(*folders.toTypedArray())
-
-        verify { foldersService.getFolderChildren(folderId) }
+        verify { foldersService.getTree() }
     }
 
     @Test

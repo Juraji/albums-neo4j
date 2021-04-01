@@ -2,6 +2,7 @@ package nl.juraji.albums.api
 
 import nl.juraji.albums.domain.FoldersService
 import nl.juraji.albums.domain.folders.Folder
+import nl.juraji.albums.domain.folders.FolderTreeView
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -14,12 +15,7 @@ class FoldersController(
 ) {
 
     @GetMapping("/roots")
-    fun getRoots(): Flux<Folder> = foldersService.getRoots()
-
-    @GetMapping("/{folderId}/children")
-    fun getFolderChildren(
-        @PathVariable folderId: String
-    ): Flux<Folder> = foldersService.getFolderChildren(folderId)
+    fun getRoots(): Flux<FolderTreeView> = foldersService.getTree()
 
     @PostMapping
     fun createFolder(

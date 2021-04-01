@@ -1,6 +1,7 @@
 package nl.juraji.albums.domain
 
 import nl.juraji.albums.domain.folders.Folder
+import nl.juraji.albums.domain.folders.FolderTreeView
 import nl.juraji.albums.domain.folders.FoldersRepository
 import nl.juraji.reactor.validations.validateAsync
 import org.springframework.stereotype.Service
@@ -11,9 +12,21 @@ import reactor.core.publisher.Mono
 class FoldersService(
     private val foldersRepository: FoldersRepository
 ) {
-    fun getRoots(): Flux<Folder> = foldersRepository.findRoots()
+    fun getTree(): Flux<FolderTreeView> = foldersRepository
+        .findRoots()
+        .flatMap(this::createFolderTreeView)
 
-    fun getFolderChildren(folderId: String): Flux<Folder> = foldersRepository.findChildren(folderId)
+    private fun createFolderTreeView(folder: Folder): Mono<FolderTreeView> = foldersRepository
+        .findChildren(folder.id!!)
+        .flatMap(this::createFolderTreeView)
+        .collectList()
+        .map {
+            FolderTreeView(
+                id = folder.id,
+                name = folder.name,
+                children = it
+            )
+        }
 
     fun createFolder(folder: Folder, parentFolderId: String?): Mono<Folder> = Mono.just(folder)
         .validateAsync {

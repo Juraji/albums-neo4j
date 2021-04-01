@@ -1,7 +1,6 @@
 package nl.juraji.albums.domain
 
 import com.marcellogalhardo.fixture.next
-import com.marcellogalhardo.fixture.nextListOf
 import io.mockk.Called
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -10,11 +9,9 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import nl.juraji.albums.configuration.TestFixtureConfiguration
 import nl.juraji.albums.domain.folders.Folder
+import nl.juraji.albums.domain.folders.FolderTreeView
 import nl.juraji.albums.domain.folders.FoldersRepository
-import nl.juraji.albums.util.returnsArgumentAsMono
-import nl.juraji.albums.util.returnsEmptyMono
-import nl.juraji.albums.util.returnsFluxOf
-import nl.juraji.albums.util.returnsMonoOf
+import nl.juraji.albums.util.*
 import nl.juraji.reactor.validations.ValidationException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -32,34 +29,41 @@ internal class FoldersServiceTest {
     private lateinit var foldersService: FoldersService
 
     @Test
-    fun `should get roots`() {
-        val folders = fixture.nextListOf<Folder>()
+    fun `should get tree`() {
+        val root = fixture.next<Folder>()
+        val level1 = fixture.next<Folder>()
+        val level2 = fixture.next<Folder>()
 
-        every { foldersRepository.findRoots() } returnsFluxOf folders
+        val expected = FolderTreeView(
+            id = root.id!!,
+            name = root.name,
+            children = listOf(
+                FolderTreeView(
+                    id = level1.id!!,
+                    name = level1.name,
+                    children = listOf(
+                        FolderTreeView(
+                            id = level2.id!!,
+                            name = level2.name,
+                            children = emptyList()
+                        )
+                    )
+                )
+            )
+        )
 
-        val result = foldersService.getRoots()
+        every { foldersRepository.findRoots() } returnsFluxOf root
+        every { foldersRepository.findChildren(any()) }.returnsEmptyFlux()
+        every { foldersRepository.findChildren(root.id!!) } returnsFluxOf level1
+        every { foldersRepository.findChildren(level1.id!!) } returnsFluxOf level2
+
+        val result = foldersService.getTree()
 
         StepVerifier.create(result)
-            .expectNextSequence(folders)
+            .expectNext(expected)
             .verifyComplete()
 
         verify { foldersRepository.findRoots() }
-    }
-
-    @Test
-    fun `should get folder children`() {
-        val folderId = fixture.nextString()
-        val folders = fixture.nextListOf<Folder>()
-
-        every { foldersRepository.findChildren(any()) } returnsFluxOf folders
-
-        val result = foldersService.getFolderChildren(folderId)
-
-        StepVerifier.create(result)
-            .expectNextSequence(folders)
-            .verifyComplete()
-
-        verify { foldersRepository.findChildren(folderId) }
     }
 
     @Test
