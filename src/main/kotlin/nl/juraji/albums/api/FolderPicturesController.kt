@@ -17,8 +17,8 @@ class FolderPicturesController(
         @PathVariable folderId: String
     ): Flux<Picture> = picturesService.getFolderPictures(folderId)
 
-    @PostMapping("/upload", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
-    fun uploadPicture(
+    @PostMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    fun uploadPictures(
         @PathVariable folderId: String,
         @RequestPart("files[]") files: Flux<FilePart>
     ): Flux<Picture> = files

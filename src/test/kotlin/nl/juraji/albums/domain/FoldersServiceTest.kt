@@ -73,7 +73,7 @@ internal class FoldersServiceTest {
 
         every { foldersRepository.save(any()) } returnsMonoOf folder
 
-        val result = foldersService.createFolder(folder, null)
+        val result = foldersService.createFolder(folder, "")
 
         StepVerifier.create(result)
             .expectNext(folder)

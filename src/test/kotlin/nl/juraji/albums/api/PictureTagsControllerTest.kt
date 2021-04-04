@@ -62,7 +62,8 @@ internal class PictureTagsControllerTest {
 
         webTestClient
             .post()
-            .uri("/pictures/$pictureId/tags/${tag.id}")
+            .uri("/pictures/$pictureId/tags")
+            .bodyValue(tag)
             .exchange()
             .expectBody<Tag>()
             .isEqualTo(tag)

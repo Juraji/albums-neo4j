@@ -75,7 +75,7 @@ internal class FoldersControllerTest {
 
         assertEquals(newFolder.name, response.responseBody?.name)
 
-        verify { foldersService.createFolder(newFolder, null) }
+        verify { foldersService.createFolder(newFolder, "") }
     }
 
     @Test

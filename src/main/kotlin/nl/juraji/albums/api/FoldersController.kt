@@ -19,7 +19,7 @@ class FoldersController(
 
     @PostMapping
     fun createFolder(
-        @RequestParam(name = "parentId", required = false) parentFolderId: String?,
+        @RequestParam(name = "parentId", required = false, defaultValue = "") parentFolderId: String,
         @Valid @RequestBody folder: Folder,
     ): Mono<Folder> = foldersService.createFolder(folder, parentFolderId)
 

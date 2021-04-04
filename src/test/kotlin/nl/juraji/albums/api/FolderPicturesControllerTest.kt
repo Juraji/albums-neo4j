@@ -93,7 +93,7 @@ internal class FolderPicturesControllerTest {
 
         webTestClient
             .post()
-            .uri("/folders/$folderId/pictures/upload")
+            .uri("/folders/$folderId/pictures")
             .body(BodyInserters.fromMultipartData(body))
             .exchange()
             .expectStatus().isOk

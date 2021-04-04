@@ -28,14 +28,14 @@ class FoldersService(
             )
         }
 
-    fun createFolder(folder: Folder, parentFolderId: String?): Mono<Folder> = Mono.just(folder)
+    fun createFolder(folder: Folder, parentFolderId: String): Mono<Folder> = Mono.just(folder)
         .validateAsync {
-            unless(parentFolderId == null) {
-                isTrue(foldersRepository.existsById(parentFolderId!!)) { "Folder with id $parentFolderId does not exist, can not link as parent" }
+            unless(parentFolderId.isBlank()) {
+                isTrue(foldersRepository.existsById(parentFolderId)) { "Folder with id $parentFolderId does not exist, can not link as parent" }
             }
         }
         .flatMap { foldersRepository.save(folder.copy(id = null)) }
-        .doOnNext { if (parentFolderId != null) foldersRepository.setParent(it.id!!, parentFolderId) }
+        .doOnNext { if (parentFolderId.isNotBlank()) foldersRepository.setParent(it.id!!, parentFolderId) }
 
     fun updateFolder(folderId: String, update: Folder): Mono<Folder> = foldersRepository
         .findById(folderId)

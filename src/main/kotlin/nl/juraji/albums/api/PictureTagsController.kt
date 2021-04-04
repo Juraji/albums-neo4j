@@ -17,11 +17,11 @@ class PictureTagsController(
         @PathVariable pictureId: String
     ): Flux<Tag> = pictureTagsService.getPictureTags(pictureId)
 
-    @PostMapping("/{tagId}")
+    @PostMapping
     fun addTagToPicture(
         @PathVariable pictureId: String,
-        @PathVariable tagId: String
-    ): Mono<Tag>  = pictureTagsService.addTagToPicture(pictureId, tagId)
+        @RequestBody tag: Tag
+    ): Mono<Tag> = pictureTagsService.addTagToPicture(pictureId, tag.id!!)
 
     @DeleteMapping("/{tagId}")
     fun removeTagFromPicture(
