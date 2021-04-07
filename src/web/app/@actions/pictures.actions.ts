@@ -1,51 +1,11 @@
 import {createAction} from '@ngrx/store';
 
-export const fetchPicture = createAction(
-  '[Pictures] Fetch picture',
-  (pictureId: string) => ({pictureId})
+export const loadPicturesByFolderId = createAction(
+  '[Pictures] Load pictures by folder id',
+  (folderId: string) => ({folderId})
 );
 
-export const fetchPictureSuccess = createAction(
-  '[Pictures] Fetch picture success',
-  (picture: PictureProps) => ({picture})
-);
-
-export const fetchDirectoryPictures = createAction(
-  '[Pictures] Fetch directory pictures',
-  (directoryId: string) => ({directoryId})
-);
-
-export const fetchDirectoryPicturesSuccess = createAction(
-  '[Pictures] Fetch directory pictures success',
-  (pictures: PictureProps[]) => ({pictures})
-);
-
-export const deletePicture = createAction(
-  '[Pictures] Delete Picture',
-  (pictureId: string, deleteFile: boolean = true) => ({pictureId, deleteFile})
-);
-
-export const deletePictureSuccess = createAction(
-  '[Pictures] Delete Picture Success',
-  (pictureId: string) => ({pictureId})
-);
-
-export const addTagToPicture = createAction(
-  '[Pictures] Add tag to picture',
-  (picture: PictureProps, tag: Tag) => ({picture, tag})
-);
-
-export const addTagToPictureSuccess = createAction(
-  '[Pictures] Add tag to picture success',
-  (picture: PictureProps, tag: Tag) => ({picture, tag})
-);
-
-export const removeTagFromPicture = createAction(
-  '[Pictures] Remove tag from picture',
-  (picture: PictureProps, tag: Tag) => ({picture, tag})
-);
-
-export const removeTagFromPictureSuccess = createAction(
-  '[Pictures] Remove tag from picture success',
-  (picture: PictureProps, tag: Tag) => ({picture, tag})
+export const loadPicturesByFolderIdSuccess = createAction(
+  '[Pictures] Load pictures by folder id success',
+  (pictures: Picture[]) => ({pictures})
 );

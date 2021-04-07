@@ -1,7 +1,7 @@
 interface AppState {
-  directories: DirectoriesSliceState;
-  pictures: PicturesSliceState;
-  tags: TagsSliceState;
-  duplicates: DuplicatesSliceState;
   settings: SettingsSliceState;
+  folders: FoldersSliceState;
+  tags: TagsSliceState;
+  pictures: PicturesSliceState;
+  duplicates: DuplicatesSliceState;
 }

@@ -3,18 +3,10 @@ import {RouterModule, Routes} from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'directories',
-    loadChildren: () => import('./routes/+directories/directories.module').then(m => m.DirectoriesModule)
+    path: 'folders',
+    loadChildren: () => import('./routes/folders/folders.module').then(m => m.FoldersModule)
   },
-  {
-    path: 'tags',
-    loadChildren: () => import('./routes/+tags/tags.module').then(m => m.TagsModule)
-  },
-  {
-    path: 'duplicates',
-    loadChildren: () => import('./routes/+duplicates/duplicates.module').then(m => m.DuplicatesModule)
-  },
-  {path: '**', redirectTo: 'directories'}
+  {path: '**', redirectTo: 'folders'}
 ];
 
 @NgModule({

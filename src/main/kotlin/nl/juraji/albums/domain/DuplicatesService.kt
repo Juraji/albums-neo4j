@@ -27,7 +27,7 @@ class DuplicatesService(
     fun removeDuplicate(pictureId: String, duplicateId: String): Mono<Void> =
         pictureDuplicatesRepository.removeAsDuplicate(pictureId, duplicateId)
 
-    fun scanDuplicates(pictureId: String): Flux<DuplicatedByView> {
+    fun scanDuplicates(pictureId: String): Flux<DuplicatesView> {
         val pictureHash = pictureHashesRepository.findByPictureId(pictureId).share()
         val otherHashes = pictureHashesRepository.findAll()
 

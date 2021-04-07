@@ -14,9 +14,9 @@ class FoldersService(
 ) {
     fun getTree(): Flux<FolderTreeView> = foldersRepository
         .findRoots()
-        .flatMap(this::createFolderTreeView)
+        .flatMap { f -> this.createFolderTreeView(f, true) }
 
-    private fun createFolderTreeView(folder: Folder): Mono<FolderTreeView> = foldersRepository
+    private fun createFolderTreeView(folder: Folder, isRoot: Boolean = false): Mono<FolderTreeView> = foldersRepository
         .findChildren(folder.id!!)
         .flatMap(this::createFolderTreeView)
         .collectList()
@@ -24,7 +24,8 @@ class FoldersService(
             FolderTreeView(
                 id = folder.id,
                 name = folder.name,
-                children = it
+                children = it,
+                isRoot = isRoot
             )
         }
 

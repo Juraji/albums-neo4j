@@ -9,7 +9,7 @@ import {environment} from '@environment';
 import {EffectsModule} from '@ngrx/effects';
 import {metaReducers, reducers} from './@reducers';
 import {HttpClientModule} from '@angular/common/http';
-import {DirectoriesEffects} from '@effects/directories.effects';
+import {FoldersEffects} from '@effects/folders.effects';
 import {PicturesEffects} from '@effects/pictures.effects';
 import {NgbmodModalsModule} from '@juraji/ng-bootstrap-modals';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -28,7 +28,7 @@ import {DuplicatesEffects} from '@effects/duplicates.effects';
     NgbmodModalsModule.forRoot(),
     StoreModule.forRoot(reducers, {metaReducers}),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
-    EffectsModule.forRoot([DirectoriesEffects, PicturesEffects, TagsEffects, DuplicatesEffects])
+    EffectsModule.forRoot([FoldersEffects, PicturesEffects, TagsEffects, DuplicatesEffects])
   ],
   bootstrap: [AppComponent],
   providers: [

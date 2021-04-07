@@ -1,36 +1,26 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
-import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '@environment';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PicturesService {
-
+  private readonly baseUri = `${environment.apiBaseUri}/pictures`;
 
   constructor(private readonly httpClient: HttpClient) {
   }
 
-  getPicture(pictureId: string): Observable<PictureProps> {
-    return this.httpClient.get<PictureProps>(`${environment.apiBaseUri}/pictures/${pictureId}`);
+  getThumbnailUri(pictureId: string): string {
+    return `${this.baseUri}/${pictureId}/thumbnail`;
   }
 
-  getPicturesByDirectory(directoryId: string): Observable<PictureProps[]> {
-    return this.httpClient.get<PictureProps[]>(`${environment.apiBaseUri}/directories/${directoryId}/pictures`);
+  getDownloadUri(pictureId: string): string {
+    return `${this.baseUri}/${pictureId}/download`;
   }
 
-  addTag(pictureId: string, tagId: string): Observable<void> {
-    return this.httpClient.post<void>(`${environment.apiBaseUri}/pictures/${pictureId}/tags/${tagId}`, null);
-  }
-
-  removeTag(pictureId: string, tagId: string): Observable<void> {
-    return this.httpClient.delete<void>(`${environment.apiBaseUri}/pictures/${pictureId}/tags/${tagId}`);
-  }
-
-  deletePicture(pictureId: string, deleteFile: boolean): Observable<void> {
-    return this.httpClient.delete<void>(`${environment.apiBaseUri}/pictures/${pictureId}`, {
-      params: new HttpParams().append('deleteFile', deleteFile.toString())
-    });
+  deleteDuplicateFromPicture(pictureId: string, targetId: string): Observable<void> {
+    return this.httpClient.delete<void>(`${this.baseUri}/${pictureId}/duplicates/${targetId}`);
   }
 }

@@ -1,40 +1,17 @@
-interface PictureProps {
+type FileType = 'JPEG' | 'BMP' | 'GIF' | 'PNG' | 'TIFF' | 'UNKNOWN';
+
+interface Picture {
   id: string;
-  location: string;
   name: string;
+  type: FileType;
   width: number;
   height: number;
   fileSize: number;
-  fileType: FileType;
-  lastModified: string;
-  directory: DirectoryProps;
-  tags: Tag[];
+  addedOn: string;
 }
 
-interface NewPictureDto {
-  location: string;
-  name?: string;
-}
-
-type FileType = 'JPEG' | 'BMP' | 'GIF' | 'PNG' | 'TIFF' | 'UNKNOWN';
-
-interface PictureCreatedEvent extends AlbumEvent {
-  eventType: 'PictureCreatedEvent';
-  pictureId: string;
-  location: string;
-  directoryId: string;
-
-}
-
-interface PictureUpdatedEvent extends AlbumEvent {
-  eventType: 'PictureUpdatedEvent';
-  pictureId: string;
-  directoryId?: string;
-}
-
-interface PictureDeletedEvent extends AlbumEvent {
-  eventType: 'PictureDeletedEvent';
-  pictureId: string;
-  location: string;
-  doDeleteFile: boolean;
+interface DuplicatesView {
+  source: Picture;
+  target: Picture;
+  similarity: number;
 }

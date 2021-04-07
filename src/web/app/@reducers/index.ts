@@ -1,17 +1,17 @@
 import {ActionReducerMap, MetaReducer} from '@ngrx/store';
-import {reducer as directoriesReducer} from './directories';
-import {reducer as picturesReducer} from './pictures';
-import {reducer as tagsReducer} from './tags';
-import {reducer as duplicatesReducer} from './duplicates';
 import {persistedSettingsMetaReducer, reducer as settingsReducer} from './settings';
+import {reducer as foldersReducer} from './folders';
+import {reducer as picturesReducer} from './pictures';
+import {reducer as duplicatesReducer} from './duplicates';
+import {reducer as tagsReducer} from './tags';
 
 
 export const reducers: ActionReducerMap<AppState> = {
-  directories: directoriesReducer,
-  pictures: picturesReducer,
-  tags: tagsReducer,
-  duplicates: duplicatesReducer,
   settings: settingsReducer,
+  folders: foldersReducer,
+  pictures: picturesReducer,
+  duplicates: duplicatesReducer,
+  tags: tagsReducer
 };
 
 

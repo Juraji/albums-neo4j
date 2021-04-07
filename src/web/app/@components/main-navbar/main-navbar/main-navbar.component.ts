@@ -16,7 +16,7 @@ export class MainNavbarComponent implements OnInit {
   readonly opened$ = new BooleanToggle();
 
   readonly links: Link[] = [
-    {label: 'Directories', url: '/directories'},
+    {label: 'Directories', url: '/folders'},
     {label: 'Duplicates', url: '/duplicates'},
     {label: 'Tags', url: '/tags'},
   ];

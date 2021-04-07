@@ -1,4 +1,1 @@
-interface TagsSliceState {
-  tags: EntityState<Tag>;
-  tagsLoaded: boolean;
-}
+type TagsSliceState = EntityState<Tag>;

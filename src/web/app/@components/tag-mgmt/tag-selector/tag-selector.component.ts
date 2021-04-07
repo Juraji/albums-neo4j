@@ -3,7 +3,7 @@ import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs';
 import {selectAllTags, selectTagsLoaded} from '@reducers/tags';
 import {not, sideEffect} from '@utils/rx';
-import {createTag, createTagSuccess, loadAllTags} from '@actions/tags.actions';
+import {createTag, createTagSuccess, loadTags} from '@actions/tags.actions';
 import {filter, map, shareReplay, switchMap} from 'rxjs/operators';
 import {Modals} from '@juraji/ng-bootstrap-modals';
 import {EditTagModal} from '../edit-tag/edit-tag.modal';
@@ -21,7 +21,7 @@ export class TagSelectorComponent implements OnInit {
   readonly tags$: Observable<Tag[]> = this.store.select(selectAllTags)
     .pipe(
       sideEffect(
-        () => this.store.dispatch(loadAllTags()),
+        () => this.store.dispatch(loadTags()),
         () => this.store.select(selectTagsLoaded).pipe(not())),
       shareReplay(1)
     );
