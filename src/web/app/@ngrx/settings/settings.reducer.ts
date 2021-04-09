@@ -1,5 +1,5 @@
 import {createFeatureSelector, createReducer, createSelector, on, Selector} from '@ngrx/store';
-import {updateSetting} from '@actions/settings.actions';
+import {updateSetting} from './settings.actions';
 
 export const reducer = createReducer<SettingsSliceState>(
   {},

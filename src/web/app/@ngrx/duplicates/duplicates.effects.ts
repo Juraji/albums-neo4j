@@ -2,8 +2,8 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType, ROOT_EFFECTS_INIT} from '@ngrx/effects';
 import {DuplicatesService} from '@services/duplicates.service';
 import {EffectMarker} from '@utils/decorators';
-import {map, switchMap, tap} from 'rxjs/operators';
-import {loadAllDuplicates, loadAllDuplicatesSuccess} from '@actions/duplicates.actions';
+import {map, switchMap} from 'rxjs/operators';
+import {loadAllDuplicates, loadAllDuplicatesSuccess} from './duplicates.actions';
 
 @Injectable()
 export class DuplicatesEffects {

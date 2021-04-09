@@ -24,11 +24,9 @@
       "@environment": [
         "src/web/environments/environment"
       ],
-      "@actions/*": ["src/web/app/@actions/*"],
       "@components/*": ["src/web/app/@components/*"],
-      "@effects/*": ["src/web/app/@effects/*"],
       "@models/*": ["src/web/app/@models/*"],
-      "@reducers/*": ["src/web/app/@reducers/*"],
+      "@ngrx/*": ["src/web/app/@ngrx/*"],
       "@services/*": ["src/web/app/@services/*"],
       "@utils/*": ["src/web/app/@utils/*"]
     }

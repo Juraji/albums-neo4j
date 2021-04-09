@@ -1,6 +1,6 @@
 import {createEntityAdapter} from '@ngrx/entity';
 import {createReducer, on} from '@ngrx/store';
-import {createFolderSuccess, deleteFolder, loadFoldersTreeSuccess, updateFolder} from '@actions/folders.actions';
+import {createFolderSuccess, deleteFolder, loadFoldersTreeSuccess, updateFolder} from './folders.actions';
 
 const foldersEntityAdapter = createEntityAdapter<Folder>();
 export const folderEntitySelectors = foldersEntityAdapter.getSelectors();

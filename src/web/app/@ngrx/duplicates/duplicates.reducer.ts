@@ -1,6 +1,6 @@
 import {createEntityAdapter} from '@ngrx/entity';
 import {createFeatureSelector, createReducer, createSelector, on} from '@ngrx/store';
-import {loadAllDuplicatesSuccess} from '@actions/duplicates.actions';
+import {loadAllDuplicatesSuccess} from './duplicates.actions';
 
 const duplicatesEntityAdapter = createEntityAdapter<DuplicatesView>({
   sortComparer: (a, b) => a.source.id.localeCompare(b.source.id)

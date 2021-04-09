@@ -1,12 +1,11 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs';
-import {selectAllTags, selectTagsLoaded} from '@reducers/tags';
-import {not, sideEffect} from '@utils/rx';
-import {createTag, createTagSuccess, loadTags} from '@actions/tags.actions';
-import {filter, map, shareReplay, switchMap} from 'rxjs/operators';
+import {createTag, createTagSuccess, selectAllTags} from '@ngrx/tags';
+import {sideEffect} from '@utils/rx';
+import {filter, map, switchMap} from 'rxjs/operators';
 import {Modals} from '@juraji/ng-bootstrap-modals';
-import {EditTagModal} from '../edit-tag/edit-tag.modal';
+import {EditTagModal} from '@components/tag-mgmt';
 import {Actions, ofType} from '@ngrx/effects';
 import {unwrap} from '@utils/rx/unwrap';
 
@@ -18,13 +17,7 @@ import {unwrap} from '@utils/rx/unwrap';
 })
 export class TagSelectorComponent implements OnInit {
 
-  readonly tags$: Observable<Tag[]> = this.store.select(selectAllTags)
-    .pipe(
-      sideEffect(
-        () => this.store.dispatch(loadTags()),
-        () => this.store.select(selectTagsLoaded).pipe(not())),
-      shareReplay(1)
-    );
+  readonly tags$: Observable<Tag[]> = this.store.select(selectAllTags);
 
   readonly tagsIsEmpty$ = this.tags$.pipe(map(arr => arr.isEmpty()));
 

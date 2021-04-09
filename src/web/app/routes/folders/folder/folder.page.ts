@@ -2,12 +2,11 @@ import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {ActivatedRoute} from '@angular/router';
 import {map, switchMap} from 'rxjs/operators';
-import {selectFolderById, selectFolderChildrenById, selectRootFolders} from '@reducers/folders';
+import {createFolder, deleteFolder, selectFolderById, selectFolderChildrenById, selectRootFolders} from '@ngrx/folders';
 import {of} from 'rxjs';
 import {filterEmpty, filterEmptyArray} from '@utils/rx';
 import {Modals} from '@juraji/ng-bootstrap-modals';
 import {AddFolderModal} from '../add-folder-modal/add-folder.modal';
-import {createFolder, deleteFolder} from '@actions/folders.actions';
 
 export const ROOT_FOLDER_ID = 'root';
 export const ROOT_FOLDER: FolderTreeView = {

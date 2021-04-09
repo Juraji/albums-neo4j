@@ -6,7 +6,7 @@ import {map, switchMap} from 'rxjs/operators';
 import {EffectMarker} from '@utils/decorators';
 import {AlbumEventsService} from '@services/album-events.service';
 import {FolderPicturesService} from '@services/folder-pictures.service';
-import {loadPicturesByFolderId, loadPicturesByFolderIdSuccess} from '@actions/pictures.actions';
+import {loadPicturesByFolderId, loadPicturesByFolderIdSuccess} from './pictures.actions';
 
 
 @Injectable()

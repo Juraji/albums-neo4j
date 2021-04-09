@@ -13,7 +13,7 @@ import {
   moveFolderSuccess,
   updateFolder,
   updateFolderSuccess
-} from '@actions/folders.actions';
+} from './folders.actions';
 import {FoldersService} from '@services/folders.service';
 import {of} from 'rxjs';
 

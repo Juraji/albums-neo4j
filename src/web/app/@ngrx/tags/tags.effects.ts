@@ -12,7 +12,7 @@ import {
   loadTagsSuccess,
   updateTag,
   updateTagSuccess
-} from '@actions/tags.actions';
+} from './tags.actions';
 
 
 @Injectable()

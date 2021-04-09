@@ -7,14 +7,10 @@ import {StoreModule} from '@ngrx/store';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {environment} from '@environment';
 import {EffectsModule} from '@ngrx/effects';
-import {metaReducers, reducers} from './@reducers';
+import {ROOT_META_REDUCERS, ROOT_REDUCER, ROOT_EFFECTS} from '@ngrx/root';
 import {HttpClientModule} from '@angular/common/http';
-import {FoldersEffects} from '@effects/folders.effects';
-import {PicturesEffects} from '@effects/pictures.effects';
 import {NgbmodModalsModule} from '@juraji/ng-bootstrap-modals';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {TagsEffects} from '@effects/tags.effects';
-import {DuplicatesEffects} from '@effects/duplicates.effects';
 import {StoreRouterConnectingModule} from '@ngrx/router-store';
 
 @NgModule({
@@ -27,10 +23,10 @@ import {StoreRouterConnectingModule} from '@ngrx/router-store';
     BrowserAnimationsModule,
     HttpClientModule,
     NgbmodModalsModule.forRoot(),
-    StoreModule.forRoot(reducers, {metaReducers}),
+    StoreModule.forRoot(ROOT_REDUCER, {metaReducers: ROOT_META_REDUCERS}),
     StoreRouterConnectingModule.forRoot(),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
-    EffectsModule.forRoot([FoldersEffects, PicturesEffects, TagsEffects, DuplicatesEffects])
+    EffectsModule.forRoot(ROOT_EFFECTS)
   ],
   bootstrap: [AppComponent],
   providers: [

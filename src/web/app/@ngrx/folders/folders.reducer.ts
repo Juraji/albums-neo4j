@@ -1,7 +1,7 @@
 import {combineReducers, createFeatureSelector, createSelector} from '@ngrx/store';
 import {Dictionary} from '@ngrx/entity';
-import {folderEntitiesReducer, folderEntitySelectors} from './folder-entities';
-import {folderTreeMappingReducer, folderTreeMappingSelectors} from './folder-tree-mapping';
+import {folderEntitiesReducer, folderEntitySelectors} from './folder-entities.reducer';
+import {folderTreeMappingReducer, folderTreeMappingSelectors} from './folder-tree-mapping.reducer';
 
 export const reducer = combineReducers<FoldersSliceState>({
   entities: folderEntitiesReducer,
