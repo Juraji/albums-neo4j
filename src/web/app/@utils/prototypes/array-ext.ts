@@ -2,6 +2,15 @@
 ///<reference path="array-ext.d.ts"/>
 
 export default function () {
+  Object.defineProperty(Array.prototype, 'append', {
+    configurable: false,
+    enumerable: false,
+    writable: false,
+    value: function <T>(this: Array<T>, ...items: Array<T>): Array<T> {
+      return [...this, ...items];
+    },
+  });
+
   Object.defineProperty(Array.prototype, 'replace', {
     configurable: false,
     enumerable: false,

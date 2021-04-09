@@ -16,8 +16,8 @@ export class FoldersService {
     return this.httpClient.get<FolderTreeView[]>(`${this.baseUri}/roots`);
   }
 
-  createFolder(folder: Folder, parentId: string = ''): Observable<Folder> {
-    const params = new HttpParams().append('parentId', parentId);
+  createFolder(folder: Folder, parentId?: string): Observable<Folder> {
+    const params = !!parentId ? new HttpParams().append('parentId', parentId) : new HttpParams();
     return this.httpClient.post<Folder>(this.baseUri, folder, {params});
   }
 

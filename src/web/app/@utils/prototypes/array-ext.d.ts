@@ -1,5 +1,10 @@
 interface Array<T> {
   /**
+   * Copy this array, appending {@param items} to it
+   */
+  append(this: Array<T>, ...items: Array<T>): Array<T>;
+
+  /**
    * Copy this array, replacing the item at {@param index} with {@param replacement}.
    */
   replace(this: Array<T>, index: number, replacement: T): Array<T>;

@@ -6,9 +6,9 @@
 
     </div>
     <div class="col col-sm-4">
-      <div class="card">
+      <div class="card" *ngIf="folder$ | async as folder">
         <div class="card-header">
-          <h1>{{(folder$ | async)?.name}}</h1>
+          <h1>{{folder.name}}</h1>
         </div>
         <div class="card-body p-0">
           <div class="list-group list-group-flush">
@@ -18,9 +18,21 @@
           </div>
         </div>
         <div class="card-footer p-0">
-          <button class="btn btn-default btn-block" (click)="onAddFolder()">
-            <span class="fa fa-folder-plus"></span>&nbsp;Add folder
-          </button>
+          <div class="btn-group d-flex">
+            <button class="btn btn-outline-primary" (click)="onAddFolder(folder.id)">
+              <span class="fa fa-folder-plus"></span>&nbsp;Add folder
+            </button>
+            <button class="btn btn-outline-primary"
+                    (click)="onMoveFolder(folder.id)"
+                    *ngIf="(isRootFolder$ | async) === false">
+              <span class="fa fa-folder-open"></span>&nbsp;Move folder
+            </button>
+            <button class="btn btn-outline-danger"
+                    (click)="onDeleteFolder(folder.id)"
+                    *ngIf="(isRootFolder$ | async) === false">
+              <span class="fa fa-folder-minus"></span>&nbsp;Delete folder
+            </button>
+          </div>
         </div>
       </div>
     </div>

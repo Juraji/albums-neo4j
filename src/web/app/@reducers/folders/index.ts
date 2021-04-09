@@ -1,39 +1,42 @@
-import {createFeatureSelector, createReducer, createSelector, on} from '@ngrx/store';
-import {loadFoldersTreeSuccess} from '@actions/folders.actions';
-import {createEntityAdapter, Dictionary} from '@ngrx/entity';
+import {combineReducers, createFeatureSelector, createSelector} from '@ngrx/store';
+import {Dictionary} from '@ngrx/entity';
+import {folderEntitiesReducer, folderEntitySelectors} from './folder-entities';
+import {folderTreeMappingReducer, folderTreeMappingSelectors} from './folder-tree-mapping';
 
-const foldersEntityAdapter = createEntityAdapter<FolderTreeView>({
-  sortComparer: (a, b) => a.name.localeCompare(b.name)
+export const reducer = combineReducers<FoldersSliceState>({
+  entities: folderEntitiesReducer,
+  treeMapping: folderTreeMappingReducer
 });
-const folderEntitySelectors = foldersEntityAdapter.getSelectors();
-
-export const reducer = createReducer(
-  foldersEntityAdapter.getInitialState(),
-  on(loadFoldersTreeSuccess, (s, {tree}) => {
-    const flatten = (children: FolderTreeView[]): FolderTreeView[] =>
-      children.flatMap((ftv) => [ftv, ...flatten(ftv.children)]);
-
-    const folders = flatten(tree);
-    const emptyState = foldersEntityAdapter.removeAll(s);
-    return foldersEntityAdapter.upsertMany(folders, emptyState);
-  })
-);
 
 const selectFoldersSlice = createFeatureSelector<FoldersSliceState>('folders');
+const selectFolderEntitiesSlice = createSelector(selectFoldersSlice, s => s.entities);
+const selectTreeMappingSlice = createSelector(selectFoldersSlice, s => s.treeMapping);
 
-const selectFoldersEntities = createSelector(selectFoldersSlice, folderEntitySelectors.selectEntities);
-const selectAllFolders = createSelector(selectFoldersSlice, folderEntitySelectors.selectAll);
+const selectFoldersEntities = createSelector(selectFolderEntitiesSlice, folderEntitySelectors.selectEntities);
+const selectAllFolders = createSelector(selectFolderEntitiesSlice, folderEntitySelectors.selectAll);
+const selectTreeMappingEntities = createSelector(selectTreeMappingSlice, folderTreeMappingSelectors.selectEntities);
+const selectAllTreeMappings = createSelector(selectTreeMappingSlice, folderTreeMappingSelectors.selectAll);
+
+const selectRootTreeMappings = createSelector(selectAllTreeMappings, s => s.filter(m => m.isRoot));
+const selectTreeMappingByFolderId = createSelector(
+  selectTreeMappingEntities,
+  (s: Dictionary<FolderTreeMapping>, {folderId}: FolderByIdProps) => s[folderId]
+);
 
 export const selectRootFolders = createSelector(
+  selectRootTreeMappings,
   selectAllFolders,
-  s => s.filter(f => f.isRoot)
+  (mappings: FolderTreeMapping[], folders: Folder[]) => mappings
+    .map(m => folders.find(f => f.id === m.folderId))
 );
 export const selectFolderById = createSelector(
   selectFoldersEntities,
-  (s: Dictionary<FolderTreeView>, {folderId}: FolderByIdProps) => s[folderId],
+  (s: Dictionary<Folder>, {folderId}: FolderByIdProps) => s[folderId],
 );
 
 export const selectFolderChildrenById = createSelector(
-  selectFolderById,
-  f => f?.children || []
+  selectTreeMappingByFolderId,
+  selectAllFolders,
+  (mapping: FolderTreeMapping | undefined, folders: Folder[]) => (mapping?.children || [])
+    .map(fid => folders.find(f => f.id === fid))
 );

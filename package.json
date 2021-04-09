@@ -23,15 +23,18 @@
     "@juraji/ng-bootstrap-modals": "1.x.x",
     "@ng-bootstrap/ng-bootstrap": "9.x.x",
     "@ngrx/effects": "11.x.x",
-    "@ngrx/entity": "^11.0.1",
+    "@ngrx/entity": "^11.x.x",
+    "@ngrx/router-store": "^11.x.x",
     "@ngrx/schematics": "11.x.x",
     "@ngrx/store": "11.x.x",
     "@ngrx/store-devtools": "11.x.x",
     "bootstrap": "4.x.x",
     "ngx-color": "^6.2.0",
+    "ngx-forms-typed": "^1.0.8",
     "ngx-infinite-scroll": "10.x.x",
     "rxjs": "6.x.x",
     "tslib": "2.x.x",
+    "uuid": "^8.3.2",
     "zone.js": "0.11.x"
   },
   "devDependencies": {
@@ -45,6 +48,7 @@
     "@angular/compiler-cli": "11.x.x",
     "@types/jasmine": "3.6.x",
     "@types/node": "12.x.x",
+    "@types/uuid": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "4.x.x",
     "@typescript-eslint/parser": "4.x.x",
     "eslint": "7.x.x",
@@ -60,6 +64,6 @@
     "karma-jasmine-html-reporter": "1.x.x",
     "ng-packagr": "11.x.x",
     "ts-node": "8.x.x",
-    "typescript": "4.x.x"
+    "typescript": "4.1.5"
   }
 }

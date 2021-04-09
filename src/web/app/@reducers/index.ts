@@ -11,7 +11,7 @@ export const reducers: ActionReducerMap<AppState> = {
   folders: foldersReducer,
   pictures: picturesReducer,
   duplicates: duplicatesReducer,
-  tags: tagsReducer
+  tags: tagsReducer,
 };
 
 

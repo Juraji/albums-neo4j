@@ -15,6 +15,7 @@ import {NgbmodModalsModule} from '@juraji/ng-bootstrap-modals';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {TagsEffects} from '@effects/tags.effects';
 import {DuplicatesEffects} from '@effects/duplicates.effects';
+import {StoreRouterConnectingModule} from '@ngrx/router-store';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import {DuplicatesEffects} from '@effects/duplicates.effects';
     HttpClientModule,
     NgbmodModalsModule.forRoot(),
     StoreModule.forRoot(reducers, {metaReducers}),
+    StoreRouterConnectingModule.forRoot(),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
     EffectsModule.forRoot([FoldersEffects, PicturesEffects, TagsEffects, DuplicatesEffects])
   ],
