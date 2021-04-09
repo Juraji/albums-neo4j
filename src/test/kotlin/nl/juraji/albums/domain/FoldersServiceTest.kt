@@ -45,11 +45,14 @@ internal class FoldersServiceTest {
                         FolderTreeView(
                             id = level2.id!!,
                             name = level2.name,
-                            children = emptyList()
+                            children = emptyList(),
+                            isRoot = false
                         )
-                    )
+                    ),
+                    isRoot = false
                 )
-            )
+            ),
+            isRoot = true
         )
 
         every { foldersRepository.findRoots() } returnsFluxOf root
@@ -151,7 +154,7 @@ internal class FoldersServiceTest {
         val folderId = fixture.nextString()
 
         every { foldersRepository.isEmptyById(any()) } returnsMonoOf true
-        every { foldersRepository.deleteById(any<String>()) }.returnsEmptyMono()
+        every { foldersRepository.deleteRecursivelyById(any()) }.returnsEmptyMono()
 
         val result = foldersService.deleteFolder(folderId, false)
 
@@ -159,7 +162,7 @@ internal class FoldersServiceTest {
 
         verify {
             foldersRepository.isEmptyById(folderId)
-            foldersRepository.deleteById(folderId)
+            foldersRepository.deleteRecursivelyById(folderId)
         }
     }
 
@@ -185,7 +188,7 @@ internal class FoldersServiceTest {
     fun `should delete non-empty folder when recursive is set`() {
         val folderId = fixture.nextString()
 
-        every { foldersRepository.deleteById(any<String>()) }.returnsEmptyMono()
+        every { foldersRepository.deleteRecursivelyById(any()) }.returnsEmptyMono()
 
         val result = foldersService.deleteFolder(folderId, true)
 
@@ -193,7 +196,7 @@ internal class FoldersServiceTest {
 
         verify {
             foldersRepository.isEmptyById(any()) wasNot Called
-            foldersRepository.deleteById(folderId)
+            foldersRepository.deleteRecursivelyById(folderId)
         }
     }
 

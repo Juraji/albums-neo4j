@@ -8,12 +8,7 @@ import reactor.core.publisher.Mono
 
 interface PictureTagsRepository : ReactiveNeo4jRepository<Tag, String> {
 
-    @Query(
-        """
-        MATCH (:Picture {id: $ pictureId})-[:HAS_TAG]->(t:Tag)
-        RETURN t ORDER BY t.label
-    """
-    )
+    @Query("MATCH (:Picture {id: $ pictureId})-[:HAS_TAG]->(t:Tag) RETURN t")
     fun findPictureTags(pictureId: String): Flux<Tag>
 
     @Query(
@@ -27,11 +22,6 @@ interface PictureTagsRepository : ReactiveNeo4jRepository<Tag, String> {
     )
     fun addTagToPicture(pictureId: String, tagId: String): Mono<Tag>
 
-    @Query(
-        """
-            MATCH (:Picture {id: $ pictureId})-[rel:HAS_TAG]->(:Tag {id: $ tagId})
-            DELETE rel
-        """
-    )
+    @Query("MATCH (:Picture {id: $ pictureId})-[rel:HAS_TAG]->(:Tag {id: $ tagId}) DELETE rel")
     fun removeTagFromPicture(pictureId: String, tagId: String): Mono<Void>
 }

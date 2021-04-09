@@ -2,8 +2,10 @@ package nl.juraji.albums.domain.pictures
 
 import nl.juraji.albums.util.BaseTestHarnessConfig
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -11,6 +13,7 @@ import org.springframework.data.neo4j.core.Neo4jClient
 import reactor.test.StepVerifier
 
 @DataNeo4jTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class PictureTagsRepositoryTest {
 
     @Autowired
@@ -25,9 +28,8 @@ class PictureTagsRepositoryTest {
         val result = pictureTagsRepository.findPictureTags("picture1")
 
         StepVerifier.create(result)
-            .expectNextMatches { it.id == "tag1" }
             .expectNextMatches { it.id == "tag2" }
-            .expectNextMatches { it.id == "tag3" }
+            .expectNextMatches { it.id == "tag1" }
             .verifyComplete()
     }
 
@@ -40,12 +42,7 @@ class PictureTagsRepositoryTest {
             .expectNextMatches { it.id == "tag3" }
             .verifyComplete()
 
-        val result = neo4jClient.query(
-            """
-            MATCH (:Picture {id: 'picture1'})-[:HAS_TAG]->(t:Tag {id: 'tag3'})
-            RETURN t
-        """
-        )
+        val result = neo4jClient.query("MATCH (:Picture {id: 'picture1'})-[:HAS_TAG]->(t:Tag {id: 'tag3'}) RETURN t")
             .fetch()
             .all()
 
@@ -60,12 +57,7 @@ class PictureTagsRepositoryTest {
         StepVerifier.create(returnValue)
             .verifyComplete()
 
-        val result = neo4jClient.query(
-            """
-            MATCH (:Picture {id: 'picture1'})-[:HAS_TAG]->(t:Tag {id: 'tag2'})
-            RETURN t
-        """
-        )
+        val result = neo4jClient.query("MATCH (:Picture {id: 'picture1'})-[:HAS_TAG]->(t:Tag {id: 'tag2'}) RETURN t")
             .fetch()
             .all()
 

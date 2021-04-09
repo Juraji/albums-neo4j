@@ -9,12 +9,7 @@ import reactor.core.publisher.Mono
 @Repository
 interface PicturesRepository : ReactiveNeo4jRepository<Picture, String> {
 
-    @Query(
-        """
-            MATCH (p:Picture)<-[:HAS_PICTURE]-(:Folder {id: $ folderId})
-            RETURN p ORDER BY p.name
-        """
-    )
+    @Query("MATCH (:Folder {id: ${'$'} folderId})-[:HAS_PICTURE]->(p:Picture) RETURN p")
     fun findAllByFolderId(folderId: String): Flux<Picture>
 
     @Query(
@@ -30,10 +25,7 @@ interface PicturesRepository : ReactiveNeo4jRepository<Picture, String> {
 
     @Suppress("SpringDataRepositoryMethodReturnTypeInspection")
     @Query(
-        """
-            OPTIONAL MATCH p=(:Folder {id: $ folderId})-[:HAS_PICTURE]->(:Picture {name: $ name})
-            RETURN p IS NOT NULL
-        """,
+        "RETURN exists((:Folder {id: ${'$'} folderId})-[:HAS_PICTURE]->(:Picture {name: ${'$'} name}))",
         exists = true
     )
     fun existsByNameInFolder(folderId: String, name: String): Mono<Boolean>

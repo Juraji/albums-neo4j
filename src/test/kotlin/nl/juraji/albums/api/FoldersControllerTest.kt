@@ -41,7 +41,7 @@ internal class FoldersControllerTest {
 
     @Test
     fun `should get roots`() {
-        val folders = fixture.nextListOf<Folder>().map { FolderTreeView(it.id!!, it.name, emptyList()) }
+        val folders = fixture.nextListOf<Folder>().map { FolderTreeView(it.id!!, it.name, emptyList(), true) }
 
         every { foldersService.getTree() } returnsFluxOf folders
 

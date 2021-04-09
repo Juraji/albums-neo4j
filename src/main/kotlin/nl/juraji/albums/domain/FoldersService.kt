@@ -36,7 +36,7 @@ class FoldersService(
             }
         }
         .flatMap { foldersRepository.save(folder.copy(id = null)) }
-        .doOnNext { if (parentFolderId.isNotBlank()) foldersRepository.setParent(it.id!!, parentFolderId) }
+        .doOnNext { if (parentFolderId.isNotBlank()) foldersRepository.setParent(it.id!!, parentFolderId).subscribe() }
 
     fun updateFolder(folderId: String, update: Folder): Mono<Folder> = foldersRepository
         .findById(folderId)
@@ -49,7 +49,7 @@ class FoldersService(
                 isTrue(foldersRepository.isEmptyById(it)) { "Folder is not empty, set recursive=true to ignore this message" }
             }
         }
-        .flatMap(foldersRepository::deleteById)
+        .flatMap(foldersRepository::deleteRecursivelyById)
 
     fun moveFolder(folderId: String, targetId: String): Mono<Folder> =
         validateAsync {
