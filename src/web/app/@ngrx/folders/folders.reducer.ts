@@ -13,7 +13,7 @@ const selectFolderEntitiesSlice = createSelector(selectFoldersSlice, s => s.enti
 const selectTreeMappingSlice = createSelector(selectFoldersSlice, s => s.treeMapping);
 
 const selectFoldersEntities = createSelector(selectFolderEntitiesSlice, folderEntitySelectors.selectEntities);
-const selectAllFolders = createSelector(selectFolderEntitiesSlice, folderEntitySelectors.selectAll);
+export const selectAllFolders = createSelector(selectFolderEntitiesSlice, folderEntitySelectors.selectAll);
 const selectTreeMappingEntities = createSelector(selectTreeMappingSlice, folderTreeMappingSelectors.selectEntities);
 const selectAllTreeMappings = createSelector(selectTreeMappingSlice, folderTreeMappingSelectors.selectAll);
 

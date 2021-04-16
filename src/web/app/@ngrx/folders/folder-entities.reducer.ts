@@ -2,7 +2,9 @@ import {createEntityAdapter} from '@ngrx/entity';
 import {createReducer, on} from '@ngrx/store';
 import {createFolderSuccess, deleteFolder, loadFoldersTreeSuccess, updateFolder} from './folders.actions';
 
-const foldersEntityAdapter = createEntityAdapter<Folder>();
+const foldersEntityAdapter = createEntityAdapter<Folder>({
+  sortComparer: (a, b) => a.name.localeCompare(b.name)
+});
 export const folderEntitySelectors = foldersEntityAdapter.getSelectors();
 
 export const folderEntitiesReducer = createReducer(

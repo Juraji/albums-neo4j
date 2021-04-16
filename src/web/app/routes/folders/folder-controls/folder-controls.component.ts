@@ -4,10 +4,11 @@ import {ObserveProperty} from '@utils/decorators';
 import {map} from 'rxjs/operators';
 import {ROOT_FOLDER_ID} from '../root-folder';
 import {AddFolderModal} from '../add-folder-modal/add-folder.modal';
-import {createFolder, deleteFolder} from '@ngrx/folders';
+import {createFolder, deleteFolder, moveFolder} from '@ngrx/folders';
 import {Store} from '@ngrx/store';
 import {Modals} from '@juraji/ng-bootstrap-modals';
 import {Router} from '@angular/router';
+import {MoveFolderModal, TargetFolderForm} from '../move-folder-modal/move-folder.modal';
 
 @Component({
   selector: 'app-folder-details-pane',
@@ -34,22 +35,33 @@ export class FolderControlsComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onAddFolder(id: string) {
-    const realParentId = id === ROOT_FOLDER_ID ? undefined : id;
+  onAddFolder() {
     this.modals.open<Folder>(AddFolderModal).onResolved
-      .subscribe(folder => this.store.dispatch(createFolder(folder, realParentId)));
+      .subscribe(folder => this.store.dispatch(createFolder(folder, this.getRealFolderId())));
   }
 
-  onMoveFolder(id: string) {
-
+  onMoveFolder() {
+    const fid = this.getRealFolderId();
+    if (!!fid) {
+      this.modals.open<TargetFolderForm>(MoveFolderModal, {data: this.folder}).onResolved
+        .subscribe(({targetFolderId}) => this.store.dispatch(moveFolder(fid, targetFolderId)));
+    }
   }
 
-  onDeleteFolder(id: string) {
-    this.modals.confirm('Are you sure you want to delete this folder?').onResolved
-      .subscribe(() => {
-        this.store.dispatch(deleteFolder(id, true));
-        this.router.navigate(['/folders']);
-      });
+  onDeleteFolder() {
+    const fid = this.getRealFolderId();
+    if (!!fid) {
+      this.modals.confirm('Are you sure you want to delete this folder?').onResolved
+        .subscribe(() => {
+          this.store.dispatch(deleteFolder(fid, true));
+          this.router.navigate(['/folders']);
+        });
+    }
   }
 
+  private getRealFolderId(): string | undefined {
+    return this.folder?.id === ROOT_FOLDER_ID
+      ? undefined
+      : this.folder?.id;
+  }
 }
