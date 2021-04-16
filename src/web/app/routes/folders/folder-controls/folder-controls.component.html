@@ -2,13 +2,18 @@
   <button class="btn btn-outline-primary" (click)="onAddFolder()" title="Add folder">
     <span class="fa fa-folder-plus"></span>
   </button>
+  <button class="btn btn-outline-primary" title="Add pictures"
+          (click)="onAddPictures()"
+          *ngIf="(isRootFolder$ | async) === false">
+    <span class="fa fa-images"></span>
+  </button>
   <button class="btn btn-outline-primary"
           title="Move folder"
           (click)="onMoveFolder()"
           *ngIf="(isRootFolder$ | async) === false">
-      <span class="fa fa-folder"></span>&nbsp;
-      <span class="fa fa-angle-double-right"></span>&nbsp;
-      <span class="fa fa-folder-open"></span>
+    <span class="fa fa-folder"></span>&nbsp;
+    <span class="fa fa-angle-double-right"></span>&nbsp;
+    <span class="fa fa-folder-open"></span>
   </button>
   <button class="btn btn-outline-danger" title="Delete folder"
           (click)="onDeleteFolder()"

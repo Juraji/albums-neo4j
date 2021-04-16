@@ -54,13 +54,13 @@ export const selectTreePathByFolderId = createSelector(
     let lastParentId = findParentId(folderId);
 
     while (lastParentId !== undefined) {
-      path = path.append(lastParentId);
+      path = path.concat(lastParentId);
       lastParentId = findParentId(lastParentId);
     }
 
     return path
       .reverse()
-      .append(folderId)
+      .concat(folderId)
       .map(findFolderById(folders))
       .filter(it => it !== undefined);
   }

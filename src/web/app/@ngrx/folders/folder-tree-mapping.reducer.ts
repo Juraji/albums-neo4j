@@ -28,7 +28,7 @@ export const folderTreeMappingReducer = createReducer(
     if (!!parentId) {
       mutation = folderTreeMappingAdapter.mapOne({
         id: parentId,
-        map: f => f.copy({children: f.children.append(folder.id)})
+        map: f => f.copy({children: f.children.concat(folder.id)})
       }, mutation);
     }
 
@@ -56,7 +56,7 @@ export const folderTreeMappingReducer = createReducer(
 
     mutation = folderTreeMappingAdapter.mapOne({
       id: targetId,
-      map: m => m.copy({children: m.children.append(folderId)})
+      map: m => m.copy({children: m.children.concat(folderId)})
     }, mutation);
 
     return mutation;

@@ -1,13 +1,13 @@
 interface Array<T> {
   /**
-   * Copy this array, appending {@param items} to it
-   */
-  append(this: Array<T>, ...items: Array<T>): Array<T>;
-
-  /**
    * Copy this array, replacing the item at {@param index} with {@param replacement}.
    */
   replace(this: Array<T>, index: number, replacement: T): Array<T>;
+
+  /**
+   * Removes {@param deleteCount} elements from this array, starting at {@param index} and returns the result.
+   */
+  removeAt(this: Array<T>, index: number, deleteCount?: number): Array<T>;
 
   /**
    * True when this array has no elements, false otherwise.
@@ -36,7 +36,7 @@ interface Array<T> {
   transpose2d<U>(this: Array<T>): T extends U[] ? Array<T> : never;
 
   /**
-   * Uses an internal Set to remove duplicated values from this array
+   * Uses an internal Set to remove duplicated values from this array.
    */
-  unique(this: Array<T>): Array<T>;
+  unique(this: Array<T>, identity?: (item: T) => any): Array<T>;
 }

@@ -13,7 +13,8 @@ import {reducer} from './@ngrx';
 import {FolderBreadcrumbsComponent} from './folder-breadcrumbs/folder-breadcrumbs.component';
 import {FolderControlsComponent} from './folder-controls/folder-controls.component';
 import {FolderChildrenTilesComponent} from './folder-children-tiles/folder-children-tiles.component';
-import { MoveFolderModal } from './move-folder-modal/move-folder.modal';
+import {MoveFolderModal} from './move-folder-modal/move-folder.modal';
+import {AddPicturesModal} from './add-pictures-modal/add-pictures.modal';
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import { MoveFolderModal } from './move-folder-modal/move-folder.modal';
     FolderBreadcrumbsComponent,
     FolderControlsComponent,
     FolderChildrenTilesComponent,
-    MoveFolderModal
+    MoveFolderModal,
+    AddPicturesModal
   ],
   imports: [
     CommonModule,

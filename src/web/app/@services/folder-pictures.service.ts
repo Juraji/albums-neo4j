@@ -16,9 +16,9 @@ export class FolderPicturesService {
     return this.httpClient.get<Picture[]>(`${this.baseUri}/${folderId}/pictures`);
   }
 
-  uploadPictures(folderId: string, files: FileList): Observable<HttpEvent<Picture[]>> {
+  uploadPictures(folderId: string, files: File[]): Observable<HttpEvent<Picture[]>> {
     const formData = new FormData();
-    Array.from(files).forEach(f => formData.append('files[]', f, f.name));
+    files.forEach(f => formData.append('files[]', f, f.name));
 
     return this.httpClient.post<Picture[]>(`${this.baseUri}/${folderId}/pictures`, formData, {
       observe: 'events',

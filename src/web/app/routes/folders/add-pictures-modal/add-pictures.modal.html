@@ -1,0 +1,45 @@
+<form [formGroup]="form" (submit)="onSubmit()">
+  <div class="modal-header">
+    <h4 class="modal-title">Add pictures to "{{parentFolder.name}}"</h4>
+    <button type="button" class="close" aria-label="Close" ngbmodDismiss>
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="selection-indicator mb-4" *ngIf="selectedFiles$ | async as selectedFiles">
+      <table class="table table-sm table-striped">
+        <tbody>
+        <tr *ngFor="let file of selectedFiles | slice:0:10; let i = index">
+          <td>{{i + 1}}</td>
+          <td>{{file.name}}</td>
+          <td>
+            <button type="button" class="btn btn-outline-danger btn-sm" (click)="onRemoveFile(i)">
+              <span class="fa fa-trash"></span>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+        <tfoot *ngIf="selectedFiles.length > 10">
+        <tr>
+          <td colspan="2">and {{selectedFiles.length - 10}} more...</td>
+        </tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="drop-zone"
+         (dragover)="onDragOver($event)"
+         (dragleave)="onDragLeave($event)"
+         (drop)="onDrop($event)">
+      <input type="file" id="fileInputRef" multiple (change)="onFileBrowse($event)">
+      <span class="select-files-label">
+        <span>Drop files here or</span>&nbsp;<label class="text-primary cursor-pointer"
+                                                    for="fileInputRef">Browse files</label>
+      </span>
+      <span class="drop-files-label">Drop files...</span>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-danger" ngbmodDismiss>Cancel</button>
+    <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Upload...</button>
+  </div>
+</form>

@@ -2,15 +2,6 @@
 ///<reference path="array-ext.d.ts"/>
 
 export default function () {
-  Object.defineProperty(Array.prototype, 'append', {
-    configurable: false,
-    enumerable: false,
-    writable: false,
-    value: function <T>(this: Array<T>, ...items: Array<T>): Array<T> {
-      return [...this, ...items];
-    },
-  });
-
   Object.defineProperty(Array.prototype, 'replace', {
     configurable: false,
     enumerable: false,
@@ -18,6 +9,17 @@ export default function () {
     value: function <T>(this: Array<T>, index: number, replacement: T): Array<T> {
       const n = this.slice();
       n[index] = replacement;
+      return n;
+    },
+  });
+
+  Object.defineProperty(Array.prototype, 'removeAt', {
+    configurable: false,
+    enumerable: false,
+    writable: false,
+    value: function <T>(this: Array<T>, index: number, deleteCount: number = 1): Array<T> {
+      const n = this.slice();
+      n.splice(index, deleteCount)
       return n;
     },
   });
@@ -80,9 +82,16 @@ export default function () {
     configurable: false,
     enumerable: false,
     writable: false,
-    value: function <T>(this: Array<T>) {
-      const uqSet = this.reduce((acc, next) => acc.add(next), new Set<T>());
-      return Array.from(uqSet.values());
+    value: function <T>(this: Array<T>, identity?: (item: T) => any) {
+      if (!!identity) {
+        const seen = new Set<any>();
+        return this.filter((v) => {
+          const id = identity(v);
+          return seen.has(id) ? false : !!seen.add(id)
+        })
+      } else {
+        return Array.from(new Set<T>(this));
+      }
     },
   });
 }

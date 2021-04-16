@@ -7,6 +7,7 @@ import {selectAllFolders} from '@ngrx/folders';
 import {map} from 'rxjs/operators';
 
 export interface TargetFolderForm {
+  folderId: string;
   targetFolderId: string;
 }
 
@@ -21,6 +22,7 @@ export class MoveFolderModal {
     .pipe(map(folders => folders.filter(f => f.id !== this.folder.id)));
 
   public readonly form = typedFormGroup<TargetFolderForm>({
+    folderId: typedFormControl(this.folder.id, Validators.required),
     targetFolderId: typedFormControl('', Validators.required),
   });
 

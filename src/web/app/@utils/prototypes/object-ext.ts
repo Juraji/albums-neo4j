@@ -6,7 +6,7 @@ export default function () {
     configurable: false,
     enumerable: false,
     writable: false,
-    value: function <T>(this: T, update?: Partial<T>): T {
+    value: function <T>(this: T, update?: Partial<T> | ((t: T) => Partial<T>)): T {
       if (Array.isArray(this)) {
         if (!!update) {
           throw Error('Can not apply update to arrays');
@@ -14,8 +14,10 @@ export default function () {
 
         // @ts-ignore
         return this.slice();
+      } else if (typeof update === "function") {
+        return Object.assign({}, this, update(this));
       } else {
-        return { ...this, ...update };
+        return Object.assign({}, this, update);
       }
     },
   });
