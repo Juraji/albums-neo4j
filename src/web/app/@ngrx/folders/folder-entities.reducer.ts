@@ -9,7 +9,7 @@ export const folderEntitiesReducer = createReducer(
   foldersEntityAdapter.getInitialState(),
   on(loadFoldersTreeSuccess, (s, {tree}) => {
     const flatten = (fs: FolderTreeView[]): Folder[] =>
-      fs.flatMap(({id, name, children}) => [{id, name}, ...flatten(children)]);
+      fs.flatMap(({children, isRoot, ...props}) => [props, ...flatten(children)]);
 
     const folders = flatten(tree);
     const emptyState = foldersEntityAdapter.removeAll(s);

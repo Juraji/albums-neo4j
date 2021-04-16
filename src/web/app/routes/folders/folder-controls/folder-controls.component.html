@@ -1,0 +1,15 @@
+<div class="btn-group d-flex" *ngIf="folder$ | async as folder">
+  <button class="btn btn-outline-primary" (click)="onAddFolder(folder.id)">
+    <span class="fa fa-folder-plus"></span>
+  </button>
+  <button class="btn btn-outline-primary"
+          (click)="onMoveFolder(folder.id)"
+          *ngIf="(isRootFolder$ | async) === false">
+    <span class="fa fa-folder-open"></span>
+  </button>
+  <button class="btn btn-outline-danger"
+          (click)="onDeleteFolder(folder.id)"
+          *ngIf="(isRootFolder$ | async) === false">
+    <span class="fa fa-folder-minus"></span>
+  </button>
+</div>

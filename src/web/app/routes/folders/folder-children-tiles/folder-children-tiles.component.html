@@ -1,0 +1,6 @@
+<a class="folder-tile text-center text-decoration-none mr-4"
+   *ngFor="let folder of childFolders$ | async"
+   [routerLink]="['/folders', folder.id]">
+  <span class="fa fa-folder-open folder-tile-icon"></span><br/>
+  <span class="folder-name">{{folder.name}}</span>
+</a>

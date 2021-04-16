@@ -1,6 +1,7 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {FolderPage, ROOT_FOLDER} from './folder/folder.page';
+import {FolderPage} from './folder/folder.page';
+import {ROOT_FOLDER} from './root-folder';
 
 const routes: Routes = [
   {path: ':folderId', component: FolderPage},

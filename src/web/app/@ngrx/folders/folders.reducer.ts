@@ -23,11 +23,14 @@ const selectTreeMappingByFolderId = createSelector(
   (s: Dictionary<FolderTreeMapping>, {folderId}: FolderByIdProps) => s[folderId]
 );
 
+const findFolderById = (folders: Folder[]) => (id: string) => folders.find(f => f.id === id);
+
 export const selectRootFolders = createSelector(
   selectRootTreeMappings,
   selectAllFolders,
   (mappings: FolderTreeMapping[], folders: Folder[]) => mappings
-    .map(m => folders.find(f => f.id === m.folderId))
+    .map(m => m.folderId)
+    .map(findFolderById(folders))
 );
 export const selectFolderById = createSelector(
   selectFoldersEntities,
@@ -38,5 +41,27 @@ export const selectFolderChildrenById = createSelector(
   selectTreeMappingByFolderId,
   selectAllFolders,
   (mapping: FolderTreeMapping | undefined, folders: Folder[]) => (mapping?.children || [])
-    .map(fid => folders.find(f => f.id === fid))
+    .map(findFolderById(folders))
+);
+
+export const selectTreePathByFolderId = createSelector(
+  selectAllTreeMappings,
+  selectAllFolders,
+  (treeMappings: FolderTreeMapping[], folders: Folder[], {folderId}: FolderByIdProps) => {
+    const findParentId = (id: string): string | undefined => treeMappings.find(it => it.children.includes(id))?.folderId;
+
+    let path: string[] = [];
+    let lastParentId = findParentId(folderId);
+
+    while (lastParentId !== undefined) {
+      path = path.append(lastParentId);
+      lastParentId = findParentId(lastParentId);
+    }
+
+    return path
+      .reverse()
+      .append(folderId)
+      .map(findFolderById(folders))
+      .filter(it => it !== undefined);
+  }
 );

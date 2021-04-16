@@ -1,40 +1,11 @@
 <app-main-navbar></app-main-navbar>
 
 <div class="container-fluid clear-navbar">
-  <div class="row">
-    <div class="col col-sm-8">
-
-    </div>
-    <div class="col col-sm-4">
-      <div class="card" *ngIf="folder$ | async as folder">
-        <div class="card-header">
-          <h1>{{folder.name}}</h1>
-        </div>
-        <div class="card-body p-0">
-          <div class="list-group list-group-flush">
-            <a [routerLink]="['/folders', child.id]" class="list-group-item list-group-item-action"
-               *ngFor="let child of childFolders$ | async"><span class="fa fa-folder"></span>&nbsp;{{child.name}}</a>
-            <a href="#" class="list-group-item disabled" *ngIf="childFolders$ | async | empty">No child folders</a>
-          </div>
-        </div>
-        <div class="card-footer p-0">
-          <div class="btn-group d-flex">
-            <button class="btn btn-outline-primary" (click)="onAddFolder(folder.id)">
-              <span class="fa fa-folder-plus"></span>&nbsp;Add folder
-            </button>
-            <button class="btn btn-outline-primary"
-                    (click)="onMoveFolder(folder.id)"
-                    *ngIf="(isRootFolder$ | async) === false">
-              <span class="fa fa-folder-open"></span>&nbsp;Move folder
-            </button>
-            <button class="btn btn-outline-danger"
-                    (click)="onDeleteFolder(folder.id)"
-                    *ngIf="(isRootFolder$ | async) === false">
-              <span class="fa fa-folder-minus"></span>&nbsp;Delete folder
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="d-flex justify-content-between">
+    <app-folder-breadcrumbs></app-folder-breadcrumbs>
+    <app-folder-details-pane [folder]="folder$ | async"></app-folder-details-pane>
   </div>
+
+  <app-folder-children-tiles [folder]="folder$ | async"></app-folder-children-tiles>
+
 </div>

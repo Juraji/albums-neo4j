@@ -3,9 +3,7 @@ interface Folder {
   name: string;
 }
 
-interface FolderTreeView {
-  id: string;
-  name: string;
+interface FolderTreeView extends Folder{
   children: FolderTreeView[];
   isRoot: boolean;
 }
