@@ -9,8 +9,8 @@ abstract class ReactiveEventListener {
 
     fun consumePublisher(operation: () -> CorePublisher<out Any>) {
         when (val publisher = operation.invoke()) {
-            is Mono -> publisher.subscribe(null, { e -> logger.error("Error consuming Mono", e) })
-            is Flux -> publisher.subscribe(null, { e -> logger.error("Error consuming Flux", e) })
+            is Mono -> publisher.subscribe(null) { e -> logger.error("Error consuming Mono", e) }
+            is Flux -> publisher.subscribe(null) { e -> logger.error("Error consuming Flux", e) }
             else -> throw IllegalArgumentException("Can not consume core publisher of $publisher")
         }
     }

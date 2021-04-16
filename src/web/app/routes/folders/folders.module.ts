@@ -12,9 +12,10 @@ import {StoreModule} from '@ngrx/store';
 import {reducer} from './@ngrx';
 import {FolderBreadcrumbsComponent} from './folder-breadcrumbs/folder-breadcrumbs.component';
 import {FolderControlsComponent} from './folder-controls/folder-controls.component';
-import {FolderChildrenTilesComponent} from './folder-children-tiles/folder-children-tiles.component';
 import {MoveFolderModal} from './move-folder-modal/move-folder.modal';
 import {AddPicturesModal} from './add-pictures-modal/add-pictures.modal';
+import {PictureImageViewsModule} from '@components/picture-image-views';
+import {PaginationModule} from '@components/pagination/pagination.module';
 
 
 @NgModule({
@@ -23,9 +24,8 @@ import {AddPicturesModal} from './add-pictures-modal/add-pictures.modal';
     AddFolderModal,
     FolderBreadcrumbsComponent,
     FolderControlsComponent,
-    FolderChildrenTilesComponent,
     MoveFolderModal,
-    AddPicturesModal
+    AddPicturesModal,
   ],
   imports: [
     CommonModule,
@@ -34,7 +34,9 @@ import {AddPicturesModal} from './add-pictures-modal/add-pictures.modal';
     UtilityPipesModule,
     NgbmodModalsModule,
     ReactiveFormsModule,
-    StoreModule.forFeature('folders-route', reducer)
+    StoreModule.forFeature('folders-route', reducer),
+    PictureImageViewsModule,
+    PaginationModule
   ]
 })
 export class FoldersModule {

@@ -1,12 +1,12 @@
 import {createEntityAdapter} from '@ngrx/entity';
-import {createReducer} from '@ngrx/store';
+import {createReducer, on} from '@ngrx/store';
+import {loadPicturesByFolderIdSuccess} from './pictures.actions';
 
-const picturesEntityAdapter = createEntityAdapter<Picture>({
-  sortComparer: (a, b) => a.name.localeCompare(b.name)
-});
+const picturesEntityAdapter = createEntityAdapter<Picture>();
 
 export const picturesEntitySelectors = picturesEntityAdapter.getSelectors();
 
 export const picturesEntityReducer = createReducer(
   picturesEntityAdapter.getInitialState(),
+  on(loadPicturesByFolderIdSuccess, (s, {pictures}) => picturesEntityAdapter.upsertMany(pictures, s))
 );

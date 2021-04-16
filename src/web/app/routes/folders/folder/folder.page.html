@@ -1,11 +1,24 @@
 <app-main-navbar></app-main-navbar>
+<nav class="navbar navbar-light bg-light fixed-top shadow folder-details">
+  <app-folder-breadcrumbs></app-folder-breadcrumbs>
+  <app-folder-details-pane [folder]="folder$ | async"></app-folder-details-pane>
+</nav>
 
-<div class="container-fluid clear-navbar">
-  <div class="d-flex justify-content-between">
-    <app-folder-breadcrumbs></app-folder-breadcrumbs>
-    <app-folder-details-pane [folder]="folder$ | async"></app-folder-details-pane>
+<div class="container-fluid d-flex flex-wrap folder-contents">
+  <div class="rounded border text-center m-1 cursor-pointer folder-tile"
+       *ngFor="let folder of childFolders$ | async"
+       [routerLink]="['/folders', folder.id]">
+    <span class="fa fa-folder-open folder-tile-icon"></span><br/>
+    <span class="folder-name">{{folder.name}}</span>
   </div>
-
-  <app-folder-children-tiles [folder]="folder$ | async"></app-folder-children-tiles>
-
+  <div class="m-1 cursor-pointer picture-tile"
+       *ngFor="let picture of pagedPictures$ | async" [routerLink]="['/pictures', picture.id]">
+    <img appPictureThumbnail [picture]="picture">
+  </div>
 </div>
+
+<nav class="navbar navbar-light bg-light fixed-bottom folder-pagination" *ngIf="pictures$ | async as pictures">
+  <app-pagination [collectionSize]="pictures.length" [pageSize]="pageSizeRef.selectedSize$ | async"
+                  (range)="onPageUpdate($event)"></app-pagination>
+  <app-page-size-selector [collectionSize]="pictures.length" #pageSizeRef></app-page-size-selector>
+</nav>

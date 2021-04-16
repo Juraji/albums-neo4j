@@ -1,15 +1,13 @@
-<nav>
-  <ul class="pagination">
-    <li class="page-item" [class.disabled]="!(canPrevious$ | async)">
-      <span class="page-link" tabindex="-1" role="button" (click)="onPrevious()">Previous</span>
-    </li>
+<ul class="pagination mb-0">
+  <li class="page-item" [class.disabled]="(canPrevious$ | async) === false">
+    <span class="page-link" tabindex="-1" role="button" (click)="onPrevious()">Previous</span>
+  </li>
 
-    <li class="page-item" *ngFor="let p of pages$ | async" [class.active]="(currentPage$ | async) === p">
-      <span class="page-link" role="button" (click)="onPageSelect(p)">{{p}}</span>
-    </li>
+  <li class="page-item" *ngFor="let p of pages$ | async" [class.active]="(currentPage$ | async) === p">
+    <span class="page-link" role="button" (click)="onPageSelect(p)">{{p}}</span>
+  </li>
 
-    <li class="page-item" [class.disabled]="!(canNext$ | async)">
-      <span class="page-link" role="button" (click)="onNext()">Next</span>
-    </li>
-  </ul>
-</nav>
+  <li class="page-item" [class.disabled]="(canNext$ | async) === false">
+    <span class="page-link" role="button" (click)="onNext()">Next</span>
+  </li>
+</ul>

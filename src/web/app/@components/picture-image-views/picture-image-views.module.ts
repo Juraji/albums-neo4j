@@ -1,11 +1,11 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {PictureImgDirective} from './picture-img.directive';
+import {PictureThumbnailDirective} from './picture-thumbnail.directive';
 
 @NgModule({
   imports: [CommonModule],
-  declarations: [PictureImgDirective],
-  exports: [PictureImgDirective]
+  declarations: [PictureThumbnailDirective],
+  exports: [PictureThumbnailDirective]
 })
 export class PictureImageViewsModule {
 }

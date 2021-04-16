@@ -35,15 +35,6 @@ class DuplicatesService(
             .filterWhen { o -> pictureHash.map { p -> p.id != o.id } }
             .flatMap { target -> pictureHash.map { source -> compare(source, target) } }
             .filter { (_, similarity) -> similarity >= configuration.similarityThreshold }
-            .doOnNext { (target, similarity) ->
-                applicationEventPublisher.publishEvent(
-                    DuplicatePictureDetectedEvent(
-                        sourceId = pictureId,
-                        targetId = target.id!!,
-                        similarity = similarity
-                    )
-                )
-            }
             .flatMap { (target, similarity) ->
                 pictureDuplicatesRepository.setAsDuplicate(
                     sourceId = pictureId,
@@ -51,6 +42,7 @@ class DuplicatesService(
                     similarity = similarity,
                 )
             }
+            .doOnNext { applicationEventPublisher.publishEvent(DuplicatePictureDetectedEvent.ofDuplicatesView(it)) }
             .onErrorContinue { t, _ -> logger.info(t.localizedMessage) }
     }
 

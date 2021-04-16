@@ -1,6 +1,7 @@
 import {combineReducers, createFeatureSelector, createSelector} from '@ngrx/store';
-import {picturesEntityReducer} from './pictures-entity.reducer';
-import {picturesFolderReducer} from './pictures-folder.reducer';
+import {picturesEntityReducer, picturesEntitySelectors} from './pictures-entity.reducer';
+import {picturesFolderEntitySelectors, picturesFolderReducer} from './pictures-folder.reducer';
+import {Dictionary} from '@ngrx/entity';
 
 export const reducer = combineReducers<PicturesSliceState>({
   pictures: picturesEntityReducer,
@@ -11,3 +12,27 @@ const selectPicturesSlice = createFeatureSelector<PicturesSliceState>('pictures'
 
 const selectPictures = createSelector(selectPicturesSlice, s => s.pictures);
 const selectPicturesFolders = createSelector(selectPicturesSlice, s => s.pictureFolders);
+
+const selectPictureFolderEntities = createSelector(
+  selectPicturesFolders,
+  picturesFolderEntitySelectors.selectEntities
+);
+
+const selectAllPictureEntities = createSelector(
+  selectPictures,
+  picturesEntitySelectors.selectAll
+);
+
+const selectFolderPicturesByFolderId = createSelector(
+  selectPictureFolderEntities,
+  (s: Dictionary<PicturesFolder>, {folderId}: FolderByIdProps) => s[folderId]
+);
+
+export const selectPicturesByFolderId = createSelector(
+  selectFolderPicturesByFolderId,
+  selectAllPictureEntities,
+  (fp, pe) => (fp?.pictureIds || [])
+    .map(id => pe.find(p => p.id === id))
+    .filterEmpty()
+);
+

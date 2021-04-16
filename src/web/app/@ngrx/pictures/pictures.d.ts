@@ -5,5 +5,5 @@ interface PicturesSliceState {
 
 interface PicturesFolder {
   folderId: string;
-  pictureIds: string;
+  pictureIds: string[];
 }

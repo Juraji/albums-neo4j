@@ -1,0 +1,8 @@
+:host {
+  .breadcrumb-item {
+    overflow: hidden;
+    max-width: 20rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}

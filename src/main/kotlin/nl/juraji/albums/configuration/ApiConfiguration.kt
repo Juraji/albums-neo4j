@@ -6,15 +6,32 @@ import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
+import org.springframework.http.codec.ServerCodecConfigurer
+import org.springframework.http.codec.multipart.DefaultPartHttpMessageReader
+import org.springframework.http.codec.multipart.MultipartHttpMessageReader
+import org.springframework.util.unit.DataSize
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.reactive.CorsWebFilter
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource
+import org.springframework.web.reactive.config.WebFluxConfigurer
 import java.time.Duration
 
 
 @Configuration
-class ApiConfiguration {
+class ApiConfiguration : WebFluxConfigurer {
+
+    override fun configureHttpMessageCodecs(configurer: ServerCodecConfigurer) {
+        val partReader = DefaultPartHttpMessageReader()
+        partReader.setMaxHeadersSize(DataSize.ofMegabytes(8).toBytes().toInt()) // 9 KiB, default is 8 KiB
+
+        partReader.isEnableLoggingRequestDetails = true
+
+        val multipartReader = MultipartHttpMessageReader(partReader)
+        multipartReader.isEnableLoggingRequestDetails = true
+
+        configurer.defaultCodecs().multipartReader(multipartReader)
+    }
 
     @Bean
     @Primary

@@ -12,13 +12,16 @@ import {
 import {DomSanitizer} from '@angular/platform-browser';
 import {PicturesService} from '@services/pictures.service';
 
-const CLASSNAMES = ['rounded', 'border', 'picture-img'];
+const CLASSNAMES = ['rounded', 'border', 'picture-thumbnail'];
 
-@Directive({selector: 'img[appPictureImg]'})
-export class PictureImgDirective implements OnInit, OnChanges {
-  @Input() pictureId: Picture | null = null;
+@Directive({selector: 'img[appPictureThumbnail]'})
+export class PictureThumbnailDirective implements OnInit, OnChanges {
+  @Input() picture: Picture | null = null;
   @HostBinding('src') hostSrc: string | null = null;
-  @HostBinding('title') hostTitle: string | null = null;
+
+  @HostBinding('title')
+  @HostBinding('alt')
+  hostTitle: string | null = null;
 
   constructor(
     private readonly picturesService: PicturesService,
@@ -42,7 +45,7 @@ export class PictureImgDirective implements OnInit, OnChanges {
   private getSanitizedSrc(picture: Picture) {
     return this.domSanitizer.sanitize(
       SecurityContext.URL,
-      this.picturesService.getDownloadUri(picture.id)
+      this.picturesService.getThumbnailUri(picture.id)
     );
   }
 

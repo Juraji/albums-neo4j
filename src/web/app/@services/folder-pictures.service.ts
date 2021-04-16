@@ -12,8 +12,11 @@ export class FolderPicturesService {
   constructor(private readonly httpClient: HttpClient) {
   }
 
-  getFolderPictures(folderId: string): Observable<Picture[]> {
-    return this.httpClient.get<Picture[]>(`${this.baseUri}/${folderId}/pictures`);
+  getFolderPictures(folderId: string): Observable<HttpEvent<Picture[]>> {
+    return this.httpClient.get<Picture[]>(`${this.baseUri}/${folderId}/pictures`, {
+      observe: 'events',
+      reportProgress: true
+    });
   }
 
   uploadPictures(folderId: string, files: File[]): Observable<HttpEvent<Picture[]>> {

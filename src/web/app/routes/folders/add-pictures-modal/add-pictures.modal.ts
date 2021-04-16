@@ -84,8 +84,11 @@ export class AddPicturesModal {
   onSubmit() {
     const files = this.form.value.files;
     const progress = new Subject<number>();
-
     const shadeRef = this.modals.shade('Uploading pictures', progress);
+    this.modalRef.onComplete.subscribe(() => {
+      progress.complete();
+      shadeRef.dismiss();
+    });
 
     this.folderPicturesService.uploadPictures(this.parentFolder.id, files)
       .subscribe({
@@ -107,10 +110,7 @@ export class AddPicturesModal {
           console.error(err);
           this.modalRef.dismiss();
         },
-        complete: () => {
-          progress.complete();
-          shadeRef.dismiss();
-        }
+        complete: () => this.modalRef.dismiss()
       });
 
   }
