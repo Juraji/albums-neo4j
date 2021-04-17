@@ -10,6 +10,7 @@ const routes: Routes = [
     path: 'duplicates',
     loadChildren: () => import('./routes/duplicates/duplicates.module').then(m => m.DuplicatesModule)
   },
+  { path: 'tags', loadChildren: () => import('./routes/tags/tags.module').then(m => m.TagsModule) },
   {path: '**', redirectTo: 'folders'}
 ];
 

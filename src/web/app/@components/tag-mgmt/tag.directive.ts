@@ -7,7 +7,7 @@ export class TagDirective implements OnInit, OnChanges {
   private static readonly staticClassList = ['badge', 'tag-badge'];
 
   @Input()
-  tag: Tag | NewTagDto | null = null;
+  tag: Tag | null = null;
 
   @Input()
   @HostBinding('style.fontSize')

@@ -1,0 +1,29 @@
+<app-main-navbar>
+  <li class="nav-item">
+    <button class="btn btn-primary" title="Add new tag" (click)="onAddNewTag()">
+      <span class="fa fa-plus"></span>
+    </button>
+  </li>
+</app-main-navbar>
+
+<div class="container clear-navbar">
+  <table class="table">
+    <tbody>
+    <tr *ngFor="let tag of availableTags$ | async">
+      <td class="tag-preview">
+        <span appTag [tag]="tag"></span>
+      </td>
+      <td class="tag-controls">
+        <div class="btn-group">
+          <button class="btn btn-outline-primary" (click)="onEditTag(tag)">
+            <span class="fa fa-edit"></span>
+          </button>
+          <button class="btn btn-outline-danger" (click)="onDeleteTag(tag)">
+            <span class="fa fa-trash"></span>
+          </button>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

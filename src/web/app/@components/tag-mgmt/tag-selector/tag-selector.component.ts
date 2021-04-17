@@ -5,7 +5,7 @@ import {createTag, createTagSuccess, selectAllTags} from '@ngrx/tags';
 import {sideEffect} from '@utils/rx';
 import {filter, map, switchMap} from 'rxjs/operators';
 import {Modals} from '@juraji/ng-bootstrap-modals';
-import {EditTagModal} from '@components/tag-mgmt';
+import {EditTagModal} from '../edit-tag/edit-tag.modal';
 import {Actions, ofType} from '@ngrx/effects';
 import {unwrap} from '@utils/rx/unwrap';
 
