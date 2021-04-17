@@ -2,6 +2,8 @@ package nl.juraji.albums.api
 
 import nl.juraji.albums.domain.DuplicatesService
 import nl.juraji.albums.domain.PicturesService
+import nl.juraji.albums.domain.folders.Folder
+import nl.juraji.albums.domain.pictures.Picture
 import org.springframework.core.io.Resource
 import org.springframework.http.CacheControl
 import org.springframework.http.ResponseEntity
@@ -38,11 +40,22 @@ class PicturesController(
                 .body(it)
         }
 
+    @PostMapping("/{pictureId}/move-to/{targetId}")
+    fun movePicture(
+        @PathVariable pictureId: String,
+        @PathVariable targetId: String
+    ): Mono<Picture> = picturesService.movePicture(pictureId, targetId)
+
     @DeleteMapping("/{pictureId}/duplicates/{targetId}")
     fun deleteDuplicateFromPicture(
         @PathVariable pictureId: String,
         @PathVariable targetId: String,
     ): Mono<Void> = duplicatesService.removeDuplicate(pictureId, targetId)
+
+    @DeleteMapping("/{pictureId}")
+    fun deletePicture(
+        @PathVariable pictureId: String
+    ): Mono<Void> = picturesService.deletePicture(pictureId)
 
     companion object {
         const val IMAGE_CACHE_HOURS: Long = 1

@@ -20,7 +20,7 @@ class FolderPicturesController(
     @PostMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun uploadPictures(
         @PathVariable folderId: String,
-        @RequestPart("files[]") files: Flux<FilePart>
+        @RequestPart("files[]") files: Flux<FilePart>,
     ): Flux<Picture> = files
         .flatMap { picturesService.persistNewPicture(folderId, it) }
 }

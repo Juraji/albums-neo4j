@@ -37,8 +37,25 @@ export default function () {
     configurable: false,
     enumerable: false,
     writable: false,
-    value: function <T>(this: Array<T>, predicate: (value: T, index: number, array: T[]) => unknown) {
-      return this.filter(predicate).pop() || null;
+    value: function <T>(this: Array<T>, predicate?: (value: T, index: number, array: T[]) => unknown) {
+      const result = !!predicate
+        ? this.filter(predicate)
+        : this.slice();
+
+      return result.shift() || null
+    },
+  });
+
+  Object.defineProperty(Array.prototype, 'last', {
+    configurable: false,
+    enumerable: false,
+    writable: false,
+    value: function <T>(this: Array<T>, predicate?: (value: T, index: number, array: T[]) => unknown) {
+      const result = !!predicate
+        ? this.filter(predicate)
+        : this.slice();
+
+      return result.pop() || null
     },
   });
 

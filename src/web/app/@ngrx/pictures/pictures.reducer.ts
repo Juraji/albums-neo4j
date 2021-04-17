@@ -35,4 +35,3 @@ export const selectPicturesByFolderId = createSelector(
     .map(id => pe.find(p => p.id === id))
     .filterEmpty()
 );
-

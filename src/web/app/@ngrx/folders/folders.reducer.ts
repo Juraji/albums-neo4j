@@ -25,6 +25,11 @@ const selectTreeMappingByFolderId = createSelector(
 
 const findFolderById = (folders: Folder[]) => (id: string) => folders.find(f => f.id === id);
 
+export const selectFolderCount = createSelector(
+  selectFolderEntitiesSlice,
+  s => folderEntitySelectors.selectIds(s).length
+);
+
 export const selectRootFolders = createSelector(
   selectRootTreeMappings,
   selectAllFolders,

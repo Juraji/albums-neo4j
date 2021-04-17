@@ -17,7 +17,12 @@ interface Array<T> {
   /**
    * Find the first element where {@param predicate} returns true.
    */
-  first(this: Array<T>, predicate: (value: T, index: number, array: T[]) => unknown): T | null;
+  first(this: Array<T>, predicate?: (value: T, index: number, array: T[]) => unknown): T | null;
+
+  /**
+   * Find the last element where {@param predicate} returns true.
+   */
+  last(this: Array<T>, predicate?: (value: T, index: number, array: T[]) => unknown): T | null;
 
   /**
    * Filter null and undefined elements from this array.

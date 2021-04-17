@@ -7,3 +7,7 @@ interface PicturesFolder {
   folderId: string;
   pictureIds: string[];
 }
+
+interface ByPictureIdProps {
+  pictureId: string;
+}

@@ -1,0 +1,18 @@
+<form [formGroup]="form" (submit)="onSubmit()">
+  <div class="modal-header">
+    <h4 class="modal-title">Select target folder</h4>
+    <button type="button" class="close" aria-label="Close" ngbmodDismiss>
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <label for="targetFolderId">Target folder</label>
+    <select class="form-select w-100" aria-label="TargetFolder" formControlName="targetFolderId" id="targetFolderId">
+      <option *ngFor="let folder of availableFolders$ | async" [value]="folder">{{folder.name}}</option>
+    </select>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-danger" ngbmodDismiss>Cancel</button>
+    <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Select</button>
+  </div>
+</form>

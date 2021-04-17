@@ -11,7 +11,6 @@ import nl.juraji.albums.util.deferTo
 import nl.juraji.albums.util.toPath
 import org.springframework.core.io.Resource
 import org.springframework.core.io.buffer.DataBufferUtils
-import org.springframework.http.codec.multipart.FilePart
 import org.springframework.http.codec.multipart.Part
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
@@ -27,7 +26,7 @@ class ImageService(
 ) {
     private val ioScheduler: Scheduler = Schedulers
         .newBoundedElastic(
-            Schedulers.DEFAULT_BOUNDED_ELASTIC_SIZE,
+            10,
             Schedulers.DEFAULT_BOUNDED_ELASTIC_QUEUESIZE,
             "nio-file-operations",
             30,
@@ -87,6 +86,10 @@ class ImageService(
             acc.set(idx, pix > pixels[idx])
             acc
         }
+    }
+
+    fun deleteByPath(pictureLocation: String): Mono<Boolean> = deferTo(ioScheduler) {
+        Files.deleteIfExists(pictureLocation.toPath())
     }
 
     private fun writerForFileType(fileType: FileType): ImageWriter = when (fileType) {

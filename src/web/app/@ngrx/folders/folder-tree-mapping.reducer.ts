@@ -7,6 +7,7 @@ const folderTreeMappingAdapter = createEntityAdapter<FolderTreeMapping>({
 });
 export const folderTreeMappingSelectors = folderTreeMappingAdapter.getSelectors();
 
+// noinspection DuplicatedCode
 export const folderTreeMappingReducer = createReducer(
   folderTreeMappingAdapter.getInitialState(),
   on(loadFoldersTreeSuccess, (s, {tree}) => {
@@ -44,8 +45,8 @@ export const folderTreeMappingReducer = createReducer(
   on(moveFolder, (s, {folderId, targetId}) => {
     let mutation = s;
 
-    const prevParentMapping = Object.values(mutation.entities)
-      .find(mapping => mapping?.children.includes(folderId));
+    const prevParentMapping = folderTreeMappingSelectors.selectAll(s)
+      .find(mapping => mapping.children.includes(folderId));
 
     if (!!prevParentMapping) {
       mutation = folderTreeMappingAdapter.mapOne({

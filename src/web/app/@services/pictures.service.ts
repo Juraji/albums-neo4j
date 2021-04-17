@@ -23,4 +23,12 @@ export class PicturesService {
   deleteDuplicateFromPicture(pictureId: string, targetId: string): Observable<void> {
     return this.httpClient.delete<void>(`${this.baseUri}/${pictureId}/duplicates/${targetId}`);
   }
+
+  movePicture(pictureId: string, targetFolderId: string): Observable<Picture> {
+    return this.httpClient.post<Picture>(`${this.baseUri}/${pictureId}/move-to/${targetFolderId}`, null);
+  }
+
+  deletePicture(pictureId: string): Observable<void> {
+    return this.httpClient.delete<void>(`${this.baseUri}/pictures/${pictureId}`);
+  }
 }

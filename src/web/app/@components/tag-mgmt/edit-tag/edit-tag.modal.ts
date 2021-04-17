@@ -1,10 +1,10 @@
 import {ChangeDetectionStrategy, Component, Inject} from '@angular/core';
-import {FormControl, Validators} from '@angular/forms';
+import {Validators} from '@angular/forms';
 import {Store} from '@ngrx/store';
 import {MODAL_DATA, ModalRef} from '@juraji/ng-bootstrap-modals';
-import {FormGroup} from '@utils/forms';
 import {ColorEvent} from 'ngx-color';
 import {Actions} from '@ngrx/effects';
+import {typedFormControl, typedFormGroup} from 'ngx-forms-typed';
 
 @Component({
   templateUrl: './edit-tag.modal.html',
@@ -13,11 +13,11 @@ import {Actions} from '@ngrx/effects';
 })
 export class EditTagModal {
 
-  readonly form = new FormGroup<Tag>({
-    id: new FormControl(), // Container for edited id
-    label: new FormControl('New tag', [Validators.required]),
-    color: new FormControl('#ff6900', [Validators.required]),
-    textColor: new FormControl('#ffffff', [Validators.required]),
+  readonly form = typedFormGroup<Tag>({
+    id: typedFormControl(), // Container for edited id
+    label: typedFormControl('New tag', Validators.required),
+    color: typedFormControl('#ff6900', Validators.required),
+    textColor: typedFormControl('#ffffff', Validators.required),
   });
 
   readonly isEditTag: boolean = false;
@@ -42,7 +42,7 @@ export class EditTagModal {
     this.modalRef.dismiss();
   }
 
-  onColorChange(property: keyof NewTagDto, event: ColorEvent) {
+  onColorChange(property: keyof Pick<Tag, 'color' | 'textColor'>, event: ColorEvent) {
     this.form.setValue(this.form.value.copy({[property]: event.color.hex}));
   }
 }

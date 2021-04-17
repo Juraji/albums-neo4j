@@ -1,6 +1,7 @@
 package nl.juraji.albums.domain
 
 import nl.juraji.albums.domain.events.PictureAddedEvent
+import nl.juraji.albums.domain.folders.FoldersRepository
 import nl.juraji.albums.domain.pictures.FileType
 import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.domain.pictures.PicturesRepository
@@ -17,10 +18,12 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.core.util.function.component1
 import reactor.kotlin.core.util.function.component2
 import reactor.kotlin.core.util.function.component3
+import reactor.kotlin.extra.bool.not
 
 @Service
 class PicturesService(
     private val picturesRepository: PicturesRepository,
+    private val foldersRepository: FoldersRepository,
     private val imageService: ImageService,
     private val applicationEventPublisher: ApplicationEventPublisher
 ) {
@@ -28,46 +31,37 @@ class PicturesService(
 
     fun getFolderPictures(folderId: String): Flux<Picture> = picturesRepository.findAllByFolderId(folderId)
 
-    fun persistNewPicture(folderId: String, file: FilePart): Mono<Picture> = unpackFilePart(file)
-        .validate { (_, contentType, filename) ->
-            isNotNull(contentType) { "Missing Content-Type header" }
-            isNotNull(filename) { "Missing Content-Disposition header or filename is undefined" }
-            isTrue(FileType.supports(contentType)) { "Unsupported Content-Type: $contentType" }
-        }
-        .validateAsync { (_, _, filename) ->
-            isFalse(picturesRepository.existsByNameInFolder(folderId, filename!!)) {
-                "A file with name $filename already exists in folder with id $folderId"
+    fun persistNewPicture(folderId: String, file: FilePart): Mono<Picture> {
+        return unpackFilePart(file)
+            .validate { (_, fileType, filename) ->
+                isNotNull(fileType) { "Missing Content-Type header" }
+                isNotNull(filename) { "Missing Content-Disposition header or filename is undefined" }
+                isFalse(FileType.UNKNOWN == fileType) { "Unsupported Content-Type" }
             }
-        }
-        .map { (file, contentType, filename) ->
-            Triple(
-                file,
-                FileType.ofContentType(contentType!!),
-                filename!!
-            )
-        }
-        .flatMap { (file, fileType, filename) ->
-            logger.info("Incoming file: $filename (as $fileType)")
+            .filterWhen { (_, _, filename) -> picturesRepository.existsByNameInFolder(folderId, filename).not() }
+            .flatMap { (file, fileType, filename) ->
+                logger.info("Incoming file: $filename (as $fileType)")
 
-            val image = imageService.loadPartAsImage(file).share()
-            val savedPicture = image.flatMap { imageService.savePicture(it, fileType) }
-            val savedThumbnail = image.flatMap { imageService.saveThumbnail(it) }
+                val image = imageService.loadPartAsImage(file).share()
+                val savedPicture = image.flatMap { imageService.savePicture(it, fileType) }
+                val savedThumbnail = image.flatMap { imageService.saveThumbnail(it) }
 
-            Mono.zip(image, savedPicture, savedThumbnail).map { (image, savedPicture, savedThumbnail) ->
-                Picture(
-                    name = filename,
-                    fileSize = savedPicture.filesSize,
-                    width = image.width,
-                    height = image.height,
-                    type = fileType,
-                    pictureLocation = savedPicture.location,
-                    thumbnailLocation = savedThumbnail.location
-                )
+                Mono.zip(image, savedPicture, savedThumbnail).map { (image, savedPicture, savedThumbnail) ->
+                    Picture(
+                        name = filename,
+                        fileSize = savedPicture.filesSize,
+                        width = image.width,
+                        height = image.height,
+                        type = fileType,
+                        pictureLocation = savedPicture.location,
+                        thumbnailLocation = savedThumbnail.location
+                    )
+                }
             }
-        }
-        .flatMap(picturesRepository::save)
-        .flatMap { picturesRepository.addPictureToFolder(folderId, it.id!!) }
-        .doOnNext { applicationEventPublisher.publishEvent(PictureAddedEvent(folderId, it)) }
+            .flatMap(picturesRepository::save)
+            .flatMap { picturesRepository.addPictureToFolder(folderId, it.id!!) }
+            .doOnNext { applicationEventPublisher.publishEvent(PictureAddedEvent(folderId, it)) }
+    }
 
     fun getPictureResource(pictureId: String): Mono<Resource> = picturesRepository
         .findById(pictureId)
@@ -77,11 +71,31 @@ class PicturesService(
         .findById(pictureId)
         .map { FileSystemResource(it.thumbnailLocation) }
 
-    private fun unpackFilePart(file: FilePart): Mono<Triple<FilePart, String?, String?>> = Mono.just(
+    fun movePicture(pictureId: String, targetFolderId: String): Mono<Picture> = getById(pictureId)
+        .validateAsync { picture ->
+            isTrue(foldersRepository.existsById(targetFolderId)) { "No folder with id $targetFolderId exists" }
+            isFalse(picturesRepository.existsByNameInFolder(targetFolderId, picture.name)) {
+                "A file with name ${picture.name} already exists in folder with id $targetFolderId"
+            }
+        }
+        .flatMap { picturesRepository.addPictureToFolder(targetFolderId, it.id!!) }
+
+    fun deletePicture(pictureId: String): Mono<Void> {
+        val picture = getById(pictureId).share()
+        val deletePicture = picture.flatMap { imageService.deleteByPath(it.pictureLocation) }
+        val deleteThumbnail = picture.flatMap { imageService.deleteByPath(it.thumbnailLocation) }
+        val deleteFromDb = picture.flatMap(picturesRepository::delete)
+
+        return deletePicture
+            .then(deleteThumbnail)
+            .then(deleteFromDb)
+    }
+
+    private fun unpackFilePart(file: FilePart): Mono<Triple<FilePart, FileType, String>> = Mono.just(
         Triple(
             file,
-            file.headers().contentType?.toString(),
-            file.headers().contentDisposition.filename
+            file.headers().contentType?.let { FileType.ofContentType(it.toString()) } ?: FileType.UNKNOWN,
+            file.headers().contentDisposition.filename!!
         )
     )
 

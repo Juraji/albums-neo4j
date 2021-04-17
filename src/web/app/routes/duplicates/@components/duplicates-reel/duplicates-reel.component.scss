@@ -1,0 +1,16 @@
+$reel-image-size: 50px;
+
+:host {
+  .duplicates-reel {
+    .duplicates-reel-item {
+      &:hover, &.selected {
+        background-color: rgba(0, 0, 0, .25);
+      }
+
+      .picture-thumbnail {
+        width: $reel-image-size;
+        height: $reel-image-size;
+      }
+    }
+  }
+}

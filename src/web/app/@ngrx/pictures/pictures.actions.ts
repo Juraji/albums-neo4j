@@ -10,12 +10,27 @@ export const loadPicturesByFolderIdSuccess = createAction(
   (pictures: Picture[], folderId: string) => ({pictures, folderId})
 );
 
-export const addPicture = createAction(
-  '[Pictures] Add picture',
-  (picture: Omit<Picture, 'id'>, parentFolderId: string) => ({picture, parentFolderId})
-);
-
 export const addPictureSuccess = createAction(
   '[Pictures] Add picture success',
   (picture: Picture, parentFolderId: string) => ({picture, parentFolderId})
+);
+
+export const deletePicture = createAction(
+  '[Pictures] Delete picture',
+  (pictureId: string) => ({pictureId})
+);
+
+export const deletePictureSuccess = createAction(
+  '[Pictures] Delete picture success',
+  (pictureId: string) => ({pictureId})
+);
+
+export const movePicture = createAction(
+  '[Pictures] Move picture',
+  (pictureId: string, targetFolderId: string) => ({pictureId, targetFolderId})
+);
+
+export const movePictureSuccess = createAction(
+  '[Pictures] Move picture success',
+  (pictureId: string, targetFolderId: string) => ({pictureId, targetFolderId})
 );

@@ -10,4 +10,12 @@ export const reducer = createReducer(
 const tagEntitySelectors = tagsEntityAdapter.getSelectors();
 const selectTagsSlice = createFeatureSelector<TagsSliceState>('tags');
 
-export const selectAllTags = createSelector(selectTagsSlice, s => tagEntitySelectors.selectAll(s));
+export const selectTagCount = createSelector(
+  selectTagsSlice,
+  s => tagEntitySelectors.selectIds(s).length
+);
+
+export const selectAllTags = createSelector(
+  selectTagsSlice,
+  s => tagEntitySelectors.selectAll(s)
+);

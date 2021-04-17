@@ -2,15 +2,22 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {PicturesService} from '@services/pictures.service';
 import {Store} from '@ngrx/store';
-import {filter, map, share, switchMap, withLatestFrom} from 'rxjs/operators';
+import {filter, map, share, switchMap} from 'rxjs/operators';
 import {EffectMarker} from '@utils/decorators';
 import {AlbumEventsService} from '@services/album-events.service';
 import {FolderPicturesService} from '@services/folder-pictures.service';
-import {loadPicturesByFolderId, loadPicturesByFolderIdSuccess} from './pictures.actions';
+import {
+  deletePicture,
+  deletePictureSuccess,
+  loadPicturesByFolderId,
+  loadPicturesByFolderIdSuccess,
+  movePicture,
+  movePictureSuccess
+} from './pictures.actions';
 import {Subject} from 'rxjs';
 import {HttpEventType, HttpResponse} from '@angular/common/http';
 import {Modals} from '@juraji/ng-bootstrap-modals';
-import {filterEmpty} from '@utils/rx';
+import {filterEmpty, switchMapContinue} from '@utils/rx';
 
 
 @Injectable()
@@ -43,10 +50,24 @@ export class PicturesEffects {
           filter(e => e.type === HttpEventType.Response),
           map(e => (e as HttpResponse<Picture[]>)?.body),
           filterEmpty(),
-          withLatestFrom(pictures => ({pictures, folderId})),
+          map(pictures => ({pictures, folderId})),
         );
     }),
     map(({pictures, folderId}) => loadPicturesByFolderIdSuccess(pictures, folderId))
+  ));
+
+  @EffectMarker
+  movePicture$ = createEffect(() => this.actions$.pipe(
+    ofType(movePicture),
+    switchMapContinue(({pictureId, targetFolderId}) => this.picturesService.movePicture(pictureId, targetFolderId)),
+    map(([{pictureId, targetFolderId}]) => movePictureSuccess(pictureId, targetFolderId))
+  ));
+
+  @EffectMarker
+  deletePicture = createEffect(() => this.actions$.pipe(
+    ofType(deletePicture),
+    switchMapContinue(({pictureId}) => this.picturesService.deletePicture(pictureId)),
+    map(([{pictureId}]) => deletePictureSuccess(pictureId))
   ));
 
   constructor(
@@ -58,6 +79,4 @@ export class PicturesEffects {
     private readonly modals: Modals,
   ) {
   }
-
-  // TODO: React to PictureCreatedEvent, should be debounced due to possible high rate of events
 }
