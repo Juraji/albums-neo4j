@@ -1,4 +1,4 @@
-package nl.juraji.albums.util
+package nl.juraji.albums.util.kotlin
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

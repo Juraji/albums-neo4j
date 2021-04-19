@@ -5,7 +5,7 @@ import nl.juraji.albums.domain.events.DuplicatePictureDetectedEvent
 import nl.juraji.albums.domain.events.PictureHashGeneratedEvent
 import nl.juraji.albums.domain.events.ReactiveEventListener
 import nl.juraji.albums.domain.pictures.*
-import nl.juraji.albums.util.LoggerCompanion
+import nl.juraji.albums.util.kotlin.LoggerCompanion
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service

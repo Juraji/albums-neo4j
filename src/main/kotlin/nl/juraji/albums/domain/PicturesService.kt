@@ -5,7 +5,7 @@ import nl.juraji.albums.domain.folders.FoldersRepository
 import nl.juraji.albums.domain.pictures.FileType
 import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.domain.pictures.PicturesRepository
-import nl.juraji.albums.util.LoggerCompanion
+import nl.juraji.albums.util.kotlin.LoggerCompanion
 import nl.juraji.reactor.validations.validate
 import nl.juraji.reactor.validations.validateAsync
 import org.springframework.context.ApplicationEventPublisher

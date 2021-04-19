@@ -1,6 +1,6 @@
 package nl.juraji.albums.domain.events
 
-import nl.juraji.albums.util.LoggerCompanion
+import nl.juraji.albums.util.kotlin.LoggerCompanion
 import reactor.core.CorePublisher
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono

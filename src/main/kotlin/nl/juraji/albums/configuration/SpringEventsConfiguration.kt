@@ -1,6 +1,6 @@
 package nl.juraji.albums.configuration
 
-import nl.juraji.albums.util.LoggerCompanion
+import nl.juraji.albums.util.kotlin.LoggerCompanion
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.event.ApplicationEventMulticaster
