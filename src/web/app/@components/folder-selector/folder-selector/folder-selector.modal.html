@@ -1,7 +1,7 @@
-<form [formGroup]="form" (submit)="onSubmit()">
+<form [formGroup]="form" (submit)="onSubmit()" class="modal-" modalForm>
   <div class="modal-header">
     <h4 class="modal-title">Select target folder</h4>
-    <button type="button" class="close" aria-label="Close" ngbmodDismiss>
+    <button type="button" class="close" aria-label="Close" modalDismiss>
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -12,7 +12,7 @@
     </select>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline-danger" ngbmodDismiss>Cancel</button>
+    <button type="button" class="btn btn-outline-danger" modalDismiss>Cancel</button>
     <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Select</button>
   </div>
 </form>

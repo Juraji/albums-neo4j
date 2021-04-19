@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ReactiveFormsModule} from '@angular/forms';
-import {NgbmodModalsModule} from '@juraji/ng-bootstrap-modals';
+import {ModalsModule} from '@juraji/ng-bootstrap-modals';
 import {ColorTwitterModule} from 'ngx-color/twitter';
 import {TagDirective} from './tag.directive';
 import {EditTagModal} from './edit-tag/edit-tag.modal';
@@ -18,12 +18,12 @@ import {NgbDropdownModule} from '@ng-bootstrap/ng-bootstrap';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    NgbmodModalsModule,
+    ModalsModule,
     ColorTwitterModule,
     NgbDropdownModule
   ],
   exports: [
-    NgbmodModalsModule,
+    ModalsModule,
     EditTagModal,
     TagDirective,
     TagSelectorComponent

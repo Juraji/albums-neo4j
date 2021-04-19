@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FolderSelectorModal } from './folder-selector/folder-selector.modal';
 import {ReactiveFormsModule} from '@angular/forms';
-import {NgbmodModalsModule} from '@juraji/ng-bootstrap-modals';
+import {ModalsModule} from '@juraji/ng-bootstrap-modals';
 
 
 
@@ -13,7 +13,7 @@ import {NgbmodModalsModule} from '@juraji/ng-bootstrap-modals';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    NgbmodModalsModule
+    ModalsModule
   ],
   exports: [
     FolderSelectorModal

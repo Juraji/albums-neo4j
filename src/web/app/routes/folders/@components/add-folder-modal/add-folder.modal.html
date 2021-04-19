@@ -1,15 +1,15 @@
-<form [formGroup]="form" (submit)="onSubmit()">
+<form [formGroup]="form" (submit)="onSubmit()" modalForm>
   <div class="modal-header">
     <h4 class="modal-title">Add folder</h4>
-    <button type="button" class="close" aria-label="Close" ngbmodDismiss>
+    <button type="button" class="close" aria-label="Close" modalDismiss>
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    <input formControlName="name" class="form-control" placeholder="Name" ngbmodAutoFocus>
+    <input formControlName="name" class="form-control" placeholder="Name" modalAutoFocus>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline-danger" ngbmodDismiss>Cancel</button>
+    <button type="button" class="btn btn-outline-danger" modalDismiss>Cancel</button>
     <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Add</button>
   </div>
 </form>

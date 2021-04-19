@@ -9,7 +9,7 @@ import {environment} from '@environment';
 import {EffectsModule} from '@ngrx/effects';
 import {ROOT_META_REDUCERS, ROOT_REDUCER, ROOT_EFFECTS} from '@ngrx/root';
 import {HttpClientModule} from '@angular/common/http';
-import {NgbmodModalsModule} from '@juraji/ng-bootstrap-modals';
+import {ModalsModule} from '@juraji/ng-bootstrap-modals';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {StoreRouterConnectingModule} from '@ngrx/router-store';
 
@@ -22,7 +22,7 @@ import {StoreRouterConnectingModule} from '@ngrx/router-store';
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    NgbmodModalsModule.forRoot(),
+    ModalsModule.forRoot(),
     StoreModule.forRoot(ROOT_REDUCER, {metaReducers: ROOT_META_REDUCERS}),
     StoreRouterConnectingModule.forRoot(),
     !environment.production ? StoreDevtoolsModule.instrument() : [],

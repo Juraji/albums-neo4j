@@ -40,7 +40,7 @@ export class PicturesEffects {
       fetch.subscribe({
         next: e => {
           if (e.type === HttpEventType.DownloadProgress && !!e.total) {
-            progress.next(e.total / e.loaded);
+            progress.next((e.loaded / e.total));
           }
         },
         error: cleanUp,

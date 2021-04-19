@@ -1,4 +1,4 @@
-<form [formGroup]="form" (submit)="onFormSubmit()">
+<form [formGroup]="form" (submit)="onFormSubmit()" modalForm>
   <div class="modal-header">
     <ng-container [ngSwitch]="isEditTag">
       <h4 class="modal-title" *ngSwitchCase="true">Edit tag</h4>
@@ -13,7 +13,7 @@
     <div class="form-group mb-3">
       <label for="location-input" class="form-label">Label</label>
       <input type="text" class="form-control" id="location-input" aria-describedby="location-input-help"
-               formControlName="label" ngbmodAutoFocus [selectText]="true">
+               formControlName="label" modalAutoFocus [selectText]="true">
         <div id="location-input-help" class="form-text small text-muted">Label name.</div>
     </div>
 

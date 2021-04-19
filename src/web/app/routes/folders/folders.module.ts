@@ -6,7 +6,7 @@ import {MainNavbarModule} from '@components/main-navbar/main-navbar.module';
 import {FolderPage} from './folder/folder.page';
 import {UtilityPipesModule} from '@components/utility-pipes/utility-pipes.module';
 import {AddFolderModal} from './@components/add-folder-modal/add-folder.modal';
-import {NgbmodModalsModule} from '@juraji/ng-bootstrap-modals';
+import {ModalsModule} from '@juraji/ng-bootstrap-modals';
 import {ReactiveFormsModule} from '@angular/forms';
 import {StoreModule} from '@ngrx/store';
 import {reducer} from './@ngrx';
@@ -31,7 +31,7 @@ import {FolderBreadcrumbsComponent} from './@components/folder-breadcrumbs/folde
     FoldersRoutingModule,
     MainNavbarModule,
     UtilityPipesModule,
-    NgbmodModalsModule,
+    ModalsModule,
     ReactiveFormsModule,
     StoreModule.forFeature('folders-route', reducer),
     PictureImageViewsModule,

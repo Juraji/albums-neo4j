@@ -96,7 +96,7 @@ export class AddPicturesModal {
           switch (event.type) {
             case HttpEventType.UploadProgress:
               if (!!event.total) {
-                progress.next(event.total / event.loaded);
+                progress.next((event.loaded / event.total) * 100);
               }
               break;
             case HttpEventType.Response:
