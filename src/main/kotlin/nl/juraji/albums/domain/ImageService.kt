@@ -80,10 +80,10 @@ class ImageService(
             .filter(GrayscaleFilter())
 
         val pixels = sample.pixels().map { it.average() }.toTypedArray()
-        val offsetPixels = pixels.copyOfRange(1, pixels.lastIndex)
+        val offsetPixels = arrayOf(0) + pixels
 
-        offsetPixels.foldIndexed(BitSet(configuration.hashSize)) { idx, acc, pix ->
-            acc.set(idx, pix > pixels[idx])
+        pixels.foldIndexed(BitSet(configuration.hashSize)) { idx, acc, pix ->
+            acc.set(idx, pix > offsetPixels[idx])
             acc
         }
     }

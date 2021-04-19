@@ -6,6 +6,7 @@ import nl.juraji.albums.domain.events.PictureHashGeneratedEvent
 import nl.juraji.albums.domain.events.ReactiveEventListener
 import nl.juraji.albums.domain.pictures.PictureHash
 import nl.juraji.albums.domain.pictures.PictureHashesRepository
+import nl.juraji.albums.util.kotlin.publishEventAndForget
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
@@ -29,7 +30,7 @@ class PictureHashesService(
         .flatMap(imageService::generateHash)
         .zipWith(getOrCreateForPicture(pictureId))
         .flatMap { (generatedData, pictureHash) -> pictureHashesRepository.save(pictureHash.copy(data = generatedData)) }
-        .doOnNext { applicationEventPublisher.publishEvent(PictureHashGeneratedEvent(pictureId)) }
+        .doOnNext { applicationEventPublisher.publishEventAndForget(PictureHashGeneratedEvent(pictureId)) }
 
     @EventListener(PictureAddedEvent::class)
     fun generateHashOnPictureAdded(e: PictureAddedEvent) = consumePublisher {
