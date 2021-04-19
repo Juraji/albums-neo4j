@@ -1,0 +1,14 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+
+:host {
+  .image-container {
+    .picture-img {
+      max-width: 100%;
+
+      @media (min-width: map-get($grid-breakpoints, 'lg')) {
+        max-height: calc(100vh - 5rem);
+      }
+    }
+  }
+}

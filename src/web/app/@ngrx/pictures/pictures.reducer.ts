@@ -18,6 +18,11 @@ const selectPictureFolderEntities = createSelector(
   picturesFolderEntitySelectors.selectEntities
 );
 
+const selectPictureEntities = createSelector(
+  selectPictures,
+  picturesEntitySelectors.selectEntities
+);
+
 const selectAllPictureEntities = createSelector(
   selectPictures,
   picturesEntitySelectors.selectAll
@@ -34,4 +39,9 @@ export const selectPicturesByFolderId = createSelector(
   (fp, pe) => (fp?.pictureIds || [])
     .map(id => pe.find(p => p.id === id))
     .filterEmpty()
+);
+
+export const selectPictureById = createSelector(
+  selectPictureEntities,
+  (s: Dictionary<Picture>, {pictureId}: ByPictureIdProps) => s[pictureId]
 );

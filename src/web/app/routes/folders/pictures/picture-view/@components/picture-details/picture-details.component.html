@@ -1,0 +1,31 @@
+<div class="card shadow" *ngIf="!!folder && !!picture">
+  <div class="card-header">
+    <h4 class="card-title text-ellipsis mb-0">{{picture.name}}</h4>
+  </div>
+  <div class="card-body">
+    <table class="table table-sm table-borderless">
+      <tbody>
+      <tr>
+        <th>Folder:</th>
+        <td>{{folder.name}}</td>
+      </tr>
+      <tr>
+        <th>Type:</th>
+        <td>{{picture.type}}</td>
+      </tr>
+      <tr>
+        <th>Dimensions:</th>
+        <td>{{picture.width}} x {{picture.height}}</td>
+      </tr>
+      <tr>
+        <th>File size:</th>
+        <td>{{picture.fileSize | fileSize}}</td>
+      </tr>
+      <tr>
+        <th>Added on:</th>
+        <td>{{picture.addedOn | date}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

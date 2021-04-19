@@ -4,8 +4,18 @@ import {FolderPage} from './folder/folder.page';
 import {ROOT_FOLDER} from './root-folder';
 
 const routes: Routes = [
-  {path: ':folderId', component: FolderPage},
-  {path: '**', redirectTo: ROOT_FOLDER.id}
+  {
+    path: ':folderId',
+    component: FolderPage
+  },
+  {
+    path: ':folderId/pictures',
+    loadChildren: () => import('./pictures/pictures.module').then(m => m.PicturesModule)
+  },
+  {
+    path: '**',
+    redirectTo: ROOT_FOLDER.id
+  }
 ];
 
 @NgModule({

@@ -6,9 +6,9 @@
     </button>
   </div>
   <div class="modal-body">
-    <label for="targetFolderId">Target folder</label>
-    <select class="form-select w-100" aria-label="TargetFolder" formControlName="targetFolderId" id="targetFolderId">
-      <option *ngFor="let folder of availableFolders$ | async" [value]="folder">{{folder.name}}</option>
+    <label for="target">Target folder</label>
+    <select class="form-select w-100" aria-label="TargetFolder" formControlName="target" id="target">
+      <option *ngFor="let folder of availableFolders$ | async" [ngValue]="folder">{{folder.name}}</option>
     </select>
   </div>
   <div class="modal-footer">

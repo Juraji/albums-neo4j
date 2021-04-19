@@ -9,6 +9,7 @@ import {FolderPicturesService} from '@services/folder-pictures.service';
 import {
   deletePicture,
   deletePictureSuccess,
+  loadPictureById,
   loadPicturesByFolderId,
   loadPicturesByFolderIdSuccess,
   movePicture,
@@ -17,7 +18,8 @@ import {
 import {Subject} from 'rxjs';
 import {HttpEventType, HttpResponse} from '@angular/common/http';
 import {Modals} from '@juraji/ng-bootstrap-modals';
-import {filterEmpty, switchMapContinue} from '@utils/rx';
+import {filterAsync, filterEmpty, isNullOrUndefined, switchMapContinue} from '@utils/rx';
+import {selectPictureById} from '@ngrx/pictures/pictures.reducer';
 
 
 @Injectable()
@@ -54,6 +56,14 @@ export class PicturesEffects {
         );
     }),
     map(({pictures, folderId}) => loadPicturesByFolderIdSuccess(pictures, folderId))
+  ));
+
+  @EffectMarker
+  loadPictureById$ = createEffect(() => this.actions$.pipe(
+    ofType(loadPictureById),
+    filterAsync(({pictureId}) => this.store.select(selectPictureById, {pictureId})
+      .pipe(isNullOrUndefined())),
+    map(({folderId}) => loadPicturesByFolderId(folderId))
   ));
 
   @EffectMarker
