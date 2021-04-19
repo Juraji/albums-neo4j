@@ -29,6 +29,6 @@ export class PicturesService {
   }
 
   deletePicture(pictureId: string): Observable<void> {
-    return this.httpClient.delete<void>(`${this.baseUri}/pictures/${pictureId}`);
+    return this.httpClient.delete<void>(`${this.baseUri}/${pictureId}`);
   }
 }
