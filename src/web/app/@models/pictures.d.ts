@@ -11,7 +11,7 @@ interface Picture {
 }
 
 interface DuplicatesView {
-  source: Picture;
-  target: Picture;
+  sourceId: string;
+  targetId: string;
   similarity: number;
 }

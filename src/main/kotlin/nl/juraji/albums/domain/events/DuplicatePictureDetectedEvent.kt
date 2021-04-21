@@ -9,8 +9,8 @@ data class DuplicatePictureDetectedEvent(
 ) {
     companion object {
         fun ofDuplicatesView(v: DuplicatesView) = DuplicatePictureDetectedEvent(
-            sourceId = v.source.id!!,
-            targetId = v.target.id!!,
+            sourceId = v.sourceId,
+            targetId = v.targetId,
             similarity = v.similarity
         )
     }

@@ -1,6 +1,7 @@
 package nl.juraji.albums.api
 
 import nl.juraji.albums.domain.DuplicatesService
+import nl.juraji.albums.domain.FoldersService
 import nl.juraji.albums.domain.PicturesService
 import nl.juraji.albums.domain.folders.Folder
 import nl.juraji.albums.domain.pictures.Picture
@@ -15,6 +16,7 @@ import java.util.concurrent.TimeUnit
 @RequestMapping("/pictures")
 class PicturesController(
     private val picturesService: PicturesService,
+    private val foldersService: FoldersService,
     private val duplicatesService: DuplicatesService
 ) {
 
@@ -39,6 +41,11 @@ class PicturesController(
                 .cacheControl(CacheControl.maxAge(IMAGE_CACHE_HOURS, TimeUnit.HOURS))
                 .body(it)
         }
+
+    @GetMapping("/{pictureId}/folder")
+    fun getPictureFolder(
+        @PathVariable pictureId: String
+    ): Mono<Folder> = foldersService.getByPictureId(pictureId)
 
     @PostMapping("/{pictureId}/move-to/{targetId}")
     fun movePicture(

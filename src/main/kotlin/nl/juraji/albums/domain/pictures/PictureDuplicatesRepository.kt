@@ -16,7 +16,7 @@ class PictureDuplicatesRepository(
         .query(
             """
             MATCH (source:Picture)-[rel:DUPLICATED_BY]->(target:Picture)
-            RETURN target, source, rel.similarity AS similarity
+            RETURN target.id as targetId, source.id as sourceId, rel.similarity AS similarity
         """
         )
         .fetch().all()
@@ -29,7 +29,7 @@ class PictureDuplicatesRepository(
             MATCH (target:Picture {id: $ targetId})
     
             MERGE (source)-[rel:DUPLICATED_BY {similarity: $ similarity}]-(target)
-            RETURN target, source, rel.similarity AS similarity
+            RETURN target.id as targetId, source.id as sourceId, rel.similarity AS similarity
         """
         )
         .bind(sourceId).to("sourceId")

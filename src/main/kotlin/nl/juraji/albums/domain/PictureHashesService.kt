@@ -1,6 +1,5 @@
 package nl.juraji.albums.domain
 
-import nl.juraji.albums.configuration.ImageServiceConfiguration
 import nl.juraji.albums.domain.events.PictureAddedEvent
 import nl.juraji.albums.domain.events.PictureHashGeneratedEvent
 import nl.juraji.albums.domain.events.ReactiveEventListener

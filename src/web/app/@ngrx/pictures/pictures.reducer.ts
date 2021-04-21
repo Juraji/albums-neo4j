@@ -45,3 +45,12 @@ export const selectPictureById = createSelector(
   selectPictureEntities,
   (s: Dictionary<Picture>, {pictureId}: ByPictureIdProps) => s[pictureId]
 );
+
+export const selectFolderIdBiyPictureId = createSelector(
+  selectPictureFolderEntities,
+  (s: Dictionary<PicturesFolder>, {pictureId}: ByPictureIdProps) => Object.values(s)
+    .filterEmpty()
+    .find(pf => pf.pictureIds.includes(pictureId))
+    ?.folderId
+);
+

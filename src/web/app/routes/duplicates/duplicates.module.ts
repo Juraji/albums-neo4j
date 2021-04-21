@@ -8,13 +8,15 @@ import {PictureImageViewsModule} from '@components/picture-image-views';
 import {FsPipesModule} from '@components/fs-pipes';
 import { DuplicatesReelComponent } from './@components/duplicates-reel/duplicates-reel.component';
 import { SideBySidePictureComponent } from './@components/side-by-side-picture/side-by-side-picture.component';
+import { DuplicatesViewComponent } from './@components/duplicates-view/duplicates-view.component';
 
 
 @NgModule({
   declarations: [
     ManageDuplicatesPage,
     DuplicatesReelComponent,
-    SideBySidePictureComponent
+    SideBySidePictureComponent,
+    DuplicatesViewComponent
   ],
     imports: [
         CommonModule,

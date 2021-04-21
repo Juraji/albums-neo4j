@@ -4,11 +4,11 @@ import {loadAllDuplicatesSuccess, unlinkDuplicate} from './duplicates.actions';
 import {deletePicture} from '@ngrx/pictures';
 
 const createIdByIds = (sourceId: string, targetId: string): string => `${sourceId}--${targetId}`;
-const createId = (d: DuplicatesView): string => createIdByIds(d.source.id, d.target.id);
+const createId = (d: DuplicatesView): string => createIdByIds(d.sourceId, d.targetId);
 
 const duplicatesEntityAdapter = createEntityAdapter<DuplicatesView>({
   selectId: createId,
-  sortComparer: (a, b) => a.source.name.localeCompare(b.source.name)
+  sortComparer: (a, b) => a.sourceId.localeCompare(b.sourceId)
 });
 
 export const duplicatesEntitySelectors = duplicatesEntityAdapter.getSelectors();
@@ -41,5 +41,5 @@ export const selectDuplicateCount = createSelector(
 export const selectDuplicatesByPictureId = createSelector(
   selectAllDuplicates,
   (s: DuplicatesView[], {pictureId}: ByPictureIdProps) =>
-    s.filter(d => d.source.id === pictureId)
+    s.filter(d => d.sourceId === pictureId)
 );

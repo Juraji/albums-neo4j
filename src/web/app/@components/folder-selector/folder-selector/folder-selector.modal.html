@@ -6,10 +6,16 @@
     </button>
   </div>
   <div class="modal-body">
-    <label for="target">Target folder</label>
-    <select class="form-select w-100" aria-label="TargetFolder" formControlName="target" id="target">
-      <option *ngFor="let folder of availableFolders$ | async" [ngValue]="folder">{{folder.name}}</option>
-    </select>
+    <div class="form-group">
+      <label for="source">Current folder</label>
+      <input id="source" class="form-control" [value]="form.value.source.name" disabled>
+    </div>
+    <div class="form-group">
+      <label for="target">Target folder</label>
+      <select class="form-select custom-select w-100" aria-label="TargetFolder" formControlName="target" id="target">
+        <option *ngFor="let folder of availableFolders$ | async" [ngValue]="folder">{{folder.name}}</option>
+      </select>
+    </div>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-outline-danger" modalDismiss>Cancel</button>

@@ -12,7 +12,7 @@ export const loadPicturesByFolderIdSuccess = createAction(
 
 export const loadPictureById = createAction(
   '[Pictures] Load picture by id',
-  (pictureId: string, folderId: string) => ({pictureId, folderId})
+  (pictureId: string, folderId?: string) => ({pictureId, folderId})
 );
 
 export const addPictureSuccess = createAction(

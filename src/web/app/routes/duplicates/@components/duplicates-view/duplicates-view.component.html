@@ -1,0 +1,79 @@
+<div class="duplicate-view">
+  <h4 class="duplicate-view-title text-center mb-4">
+    <span>{{(sourcePicture$ | async)?.name}}</span>
+    <span>&nbsp;<span
+      class="fa fa-angle-double-left"></span>&nbsp;{{duplicate?.similarity | percent}}&nbsp;<span
+      class="fa fa-angle-double-right"></span>&nbsp;</span>
+    <span>{{(targetPicture$ | async)?.name}}</span>
+  </h4>
+  <div class="row side-by-side-container">
+    <div class="col col-sm-6 side-by-side source">
+      <ng-container [ngTemplateOutlet]="pictureSideTpl"
+                    [ngTemplateOutletContext]="{picture: sourcePicture$ | async, folder: sourceFolder$ | async}"></ng-container>
+    </div>
+    <div class="col col-sm-6 side-by-side target">
+      <ng-container [ngTemplateOutlet]="pictureSideTpl"
+                    [ngTemplateOutletContext]="{picture: targetPicture$ | async, folder: targetFolder$ | async}"></ng-container>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #pictureSideTpl let-picture="picture" let-folder="folder">
+  <div class="card" *ngIf="!!folder && !!picture">
+    <div class="card-body">
+      <div class="row">
+        <div class="col col-sm-6"><img appPictureImg [pictureId]="picture.id"/></div>
+        <div class="col col-sm-6">
+          <table class="table table-sm picture-details">
+            <tbody>
+            <tr>
+              <th>Folder:</th>
+              <td>{{asFolder(folder).name}}</td>
+            </tr>
+            <tr>
+              <th>Name:</th>
+              <td>{{asPicture(picture).name}}</td>
+            </tr>
+            <tr>
+              <th>Type:</th>
+              <td>{{asPicture(picture).type}}</td>
+            </tr>
+            <tr>
+              <th>Dimensions:</th>
+              <td>{{asPicture(picture).width}} x {{asPicture(picture).height}}</td>
+            </tr>
+            <tr>
+              <th>File size:</th>
+              <td>{{asPicture(picture).fileSize | fileSize}}</td>
+            </tr>
+            <tr>
+              <th>Added on:</th>
+              <td>{{asPicture(picture).addedOn | date}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <a class="btn btn-outline-primary mr-2" title="Go to folder" [routerLink]="['/folders', asFolder(folder).id]">
+        <span class="fa fa-folder-open"></span>
+      </a>
+      <a class="btn btn-outline-primary mr-2" title="Go to picture"
+         [routerLink]="['/folders', asFolder(folder).id ,'pictures', asPicture(picture).id]">
+        <span class="fa fa-search"></span>
+      </a>
+      <button class="btn btn-outline-primary mr-2" title="Unlink duplicates" (click)="onUnlinkDuplicate()">
+        <span class="fa fa-unlink"></span>
+      </button>
+      <button class="btn btn-outline-danger mr-2" title="Delete picture" (click)="onDeletePicture(picture)">
+        <span class="fa fa-trash"></span>
+      </button>
+      <button class="btn btn-outline-primary mr-2" title="Move picture" (click)="onMovePicture(folder, picture)">
+        <span class="fa fa-external-link-alt"></span>
+      </button>
+    </div>
+  </div>
+
+</ng-template>

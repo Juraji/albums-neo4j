@@ -16,12 +16,8 @@ const CLASSNAMES = ['rounded', 'border', 'picture-img'];
 
 @Directive({selector: 'img[appPictureImg]'})
 export class PictureImgDirective implements OnInit, OnChanges {
-  @Input() picture: Picture | null = null;
+  @Input() pictureId: string | null = null;
   @HostBinding('src') hostSrc: string | null = null;
-
-  @HostBinding('title')
-  @HostBinding('alt')
-  hostTitle: string | null = null;
 
   constructor(
     private readonly picturesService: PicturesService,
@@ -36,17 +32,12 @@ export class PictureImgDirective implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.hasOwnProperty('picture') && !!changes.picture.currentValue) {
-      this.hostSrc = this.getSanitizedSrc(changes.picture.currentValue);
-      this.hostTitle = changes.picture.currentValue.name;
+    if (changes.hasOwnProperty('pictureId') && !!changes.pictureId.currentValue) {
+      this.hostSrc = this.domSanitizer.sanitize(
+        SecurityContext.URL,
+        this.picturesService.getDownloadUri(changes.pictureId.currentValue)
+      );
     }
-  }
-
-  private getSanitizedSrc(picture: Picture) {
-    return this.domSanitizer.sanitize(
-      SecurityContext.URL,
-      this.picturesService.getDownloadUri(picture.id)
-    );
   }
 
 }

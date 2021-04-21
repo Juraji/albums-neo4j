@@ -16,6 +16,8 @@ class FoldersService(
         .findRoots()
         .flatMap { f -> this.createFolderTreeView(f, true) }
 
+    fun getByPictureId(pictureId: String): Mono<Folder> =foldersRepository.findByPictureId(pictureId)
+
     private fun createFolderTreeView(folder: Folder, isRoot: Boolean = false): Mono<FolderTreeView> = foldersRepository
         .findChildren(folder.id!!)
         .flatMap(this::createFolderTreeView)

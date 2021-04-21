@@ -19,7 +19,8 @@ interface FoldersRepository : ReactiveNeo4jRepository<Folder, String> {
         
         MERGE (parent)-[:HAS_CHILD]->(child)
         RETURN parent
-    """)
+    """
+    )
     fun setParent(folderId: String, parentId: String): Mono<Folder>
 
     @Query("MATCH (f:Folder) WHERE NOT exists(()-[:HAS_CHILD]->(f)) RETURN f")
@@ -27,6 +28,9 @@ interface FoldersRepository : ReactiveNeo4jRepository<Folder, String> {
 
     @Query("MATCH (:Folder {id: $ folderId})-[:HAS_CHILD]->(f:Folder) RETURN f")
     fun findChildren(folderId: String): Flux<Folder>
+
+    @Query("MATCH (f:Folder)-[:HAS_PICTURE]->(:Picture {id: $ pictureId}) RETURN f")
+    fun findByPictureId(pictureId: String): Mono<Folder>
 
     @Query("RETURN NOT exists((:Folder {id: $ folderId})-[:HAS_CHILD|HAS_PICTURE]->())")
     fun isEmptyById(folderId: String): Mono<Boolean>

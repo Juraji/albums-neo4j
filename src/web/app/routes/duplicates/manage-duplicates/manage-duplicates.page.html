@@ -7,29 +7,7 @@
 </app-main-navbar>
 
 <div class="container-fluid clear-navbar">
-  <div class="duplicate-view" *ngIf="duplicatesReelRef.selectedDuplicate$ | async as selectedDuplicate; else noDuplicatesTpl">
-    <h4 class="duplicate-view-title text-center mb-4">
-      <span>{{selectedDuplicate.source.name}}</span>
-      <span>&nbsp;<span
-        class="fa fa-angle-double-left"></span>&nbsp;{{selectedDuplicate.similarity | percent}}&nbsp;<span
-        class="fa fa-angle-double-right"></span>&nbsp;</span>
-      <span>{{selectedDuplicate.target.name}}</span>
-    </h4>
-    <div class="row side-by-side-container">
-      <div class="col col-sm-6 side-by-side source">
-        <app-side-by-side-picture [picture]="selectedDuplicate.source"
-        (unlinkDuplicateClick)="onUnlinkDuplicate(selectedDuplicate)"
-        (deletePictureClick)="onDeletePicture($event)"
-        (movePictureClick)="onMovePicture($event)"></app-side-by-side-picture>
-      </div>
-      <div class="col col-sm-6 side-by-side target">
-        <app-side-by-side-picture [picture]="selectedDuplicate.target"
-        (unlinkDuplicateClick)="onUnlinkDuplicate(selectedDuplicate)"
-        (deletePictureClick)="onDeletePicture($event)"
-        (movePictureClick)="onMovePicture($event)"></app-side-by-side-picture>
-      </div>
-    </div>
-  </div>
+  <app-duplicates-view *ngIf="duplicatesReelRef.selectedDuplicate$ | async as selectedDuplicate; else noDuplicatesTpl" [duplicate]="selectedDuplicate"></app-duplicates-view>
 
   <app-duplicates-reel #duplicatesReelRef></app-duplicates-reel>
 

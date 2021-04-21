@@ -31,7 +31,7 @@
       <app-picture-details [folder]="folder$ | async" [picture]="picture$ | async"></app-picture-details>
     </div>
     <div class="col-lg-9 image-container">
-      <img class="d-block mx-auto" appPictureImg [picture]="picture$ | async"/>
+      <img class="d-block mx-auto" appPictureImg [pictureId]="(picture$ | async)?.id || null"/>
     </div>
   </div>
 </div>

@@ -3,11 +3,11 @@
        *ngFor="let duplicate of duplicates$ | async"
        [class.selected]="(selectedDuplicate$ | async) === duplicate"
        (click)="onSelectDuplicate(duplicate)">
-    <img appPictureThumbnail [picture]="duplicate.source" class="duplicate-reel-source">
+    <img appPictureThumbnail [pictureId]="duplicate.sourceId" class="duplicate-reel-source">
     <span class="fa-stack ml-n3 mt-2" style="vertical-align: top;">
       <i class="fa fa-circle fa-stack-2x text-primary"></i>
       <i class="fa fa-angle-double-right fa-stack-1x fa-inverse"></i>
     </span>
-    <img appPictureThumbnail [picture]="duplicate.target" class="ml-n3 duplicate-reel-target">
+    <img appPictureThumbnail [pictureId]="duplicate.targetId" class="ml-n3 duplicate-reel-target">
   </div>
 </div>
