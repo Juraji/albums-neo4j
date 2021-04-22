@@ -1,0 +1,8 @@
+$duplicate-image-size: 2.5rem;
+
+:host {
+  .picture-thumbnail {
+    width: $duplicate-image-size;
+    height: $duplicate-image-size;
+  }
+}

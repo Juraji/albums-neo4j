@@ -14,4 +14,5 @@ interface DuplicatesView {
   sourceId: string;
   targetId: string;
   similarity: number;
+  trackingId$: string;
 }

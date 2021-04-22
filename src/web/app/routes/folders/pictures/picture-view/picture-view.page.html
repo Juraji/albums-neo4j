@@ -30,7 +30,9 @@
     <div class="col-lg-3 mb-4">
       <app-picture-details [folder]="folder$ | async" [picture]="picture$ | async"
                            class="d-block mb-2"></app-picture-details>
-      <app-picture-tags [picture]="picture$ | async"></app-picture-tags>
+      <app-picture-tags [picture]="picture$ | async"
+                        class="d-block mb-2"></app-picture-tags>
+      <app-picture-duplicates [picture]="picture$ | async"></app-picture-duplicates>
     </div>
     <div class="col-lg-9 image-container">
       <img class="d-block mx-auto" appPictureImg [pictureId]="(picture$ | async)?.id || null"/>

@@ -4,7 +4,7 @@
        [class.selected]="(selectedDuplicate$ | async) === duplicate"
        (click)="onSelectDuplicate(duplicate)">
     <img appPictureThumbnail [pictureId]="duplicate.sourceId" class="duplicate-reel-source">
-    <span class="fa-stack ml-n3 mt-2" style="vertical-align: top;">
+    <span class="fa-stack ml-n3 mt-2 align-top">
       <i class="fa fa-circle fa-stack-2x text-primary"></i>
       <i class="fa fa-angle-double-right fa-stack-1x fa-inverse"></i>
     </span>

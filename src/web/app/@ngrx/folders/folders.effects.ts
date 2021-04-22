@@ -15,7 +15,7 @@ import {
   updateFolderSuccess
 } from './folders.actions';
 import {FoldersService} from '@services/folders.service';
-import {of} from 'rxjs';
+import {switchMapContinue} from '@utils/rx';
 
 
 @Injectable()
@@ -31,10 +31,8 @@ export class FoldersEffects {
   @EffectMarker
   readonly createFolder = createEffect(() => this.actions$.pipe(
     ofType(createFolder),
-    switchMap(({parentId, folder}) => this.foldersService
-      .createFolder(folder, parentId)
-      .pipe(map(f => createFolderSuccess(f, parentId)))
-    )
+    switchMapContinue(({parentId, folder}) => this.foldersService.createFolder(folder, parentId)),
+    map(([{parentId}, folder]) => createFolderSuccess(folder, parentId))
   ));
 
   @EffectMarker
@@ -47,15 +45,18 @@ export class FoldersEffects {
   @EffectMarker
   readonly deleteFolder = createEffect(() => this.actions$.pipe(
     ofType(deleteFolder),
-    switchMap(({folderId, recursive}) => this.foldersService.deleteFolder(folderId, recursive)
-      .pipe(mergeMap(() => of(deleteFolderSuccess(folderId, recursive), loadFoldersTree())))),
+    switchMapContinue(({folderId, recursive}) => this.foldersService.deleteFolder(folderId, recursive)),
+    mergeMap(([{folderId, recursive}]) => [
+      deleteFolderSuccess(folderId, recursive),
+      loadFoldersTree()
+    ])
   ));
 
   @EffectMarker
   readonly moveFolder = createEffect(() => this.actions$.pipe(
     ofType(moveFolder),
-    switchMap(({folderId, targetId}) => this.foldersService.moveFolder(folderId, targetId)
-      .pipe(map(() => moveFolderSuccess(folderId, targetId)))),
+    switchMapContinue(({folderId, targetId}) => this.foldersService.moveFolder(folderId, targetId)),
+    map(([{folderId, targetId}]) => moveFolderSuccess(folderId, targetId))
   ));
 
   constructor(

@@ -1,10 +1,11 @@
 import {ChangeDetectionStrategy, Component, HostListener, OnDestroy, OnInit, Output} from '@angular/core';
 import {selectAllDuplicates} from '@ngrx/duplicates';
 import {Store} from '@ngrx/store';
-import {combineLatest, ReplaySubject} from 'rxjs';
+import {combineLatest, iif, of, ReplaySubject} from 'rxjs';
 import {untilDestroyed} from '@utils/until-destroyed';
-import {filterEmpty, filterEmptyArray, once} from '@utils/rx';
-import {map} from 'rxjs/operators';
+import {filterEmpty, once} from '@utils/rx';
+import {filter, map, mergeMap} from 'rxjs/operators';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-duplicates-reel',
@@ -21,15 +22,20 @@ export class DuplicatesReelComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly store: Store<AppState>,
+    private readonly activatedRoute: ActivatedRoute,
   ) {
   }
 
   ngOnInit(): void {
-    this.duplicates$
+    combineLatest([this.duplicates$, this.activatedRoute.queryParamMap])
       .pipe(
         untilDestroyed(this),
-        filterEmptyArray(),
-        map(ds => ds[0])
+        filter(([ds]) => !ds.isEmpty()),
+        mergeMap(([ds, qp]) => iif(
+          () => qp.has('selectTrackingId'),
+          of(ds.find(d => d.trackingId$ === qp.get('selectTrackingId'))),
+          of(ds[0])
+        )),
       )
       .subscribe(d => this.selectedDuplicate$.next(d));
   }

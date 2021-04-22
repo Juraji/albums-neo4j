@@ -10,6 +10,7 @@ import {PictureImageViewsModule} from '@components/picture-image-views';
 import { PictureTagsComponent } from './picture-view/@components/picture-tags/picture-tags.component';
 import {TagMgmtModule} from '@components/tag-mgmt';
 import {NgbDropdownModule} from '@ng-bootstrap/ng-bootstrap';
+import { PictureDuplicatesComponent } from './picture-view/@components/picture-duplicates/picture-duplicates.component';
 
 
 @NgModule({
@@ -17,6 +18,7 @@ import {NgbDropdownModule} from '@ng-bootstrap/ng-bootstrap';
     PictureViewPage,
     PictureDetailsComponent,
     PictureTagsComponent,
+    PictureDuplicatesComponent,
   ],
   imports: [
     CommonModule,

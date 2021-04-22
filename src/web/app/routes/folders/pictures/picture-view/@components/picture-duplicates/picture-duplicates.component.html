@@ -1,0 +1,25 @@
+<div class="card shadow" *ngIf="!!picture">
+  <div class="card-header border-bottom-0">
+    <h6 class="card-title text-ellipsis mb-0">Duplicates</h6>
+  </div>
+  <table class="table">
+    <tbody>
+    <tr *ngFor="let duplicate of duplicates$ | async">
+      <td class="align-middle">{{duplicate.similarity | percent}}</td>
+      <td>
+        <span class="fa-stack mt-1 align-top">
+          <i class="fa fa-circle fa-stack-2x text-primary"></i>
+          <i class="fa fa-angle-double-right fa-stack-1x fa-inverse"></i>
+        </span>
+        <img appPictureThumbnail [pictureId]="duplicate.targetId" class="ml-n3 duplicate-reel-target">
+      </td>
+      <td>
+        <a class="btn btn-outline-primary" [routerLink]="['/duplicates']"
+           [queryParams]="{selectTrackingId: duplicate.trackingId$}">
+          <span class="fa fa-search"></span>
+        </a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
