@@ -6,3 +6,4 @@ export * from './once';
 export * from './side-effect';
 export * from './unwrap';
 export * from './switch-map-continue';
+export * from './distinct-over-time';

@@ -2,17 +2,20 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType, ROOT_EFFECTS_INIT} from '@ngrx/effects';
 import {DuplicatesService} from '@services/duplicates.service';
 import {EffectMarker} from '@utils/decorators';
-import {map, mergeMap, switchMap} from 'rxjs/operators';
+import {map, mergeMap, share, switchMap} from 'rxjs/operators';
 import {
+  duplicatesDetected,
   loadAllDuplicates,
-  loadAllDuplicatesSuccess,
+  runDuplicateScan,
   unlinkDuplicate,
   unlinkDuplicateSuccess
 } from './duplicates.actions';
 import {PicturesService} from '@services/pictures.service';
 import {switchMapContinue} from '@utils/rx';
-import {Action, Store} from '@ngrx/store';
+import {Store} from '@ngrx/store';
 import {loadPictureById} from '@ngrx/pictures';
+import {Modals} from '@juraji/ng-bootstrap-modals';
+import {EMPTY} from 'rxjs';
 
 @Injectable()
 export class DuplicatesEffects {
@@ -21,17 +24,26 @@ export class DuplicatesEffects {
   loadAllDuplicates$ = createEffect(() => this.actions$.pipe(
     ofType(ROOT_EFFECTS_INIT, loadAllDuplicates),
     switchMap(() => this.duplicatesService.getDuplicates()),
-    mergeMap(duplicates => {
-      const actions: Action[] = [
-        loadAllDuplicatesSuccess(duplicates),
-        ...duplicates
-          .flatMap(d => [d.sourceId, d.targetId])
-          .unique()
-          .map(pid => loadPictureById(pid))
-      ];
+    map(duplicatesDetected),
+  ));
 
-      return actions;
+  @EffectMarker
+  runDuplicateScan$ = createEffect(() => this.actions$.pipe(
+    ofType(runDuplicateScan),
+    switchMap(() => {
+      const fetch = this.duplicatesService.runScan().pipe(share());
+      const shade = this.modals.shade('Scanning duplicates...', EMPTY);
+      fetch.subscribe({complete: () => shade.dismiss()});
+      return fetch;
     }),
+    map(duplicatesDetected)
+  ));
+
+  @EffectMarker
+  loadDuplicatePictures$ = createEffect(() => this.actions$.pipe(
+    ofType(duplicatesDetected),
+    mergeMap(({duplicates}) => duplicates.flatMap(d => [d.sourceId, d.targetId]).unique()),
+    map(pid => loadPictureById(pid))
   ));
 
   @EffectMarker
@@ -47,6 +59,7 @@ export class DuplicatesEffects {
     private readonly actions$: Actions,
     private readonly duplicatesService: DuplicatesService,
     private readonly picturesService: PicturesService,
+    private readonly modals: Modals,
   ) {
   }
 }

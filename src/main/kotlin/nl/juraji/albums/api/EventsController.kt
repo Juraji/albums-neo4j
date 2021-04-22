@@ -5,6 +5,7 @@ import nl.juraji.albums.util.ServerSentEventFlux
 import nl.juraji.albums.util.toServerSentEvents
 import org.springframework.context.event.EventListener
 import org.springframework.http.MediaType
+import org.springframework.scheduling.annotation.Async
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -19,6 +20,7 @@ class EventsController {
     @PreDestroy
     fun destroy() = updatesProcessor.emitComplete(Sinks.EmitFailureHandler.FAIL_FAST)
 
+    @Async
     @EventListener
     fun onAlbumEvent(event: AlbumEvent) = updatesProcessor
         .emitNext(event) { _, result -> result == Sinks.EmitResult.FAIL_NON_SERIALIZED }

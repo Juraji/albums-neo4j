@@ -2,16 +2,17 @@ package nl.juraji.albums.domain
 
 import nl.juraji.albums.configuration.ImageServiceConfiguration
 import nl.juraji.albums.domain.events.DuplicatePictureDetectedEvent
-import nl.juraji.albums.domain.events.PictureHashGeneratedEvent
 import nl.juraji.albums.domain.events.ReactiveEventListener
-import nl.juraji.albums.domain.pictures.*
+import nl.juraji.albums.domain.pictures.DuplicatesView
+import nl.juraji.albums.domain.pictures.PictureDuplicatesRepository
+import nl.juraji.albums.domain.pictures.PictureHash
+import nl.juraji.albums.domain.pictures.PictureHashesRepository
 import nl.juraji.albums.util.kotlin.LoggerCompanion
-import nl.juraji.albums.util.kotlin.publishEventAndForget
 import org.springframework.context.ApplicationEventPublisher
-import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toFlux
 import java.util.*
 
 @Service
@@ -28,32 +29,29 @@ class DuplicatesService(
     fun removeDuplicate(pictureId: String, duplicateId: String): Mono<Void> =
         pictureDuplicatesRepository.removeAsDuplicate(pictureId, duplicateId)
 
-    fun scanDuplicates(pictureId: String): Flux<DuplicatesView> {
-        val pictureHash = pictureHashesRepository.findByPictureId(pictureId).share()
-        val otherHashes = pictureHashesRepository.findAll()
+    fun scanDuplicates(): Flux<DuplicatesView> =
+        pictureHashesRepository.findAll()
+            .collectList()
+            .flatMapMany { sourceHashes -> mapHashCombinations(sourceHashes).toFlux() }
+            .map { (source, target) -> DuplicatesView(source.picture.id!!, target.picture.id!!, compare(source, target)) }
+            .filter { it.similarity >= configuration.similarityThreshold }
+            .flatMap { pictureDuplicatesRepository.save(it) }
+            .doOnNext { applicationEventPublisher.publishEvent(DuplicatePictureDetectedEvent(it)) }
 
-        return otherHashes
-            .filterWhen { o -> pictureHash.map { p -> p.id != o.id } }
-            .flatMap { target -> pictureHash.map { source -> compare(source, target) } }
-            .filter { (_, similarity) -> similarity >= configuration.similarityThreshold }
-            .flatMap { (target, similarity) ->
-                pictureDuplicatesRepository.setAsDuplicate(
-                    sourceId = pictureId,
-                    targetId = target.id!!,
-                    similarity = similarity,
-                )
-            }
-            .doOnNext { applicationEventPublisher.publishEventAndForget(DuplicatePictureDetectedEvent.ofDuplicatesView(it)) }
-            .onErrorContinue { t, _ -> logger.info(t.localizedMessage) }
+    /**
+     * Hash objects are removed from the source list as they are added to the output pairs,
+     * this makes all output pairs unique.
+     */
+    private fun mapHashCombinations(sourceHashes: List<PictureHash>): List<Pair<PictureHash, PictureHash>> {
+        val availableHashes = sourceHashes.toMutableList()
+        return sourceHashes.flatMap { sourceHash ->
+            availableHashes.remove(sourceHash)
+            availableHashes.map { sourceHash to it }
+        }
     }
 
-    @EventListener(PictureHashGeneratedEvent::class)
-    fun scanDuplicatesOnPictureHashGenerated(e: PictureHashGeneratedEvent) = consumePublisher {
-        scanDuplicates(e.pictureId)
-    }
-
-    private fun compare(source: PictureHash, target: PictureHash): Pair<Picture, Double> =
-        target.picture to if (source.data == target.data) {
+    private fun compare(source: PictureHash, target: PictureHash): Double =
+        if (source.data == target.data) {
             1.0
         } else {
             val sourceHash = source.data.clone() as BitSet

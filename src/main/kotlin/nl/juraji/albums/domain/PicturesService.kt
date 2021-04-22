@@ -6,7 +6,6 @@ import nl.juraji.albums.domain.pictures.FileType
 import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.domain.pictures.PicturesRepository
 import nl.juraji.albums.util.kotlin.LoggerCompanion
-import nl.juraji.albums.util.kotlin.publishEventAndForget
 import nl.juraji.reactor.validations.validate
 import nl.juraji.reactor.validations.validateAsync
 import org.springframework.context.ApplicationEventPublisher
@@ -61,7 +60,7 @@ class PicturesService(
             }
             .flatMap(picturesRepository::save)
             .flatMap { picturesRepository.addPictureToFolder(folderId, it.id!!) }
-            .doOnNext { applicationEventPublisher.publishEventAndForget(PictureAddedEvent(folderId, it)) }
+            .doOnNext { applicationEventPublisher.publishEvent(PictureAddedEvent(folderId, it)) }
     }
 
     fun getPictureResource(pictureId: String): Mono<Resource> = picturesRepository

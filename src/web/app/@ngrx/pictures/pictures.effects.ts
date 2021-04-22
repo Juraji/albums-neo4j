@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {PicturesService} from '@services/pictures.service';
 import {Store} from '@ngrx/store';
-import {distinctUntilKeyChanged, filter, map, mergeMap, share} from 'rxjs/operators';
+import {distinctUntilKeyChanged, filter, map, mergeMap, pluck, share} from 'rxjs/operators';
 import {EffectMarker} from '@utils/decorators';
 import {AlbumEventsService} from '@services/album-events.service';
 import {FolderPicturesService} from '@services/folder-pictures.service';
@@ -18,7 +18,7 @@ import {
 import {iif, of, Subject} from 'rxjs';
 import {HttpEventType, HttpResponse} from '@angular/common/http';
 import {Modals} from '@juraji/ng-bootstrap-modals';
-import {filterAsync, filterEmpty, isNullOrUndefined, switchMapContinue} from '@utils/rx';
+import {distinctOverTime, filterAsync, filterEmpty, isNullOrUndefined, switchMapContinue} from '@utils/rx';
 import {selectPictureById} from '@ngrx/pictures/pictures.reducer';
 
 
@@ -66,10 +66,11 @@ export class PicturesEffects {
       this.store.select(selectPictureById, {pictureId}).pipe(isNullOrUndefined())),
     mergeMap(({pictureId, folderId}) => iif(
       () => folderId === undefined,
-      this.picturesService.getPictureFolder(pictureId).pipe(map(({id}) => ({folderId: id}))),
-      of({folderId} as { folderId: string })
+      this.picturesService.getPictureFolder(pictureId).pipe(pluck('id')),
+      of(folderId as string)
     )),
-    map(({folderId}) => loadPicturesByFolderId(folderId))
+    distinctOverTime(300),
+    map(folderId => loadPicturesByFolderId(folderId))
   ));
 
   @EffectMarker

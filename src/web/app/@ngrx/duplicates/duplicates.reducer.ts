@@ -1,6 +1,6 @@
 import {createEntityAdapter} from '@ngrx/entity';
 import {createFeatureSelector, createReducer, createSelector, on} from '@ngrx/store';
-import {loadAllDuplicatesSuccess, unlinkDuplicate} from './duplicates.actions';
+import {duplicatesDetected, unlinkDuplicate} from './duplicates.actions';
 import {deletePicture} from '@ngrx/pictures';
 
 const createIdByIds = (sourceId: string, targetId: string): string =>
@@ -20,7 +20,7 @@ export const duplicatesEntitySelectors = duplicatesEntityAdapter.getSelectors();
 
 export const reducer = createReducer(
   duplicatesEntityAdapter.getInitialState(),
-  on(loadAllDuplicatesSuccess, (s, {duplicates}) => {
+  on(duplicatesDetected, (s, {duplicates}) => {
     const trackedDuplicates = duplicates.map(d => d.copy({trackingId$: createId(d)}));
     return duplicatesEntityAdapter.upsertMany(trackedDuplicates, s);
   }),

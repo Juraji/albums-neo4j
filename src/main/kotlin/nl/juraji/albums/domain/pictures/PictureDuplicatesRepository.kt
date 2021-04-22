@@ -3,6 +3,7 @@ package nl.juraji.albums.domain.pictures
 import nl.juraji.albums.util.Neo4jDataClassMapper
 import org.springframework.data.neo4j.core.ReactiveNeo4jClient
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
@@ -16,13 +17,13 @@ class PictureDuplicatesRepository(
         .query(
             """
             MATCH (source:Picture)-[rel:DUPLICATED_BY]->(target:Picture)
-            RETURN target.id as targetId, source.id as sourceId, rel.similarity AS similarity
+            RETURN target.id AS targetId, source.id AS sourceId, rel.similarity AS similarity
         """
         )
         .fetch().all()
         .map(duplicatesViewMapper::mapFrom)
 
-    fun setAsDuplicate(sourceId: String, targetId: String, similarity: Double): Mono<DuplicatesView> = neo4jClient
+    fun save(duplicatesView: DuplicatesView): Mono<DuplicatesView> = neo4jClient
         .query(
             """
             MATCH (source:Picture {id: $ sourceId})
@@ -32,19 +33,14 @@ class PictureDuplicatesRepository(
             RETURN target.id as targetId, source.id as sourceId, rel.similarity AS similarity
         """
         )
-        .bind(sourceId).to("sourceId")
-        .bind(targetId).to("targetId")
-        .bind(similarity).to("similarity")
+        .bind(duplicatesView.sourceId).to("sourceId")
+        .bind(duplicatesView.targetId).to("targetId")
+        .bind(duplicatesView.similarity).to("similarity")
         .fetch().one()
         .map(duplicatesViewMapper::mapFrom)
 
     fun removeAsDuplicate(sourceId: String, targetId: String): Mono<Void> = neo4jClient
-        .query(
-            """
-            MATCH (:Picture {id: $ sourceId})-[rel:DUPLICATED_BY]->(:Picture {id: $ targetId})
-            DELETE rel
-        """
-        )
+        .query("MATCH (:Picture {id: $ sourceId})-[rel:DUPLICATED_BY]->(:Picture {id: $ targetId}) DELETE rel")
         .bind(sourceId).to("sourceId")
         .bind(targetId).to("targetId")
         .run().flatMap { Mono.empty() }

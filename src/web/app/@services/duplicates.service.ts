@@ -15,4 +15,8 @@ export class DuplicatesService {
   getDuplicates(): Observable<DuplicatesView[]> {
     return this.httpClient.get<DuplicatesView[]>(this.baseUri);
   }
+
+  runScan(): Observable<DuplicatesView[]> {
+    return this.httpClient.post<DuplicatesView[]>(`${this.baseUri}/run-scan`, null);
+  }
 }

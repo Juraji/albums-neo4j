@@ -4,8 +4,12 @@ export const loadAllDuplicates = createAction(
   '[Duplicates] Load all duplicates'
 );
 
-export const loadAllDuplicatesSuccess = createAction(
-  '[Duplicates] Load all duplicates success',
+export const runDuplicateScan = createAction(
+  '[Duplicates] Run duplicateScan'
+);
+
+export const duplicatesDetected = createAction(
+  '[Duplicates] Duplicates detected/loaded',
   (duplicates: DuplicatesView[]) => ({duplicates})
 );
 
