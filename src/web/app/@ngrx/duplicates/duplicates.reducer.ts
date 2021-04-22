@@ -35,7 +35,7 @@ export const selectAllDuplicates = createSelector(
 
 export const selectDuplicateCount = createSelector(
   selectDuplicatesSlice,
-  s => duplicatesEntitySelectors.selectIds(s).length,
+  duplicatesEntitySelectors.selectTotal,
 );
 
 export const selectDuplicatesByPictureId = createSelector(

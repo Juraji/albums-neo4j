@@ -7,19 +7,19 @@
   </li>
   <li class="nav-item">
     <button class="btn btn-primary ml-2" title="Rename picture"
-    (click)="onRenamePicture()">
+            (click)="onRenamePicture()">
       <span class="fa fa-edit"></span>
     </button>
   </li>
   <li class="nav-item">
     <button class="btn btn-primary ml-2" title="Move picture"
-    (click)="onMovePicture()">
+            (click)="onMovePicture()">
       <span class="fa fa-external-link-alt"></span>
     </button>
   </li>
   <li class="nav-item">
     <button class="btn btn-danger ml-2" title="Delete picture"
-    (click)="onDeletePicture()">
+            (click)="onDeletePicture()">
       <span class="fa fa-trash"></span>
     </button>
   </li>
@@ -28,7 +28,9 @@
 <div class="container-fluid clear-navbar">
   <div class="row">
     <div class="col-lg-3 mb-4">
-      <app-picture-details [folder]="folder$ | async" [picture]="picture$ | async"></app-picture-details>
+      <app-picture-details [folder]="folder$ | async" [picture]="picture$ | async"
+                           class="d-block mb-2"></app-picture-details>
+      <app-picture-tags [picture]="picture$ | async"></app-picture-tags>
     </div>
     <div class="col-lg-9 image-container">
       <img class="d-block mx-auto" appPictureImg [pictureId]="(picture$ | async)?.id || null"/>

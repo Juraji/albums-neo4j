@@ -1,31 +1,33 @@
-import {createFeatureSelector, createReducer, createSelector, on} from '@ngrx/store';
-import {createEntityAdapter} from '@ngrx/entity';
-import {createTagSuccess, deleteTag, loadTagsSuccess, updateTag} from "@ngrx/tags/tags.actions";
+import {combineReducers, createFeatureSelector, createSelector} from '@ngrx/store';
+import {tagEntitiesReducer, tagEntitySelectors} from './tag-entities.reducer';
+import {pictureTagsEntitySelectors, pictureTagsReducer} from './picture-tags.reducer';
+import {Dictionary} from '@ngrx/entity';
 
-const tagsEntityAdapter = createEntityAdapter<Tag>();
+export const reducer = combineReducers<TagsSliceState>({
+  tags: tagEntitiesReducer,
+  pictureTags: pictureTagsReducer
+});
 
-export const reducer = createReducer(
-  tagsEntityAdapter.getInitialState(),
-  on(loadTagsSuccess, (s, {tags}) => {
-    let mutation = s;
-    mutation = tagsEntityAdapter.removeAll(mutation);
-    mutation = tagsEntityAdapter.addMany(tags, mutation);
-    return mutation;
-  }),
-  on(createTagSuccess, (s, {tag}) => tagsEntityAdapter.addOne(tag, s)),
-  on(updateTag, (s, {tag}) => tagsEntityAdapter.upsertOne(tag, s)),
-  on(deleteTag, (s, {tag}) => tagsEntityAdapter.removeOne(tag.id, s))
-);
-
-const tagEntitySelectors = tagsEntityAdapter.getSelectors();
 const selectTagsSlice = createFeatureSelector<TagsSliceState>('tags');
 
-export const selectTagCount = createSelector(
-  selectTagsSlice,
-  s => tagEntitySelectors.selectIds(s).length
+const selectTags = createSelector(selectTagsSlice, s => s.tags);
+const selectPictureTags = createSelector(selectTagsSlice, s => s.pictureTags);
+
+const selectPictureTagEntities = createSelector(selectPictureTags, pictureTagsEntitySelectors.selectEntities);
+
+export const selectTagCount = createSelector(selectTags, tagEntitySelectors.selectTotal);
+
+export const selectAllTags = createSelector(selectTags, tagEntitySelectors.selectAll);
+
+const selectPictureTagsByPictureId = createSelector(
+  selectPictureTagEntities,
+  (s: Dictionary<PictureTags>, {pictureId}: ByPictureIdProps) =>
+    s[pictureId] || {pictureId, tagIds: []}
 );
 
-export const selectAllTags = createSelector(
-  selectTagsSlice,
-  s => tagEntitySelectors.selectAll(s)
+export const selectTagsByPictureId = createSelector(
+  selectPictureTagsByPictureId,
+  selectAllTags,
+  (s: PictureTags, s2: Tag[]) =>
+    s.tagIds.map(id => s2.find(t => t.id === id)).filterEmpty()
 );

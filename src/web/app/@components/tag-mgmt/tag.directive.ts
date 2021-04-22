@@ -1,7 +1,7 @@
 import {Directive, ElementRef, HostBinding, Input, OnChanges, OnInit, Renderer2, SimpleChanges} from '@angular/core';
 
 @Directive({
-  selector: 'span[appTag]'
+  selector: 'span[appTag],button[appTag]'
 })
 export class TagDirective implements OnInit, OnChanges {
   private static readonly staticClassList = ['badge', 'tag-badge'];

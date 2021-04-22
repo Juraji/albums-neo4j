@@ -1,0 +1,17 @@
+<div class="card shadow" *ngIf="!!picture">
+  <div class="card-header border-bottom-0">
+    <h6 class="card-title text-ellipsis mb-0">Tags</h6>
+  </div>
+  <div class="card-body d-flex flex-wrap">
+    <div ngbDropdown *ngFor="let tag of pictureTags$ | async">
+      <button class="btn mr-2 mb-2" appTag [tag]="tag" ngbDropdownToggle></button>
+      <div ngbDropdownMenu>
+        <button ngbDropdownItem disabled>More like this...</button>
+        <button ngbDropdownItem (click)="onRemoveTag(tag)">Remove</button>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer">
+    <app-tag-selector (tagSelected)="onAddTag($event)"></app-tag-selector>
+  </div>
+</div>

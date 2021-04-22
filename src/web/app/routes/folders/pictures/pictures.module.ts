@@ -7,19 +7,25 @@ import {MainNavbarModule} from '@components/main-navbar';
 import {PictureDetailsComponent} from './picture-view/@components/picture-details/picture-details.component';
 import {FsPipesModule} from '@components/fs-pipes';
 import {PictureImageViewsModule} from '@components/picture-image-views';
+import { PictureTagsComponent } from './picture-view/@components/picture-tags/picture-tags.component';
+import {TagMgmtModule} from '@components/tag-mgmt';
+import {NgbDropdownModule} from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
   declarations: [
     PictureViewPage,
     PictureDetailsComponent,
+    PictureTagsComponent,
   ],
   imports: [
     CommonModule,
     PicturesRoutingModule,
     MainNavbarModule,
     FsPipesModule,
-    PictureImageViewsModule
+    PictureImageViewsModule,
+    TagMgmtModule,
+    NgbDropdownModule
   ]
 })
 export class PicturesModule {
