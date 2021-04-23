@@ -81,19 +81,17 @@ internal class PicturesServiceTest {
             width = 100,
             height = 150,
             type = FileType.JPEG,
-            pictureLocation = "saved-image.jpg",
-            thumbnailLocation = "saved-thumbnail.jpg",
         )
         val expectedAfterSave = expectedToSave.copy(
             id = fixture.nextString()
         )
 
         every { imageService.loadPartAsImage(any()) } returnsMonoOf testImage
-        every { imageService.savePicture(any(), any()) } returnsMonoOf ImageService.SavedPicture(
+        every { imageService.saveFullImage(any(), any(), any()) } returnsMonoOf ImageService.SavedPicture(
             "saved-image.jpg",
             64000
         )
-        every { imageService.saveThumbnail(any()) } returnsMonoOf ImageService.SavedPicture(
+        every { imageService.saveThumbnail(any(), any()) } returnsMonoOf ImageService.SavedPicture(
             "saved-thumbnail.jpg",
             0
         )
@@ -110,8 +108,8 @@ internal class PicturesServiceTest {
 
         verify {
             imageService.loadPartAsImage(filePart)
-            imageService.savePicture(testImage, FileType.JPEG)
-            imageService.saveThumbnail(testImage)
+            imageService.saveFullImage(testImage, expectedAfterSave.id!!, FileType.JPEG)
+            imageService.saveThumbnail(testImage, expectedAfterSave.id!!)
             picturesRepository.existsByNameInFolder(folderId, "image.jpg")
             picturesRepository.save(match {
                 samePropertyValuesAs(expectedToSave, "addedOn").matches(it)
@@ -199,33 +197,31 @@ internal class PicturesServiceTest {
     @Test
     fun `should get picture resource`() {
         val pictureId = fixture.nextString()
-        val picture = fixture.next<Picture>()
 
-        every { picturesRepository.findById(any<String>()) } returnsMonoOf picture
+        every { imageService.getFullImagePath(any()) } returns Path.of("/test/path")
 
         val result = picturesService.getPictureResource(pictureId)
 
         StepVerifier.create(result)
-            .expectNext(FileSystemResource(picture.pictureLocation))
+            .expectNext(FileSystemResource(Path.of("/test/path")))
             .verifyComplete()
 
-        verify { picturesRepository.findById(pictureId) }
+        verify { imageService.getFullImagePath(pictureId) }
     }
 
     @Test
     fun `should get thumbnail resource`() {
         val pictureId = fixture.nextString()
-        val picture = fixture.next<Picture>()
 
-        every { picturesRepository.findById(any<String>()) } returnsMonoOf picture
+        every { imageService.getThumbnailPath(any()) } returns Path.of("/test/path")
 
         val result = picturesService.getThumbnailResource(pictureId)
 
         StepVerifier.create(result)
-            .expectNext(FileSystemResource(picture.thumbnailLocation))
+            .expectNext(FileSystemResource(Path.of("/test/path")))
             .verifyComplete()
 
-        verify { picturesRepository.findById(pictureId) }
+        verify { imageService.getThumbnailPath(pictureId) }
     }
 
     private fun filePartOf(

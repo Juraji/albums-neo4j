@@ -1,6 +1,9 @@
 package nl.juraji.albums.domain
 
+import nl.juraji.albums.domain.events.FolderDeletedEvent
 import nl.juraji.albums.domain.events.PictureAddedEvent
+import nl.juraji.albums.domain.events.PictureDeletedEvent
+import nl.juraji.albums.domain.events.ReactiveEventListener
 import nl.juraji.albums.domain.folders.FoldersRepository
 import nl.juraji.albums.domain.pictures.FileType
 import nl.juraji.albums.domain.pictures.Picture
@@ -9,15 +12,16 @@ import nl.juraji.albums.util.kotlin.LoggerCompanion
 import nl.juraji.reactor.validations.validate
 import nl.juraji.reactor.validations.validateAsync
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.context.event.EventListener
 import org.springframework.core.io.FileSystemResource
 import org.springframework.core.io.Resource
 import org.springframework.http.codec.multipart.FilePart
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.util.function.component1
 import reactor.kotlin.core.util.function.component2
-import reactor.kotlin.core.util.function.component3
 import reactor.kotlin.extra.bool.not
 
 @Service
@@ -26,7 +30,7 @@ class PicturesService(
     private val foldersRepository: FoldersRepository,
     private val imageService: ImageService,
     private val applicationEventPublisher: ApplicationEventPublisher
-) {
+) : ReactiveEventListener() {
     fun getById(pictureId: String): Mono<Picture> = picturesRepository.findById(pictureId)
 
     fun getFolderPictures(folderId: String): Flux<Picture> = picturesRepository.findAllByFolderId(folderId)
@@ -35,26 +39,27 @@ class PicturesService(
         return unpackFilePart(file)
             .validate { (_, fileType, filename) ->
                 isNotNull(fileType) { "Missing Content-Type header" }
-                isNotNull(filename) { "Missing Content-Disposition header or filename is undefined" }
+                isNotNull(filename) { "Missing Content-Disposition header" }
                 isFalse(FileType.UNKNOWN == fileType) { "Unsupported Content-Type" }
             }
             .filterWhen { (_, _, filename) -> picturesRepository.existsByNameInFolder(folderId, filename).not() }
+            .doOnNext { (_, fileType, filename) -> logger.info("Incoming file: $filename (as $fileType)") }
             .flatMap { (file, fileType, filename) ->
-                logger.info("Incoming file: $filename (as $fileType)")
-
+                Mono.zip(
+                    picturesRepository.save(Picture(name = filename, type = fileType)),
+                    Mono.just(file),
+                )
+            }
+            .flatMap { (picture, file) ->
                 val image = imageService.loadPartAsImage(file).share()
-                val savedPicture = image.flatMap { imageService.savePicture(it, fileType) }
-                val savedThumbnail = image.flatMap { imageService.saveThumbnail(it) }
+                val savedFullImage = image.flatMap { imageService.saveFullImage(it, picture.id!!, picture.type) }
+                val savedThumbnail = image.flatMap { imageService.saveThumbnail(it, picture.id!!) }
 
-                Mono.zip(image, savedPicture, savedThumbnail).map { (image, savedPicture, savedThumbnail) ->
-                    Picture(
-                        name = filename,
+                Mono.zip(image, savedFullImage, savedThumbnail).map { (image, savedPicture) ->
+                    picture.copy(
                         fileSize = savedPicture.filesSize,
                         width = image.width,
                         height = image.height,
-                        type = fileType,
-                        pictureLocation = savedPicture.location,
-                        thumbnailLocation = savedThumbnail.location
                     )
                 }
             }
@@ -63,13 +68,13 @@ class PicturesService(
             .doOnNext { applicationEventPublisher.publishEvent(PictureAddedEvent(folderId, it)) }
     }
 
-    fun getPictureResource(pictureId: String): Mono<Resource> = picturesRepository
-        .findById(pictureId)
-        .map { FileSystemResource(it.pictureLocation) }
+    fun getPictureResource(pictureId: String): Mono<Resource> = Mono
+        .just(pictureId)
+        .map { FileSystemResource(imageService.getFullImagePath(it)) }
 
-    fun getThumbnailResource(pictureId: String): Mono<Resource> = picturesRepository
-        .findById(pictureId)
-        .map { FileSystemResource(it.thumbnailLocation) }
+    fun getThumbnailResource(pictureId: String): Mono<Resource> = Mono
+        .just(pictureId)
+        .map { FileSystemResource(imageService.getThumbnailPath(it)) }
 
     fun movePicture(pictureId: String, targetFolderId: String): Mono<Picture> = getById(pictureId)
         .validateAsync { picture ->
@@ -80,15 +85,23 @@ class PicturesService(
         }
         .flatMap { picturesRepository.addPictureToFolder(targetFolderId, it.id!!) }
 
-    fun deletePicture(pictureId: String): Mono<Void> {
-        val picture = getById(pictureId).share()
-        val deletePicture = picture.flatMap { imageService.deleteByPath(it.pictureLocation) }
-        val deleteThumbnail = picture.flatMap { imageService.deleteByPath(it.thumbnailLocation) }
-        val deleteFromDb = picture.flatMap { picturesRepository.deleteFully(it.id!!) }
+    fun deletePicture(pictureId: String): Mono<Void> =
+        picturesRepository
+            .deleteFully(pictureId)
+            .doFinally { this.applicationEventPublisher.publishEvent(PictureDeletedEvent(pictureId)) }
 
-        return deletePicture
-            .then(deleteThumbnail)
-            .then(deleteFromDb)
+    @Async
+    @EventListener(FolderDeletedEvent::class)
+    fun onFolderDeleted(e: FolderDeletedEvent) = consumePublisher {
+        picturesRepository
+            .findOrphaned()
+            .flatMap { deletePicture(it.id!!) }
+    }
+
+    @Async
+    @EventListener(PictureDeletedEvent::class)
+    fun onPictureDeleted(e: PictureDeletedEvent) = consumePublisher {
+        imageService.deleteThumbnailAndFullImageById(e.pictureId)
     }
 
     private fun unpackFilePart(file: FilePart): Mono<Triple<FilePart, FileType, String>> = Mono.just(

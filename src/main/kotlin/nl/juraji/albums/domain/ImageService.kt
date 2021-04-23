@@ -18,6 +18,7 @@ import reactor.core.scheduler.Scheduler
 import reactor.core.scheduler.Schedulers
 import java.awt.Color
 import java.nio.file.Files
+import java.nio.file.Path
 import java.util.*
 
 @Service
@@ -40,27 +41,33 @@ class ImageService(
     fun loadResourceAsImage(resource: Resource) = Mono.just(resource)
         .map { ImmutableImage.loader().fromStream(it.inputStream) }
 
-    fun saveThumbnail(image: ImmutableImage): Mono<SavedPicture> = deferTo(ioScheduler) {
-        val id = UUID.randomUUID().toString()
+    fun getThumbnailPath(id: String): Path =
+        configuration.thumbnailsDirectory.toPath().resolve(id)
+
+    fun getFullImagePath(id: String): Path =
+        configuration.fullImageDirectory.toPath().resolve(id)
+
+    fun saveThumbnail(image: ImmutableImage, id: String): Mono<SavedPicture> = deferTo(ioScheduler) {
         val thumbnailImage = image.cover(configuration.thumbnailSize, configuration.thumbnailSize)
 
-        val path = configuration.thumbnailsDirectory.toPath().resolve("$id.jpg")
+        val path = getThumbnailPath(id)
         val writer = JpegWriter()
             .withCompression(50)
             .withProgressive(true)
 
         with(writer) {
+            Files.createDirectories(path.parent)
             thumbnailImage.output(this, path)
         }
 
         SavedPicture(path.toString(), 0)
     }
 
-    fun savePicture(image: ImmutableImage, fileType: FileType): Mono<SavedPicture> = deferTo(ioScheduler) {
-        val id = UUID.randomUUID().toString()
-        val path = configuration.picturesDirectory.toPath().resolve("$id.jpg")
+    fun saveFullImage(image: ImmutableImage, id: String, type: FileType): Mono<SavedPicture> = deferTo(ioScheduler) {
+        val path = getFullImagePath(id)
 
-        with(writerForFileType(fileType)) {
+        with(writerForFileType(type)) {
+            Files.createDirectories(path.parent)
             image.output(this, path)
         }
 
@@ -88,8 +95,10 @@ class ImageService(
         }
     }
 
-    fun deleteByPath(pictureLocation: String): Mono<Boolean> = deferTo(ioScheduler) {
-        Files.deleteIfExists(pictureLocation.toPath())
+    fun deleteThumbnailAndFullImageById(id: String): Mono<Void> = deferTo(ioScheduler) {
+        Files.deleteIfExists(getThumbnailPath(id))
+        Files.deleteIfExists(getFullImagePath(id))
+        null
     }
 
     private fun writerForFileType(fileType: FileType): ImageWriter = when (fileType) {
@@ -98,7 +107,7 @@ class ImageService(
         FileType.GIF -> GifWriter.Default
         FileType.PNG -> PngWriter.NoCompression
         FileType.TIFF -> TiffWriter()
-        else -> throw IllegalArgumentException("No writer defined for file type $fileType")
+        FileType.UNKNOWN -> throw IllegalArgumentException("Unknown file type")
     }
 
     data class SavedPicture(

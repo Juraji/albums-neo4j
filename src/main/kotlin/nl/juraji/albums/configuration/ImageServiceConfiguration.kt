@@ -11,5 +11,5 @@ data class ImageServiceConfiguration(
     val similarityThreshold: Double = 0.82,
     val thumbnailSize: Int = 250,
     val thumbnailsDirectory: String = "./",
-    val picturesDirectory: String = "./",
+    val fullImageDirectory: String = "./",
 )

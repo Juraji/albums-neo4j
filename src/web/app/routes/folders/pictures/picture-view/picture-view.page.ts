@@ -64,7 +64,7 @@ export class PictureViewPage implements OnInit, OnDestroy {
       )
       .subscribe(([{target}, pictureId]) => {
         this.store.dispatch(movePicture(pictureId, target.id));
-        this.router.navigate(['/folders', target.id, 'pictures', pictureId]);
+        this.router.navigate(['/folders', target.id, 'pictures', pictureId], {replaceUrl: true});
       });
   }
 

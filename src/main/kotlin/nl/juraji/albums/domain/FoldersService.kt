@@ -1,17 +1,24 @@
 package nl.juraji.albums.domain
 
+import nl.juraji.albums.domain.events.FolderCreatedEvent
+import nl.juraji.albums.domain.events.FolderDeletedEvent
+import nl.juraji.albums.domain.events.ReactiveEventListener
 import nl.juraji.albums.domain.folders.Folder
 import nl.juraji.albums.domain.folders.FolderTreeView
 import nl.juraji.albums.domain.folders.FoldersRepository
 import nl.juraji.reactor.validations.validateAsync
+import org.springframework.context.ApplicationEventPublisher
+import org.springframework.context.event.EventListener
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Service
 class FoldersService(
-    private val foldersRepository: FoldersRepository
-) {
+    private val foldersRepository: FoldersRepository,
+    private val applicationEventPublisher: ApplicationEventPublisher
+): ReactiveEventListener() {
     fun getTree(): Flux<FolderTreeView> = foldersRepository
         .findRoots()
         .flatMap { f -> this.createFolderTreeView(f, true) }
@@ -38,7 +45,7 @@ class FoldersService(
             }
         }
         .flatMap { foldersRepository.save(folder.copy(id = null)) }
-        .doOnNext { if (parentFolderId.isNotBlank()) foldersRepository.setParent(it.id!!, parentFolderId).subscribe() }
+        .doOnNext { applicationEventPublisher.publishEvent(FolderCreatedEvent(it.id!!, it.name, parentFolderId)) }
 
     fun updateFolder(folderId: String, update: Folder): Mono<Folder> = foldersRepository
         .findById(folderId)
@@ -52,6 +59,7 @@ class FoldersService(
             }
         }
         .flatMap(foldersRepository::deleteRecursivelyById)
+        .doFinally { applicationEventPublisher.publishEvent(FolderDeletedEvent(folderId)) }
 
     fun moveFolder(folderId: String, targetId: String): Mono<Folder> =
         validateAsync {
@@ -59,4 +67,10 @@ class FoldersService(
             isTrue(foldersRepository.existsById(targetId)) { "Folder with id $folderId does not exist" }
         }
             .flatMap { foldersRepository.setParent(folderId, targetId) }
+
+    @Async
+    @EventListener(FolderCreatedEvent::class, condition = "#e.parentId != null")
+    fun onFolderCreatedWithParent(e: FolderCreatedEvent) = consumePublisher {
+        foldersRepository.setParent(e.folderId, e.parentId!!)
+    }
 }

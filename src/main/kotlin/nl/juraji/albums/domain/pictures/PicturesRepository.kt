@@ -12,6 +12,9 @@ interface PicturesRepository : ReactiveNeo4jRepository<Picture, String> {
     @Query("MATCH (:Folder {id: $ folderId})-[:HAS_PICTURE]->(p:Picture) RETURN p")
     fun findAllByFolderId(folderId: String): Flux<Picture>
 
+    @Query("MATCH (p:Picture) WHERE NOT exists((p)<-[:HAS_PICTURE]-(:Folder)) RETURN p")
+    fun findOrphaned(): Flux<Picture>
+
     @Query(
         """
             MATCH (f:Folder {id: $ folderId})

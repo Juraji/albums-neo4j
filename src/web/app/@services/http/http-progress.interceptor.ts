@@ -27,7 +27,11 @@ export class HttpProgressInterceptor implements HttpInterceptor {
 
       const onNext = (e: HttpEvent<any>) => {
         if ((e.type === HttpEventType.DownloadProgress || e.type === HttpEventType.UploadProgress) && !!e.total) {
-          progress.next((e.loaded / e.total));
+          if (e.loaded === e.total) {
+            progress.next(-1);
+          } else {
+            progress.next(100 * (e.loaded / e.total));
+          }
         }
       };
 

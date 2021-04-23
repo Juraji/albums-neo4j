@@ -20,4 +20,4 @@ image-service:
   similarity-threshold: 0.82
   thumbnail-size: 250
   thumbnails-directory: "/data/thumbnails"
-  pictures-directory: "/data/pictures"
+  full-image-directory: "/data/pictures"

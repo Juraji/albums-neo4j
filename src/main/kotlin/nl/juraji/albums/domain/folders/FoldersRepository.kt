@@ -35,6 +35,6 @@ interface FoldersRepository : ReactiveNeo4jRepository<Folder, String> {
     @Query("RETURN NOT exists((:Folder {id: $ folderId})-[:HAS_CHILD|HAS_PICTURE]->())")
     fun isEmptyById(folderId: String): Mono<Boolean>
 
-    @Query("MATCH p=(:Folder {id: $ folderId})-[:HAS_CHILD|HAS_PICTURE*0..]->() DETACH DELETE p")
+    @Query("MATCH p=(:Folder {id: $ folderId})-[:HAS_CHILD*0..]->() DETACH DELETE p")
     fun deleteRecursivelyById(folderId: String): Mono<Void>
 }

@@ -9,10 +9,6 @@ enum class FileType(val contentType: String) {
     UNKNOWN("*/*");
 
     companion object {
-        fun supports(contentType: String?): Boolean =
-            if (contentType.isNullOrBlank()) false
-            else values().any { pType -> pType.contentType.equals(contentType, true) }
-
         fun ofContentType(contentType: String): FileType = values()
             .first { pType -> pType.contentType.equals(contentType, true) }
     }
