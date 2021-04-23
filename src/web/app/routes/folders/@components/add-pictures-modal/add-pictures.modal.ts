@@ -1,8 +1,6 @@
 import {Component, HostBinding, Inject} from '@angular/core';
-import {Subject} from 'rxjs';
 import {MODAL_DATA, ModalRef, Modals} from '@juraji/ng-bootstrap-modals';
 import {FolderPicturesService} from '@services/folder-pictures.service';
-import {HttpEventType} from '@angular/common/http';
 import {typedFormControl, typedFormGroup} from 'ngx-forms-typed';
 import {Validators} from '@angular/forms';
 import {map} from 'rxjs/operators';
@@ -83,36 +81,9 @@ export class AddPicturesModal {
 
   onSubmit() {
     const files = this.form.value.files;
-    const progress = new Subject<number>();
-    const shadeRef = this.modals.shade('Uploading pictures', progress);
-    this.modalRef.onComplete.subscribe(() => {
-      progress.complete();
-      shadeRef.dismiss();
-    });
 
     this.folderPicturesService.uploadPictures(this.parentFolder.id, files)
-      .subscribe({
-        next: event => {
-          switch (event.type) {
-            case HttpEventType.UploadProgress:
-              if (!!event.total) {
-                progress.next((event.loaded / event.total) * 100);
-              }
-              break;
-            case HttpEventType.Response:
-              if (event.ok && !!event.body) {
-                this.modalRef.resolve(event.body);
-              }
-              break;
-          }
-        },
-        error: err => {
-          console.error(err);
-          this.modalRef.dismiss();
-        },
-        complete: () => this.modalRef.dismiss()
-      });
-
+      .subscribe(pictures => this.modalRef.resolve(pictures));
   }
 
   private filterAndUpdateSelection(files: File[]) {

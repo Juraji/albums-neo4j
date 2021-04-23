@@ -12,6 +12,7 @@ import {HttpClientModule} from '@angular/common/http';
 import {ModalsModule} from '@juraji/ng-bootstrap-modals';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {StoreRouterConnectingModule} from '@ngrx/router-store';
+import {httpInterceptorProviders} from '@services/http';
 
 @NgModule({
   declarations: [
@@ -26,11 +27,12 @@ import {StoreRouterConnectingModule} from '@ngrx/router-store';
     StoreModule.forRoot(ROOT_REDUCER, {metaReducers: ROOT_META_REDUCERS}),
     StoreRouterConnectingModule.forRoot(),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
-    EffectsModule.forRoot(ROOT_EFFECTS)
+    EffectsModule.forRoot(ROOT_EFFECTS),
   ],
   bootstrap: [AppComponent],
   providers: [
-    {provide: LOCALE_ID, useValue: 'nl'}
+    {provide: LOCALE_ID, useValue: 'nl'},
+    httpInterceptorProviders
   ]
 })
 export class AppModule {

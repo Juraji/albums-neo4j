@@ -2,9 +2,8 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {PicturesService} from '@services/pictures.service';
 import {Store} from '@ngrx/store';
-import {distinctUntilKeyChanged, filter, map, mergeMap, pluck, share} from 'rxjs/operators';
+import {distinctUntilKeyChanged, map, mergeMap, pluck} from 'rxjs/operators';
 import {EffectMarker} from '@utils/decorators';
-import {AlbumEventsService} from '@services/album-events.service';
 import {FolderPicturesService} from '@services/folder-pictures.service';
 import {
   deletePicture,
@@ -15,10 +14,8 @@ import {
   movePicture,
   movePictureSuccess
 } from './pictures.actions';
-import {iif, of, Subject} from 'rxjs';
-import {HttpEventType, HttpResponse} from '@angular/common/http';
-import {Modals} from '@juraji/ng-bootstrap-modals';
-import {distinctOverTime, filterAsync, filterEmpty, isNullOrUndefined, switchMapContinue} from '@utils/rx';
+import {iif, of} from 'rxjs';
+import {distinctOverTime, filterAsync, isNullOrUndefined, switchMapContinue} from '@utils/rx';
 import {selectPictureById} from '@ngrx/pictures/pictures.reducer';
 
 
@@ -29,34 +26,8 @@ export class PicturesEffects {
   fetchDirectoryPictures$ = createEffect(() => this.actions$.pipe(
     ofType(loadPicturesByFolderId),
     distinctUntilKeyChanged('folderId'),
-    mergeMap(({folderId}) => {
-      const progress = new Subject<number>();
-      const shadeRef = this.modals.shade('Downloading pictures...', progress);
-      const fetch = this.folderPicturesService.getFolderPictures(folderId).pipe(share());
-      const cleanUp = () => {
-        progress.complete();
-        shadeRef.dismiss();
-      };
-
-      fetch.subscribe({
-        next: e => {
-          if (e.type === HttpEventType.DownloadProgress && !!e.total) {
-            progress.next((e.loaded / e.total));
-          }
-        },
-        error: cleanUp,
-        complete: cleanUp
-      });
-
-      return fetch
-        .pipe(
-          filter(e => e.type === HttpEventType.Response),
-          map(e => (e as HttpResponse<Picture[]>)?.body),
-          filterEmpty(),
-          map(pictures => ({pictures, folderId})),
-        );
-    }),
-    map(({pictures, folderId}) => loadPicturesByFolderIdSuccess(pictures, folderId))
+    switchMapContinue(({folderId}) => this.folderPicturesService.getFolderPictures(folderId)),
+    map(([{folderId}, pictures]) => loadPicturesByFolderIdSuccess(pictures, folderId))
   ));
 
   @EffectMarker
@@ -92,8 +63,6 @@ export class PicturesEffects {
     private readonly store: Store<AppState>,
     private readonly picturesService: PicturesService,
     private readonly folderPicturesService: FolderPicturesService,
-    private readonly albumEventsService: AlbumEventsService,
-    private readonly modals: Modals,
   ) {
   }
 }

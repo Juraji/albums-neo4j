@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {BooleanToggle} from '@utils/boolean-toggle';
 import {Store} from '@ngrx/store';
 import {selectDuplicateCount} from '@ngrx/duplicates';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {selectFolderCount} from '@ngrx/folders';
 import {selectTagCount} from '@ngrx/tags';
@@ -41,6 +41,10 @@ export class MainNavbarComponent implements OnInit {
         .pipe(map(count => `Tags (${count})`)),
       url: '/tags'
     },
+    {
+      label: of('Settings'),
+      url: '/settings'
+    }
   ];
 
   constructor(

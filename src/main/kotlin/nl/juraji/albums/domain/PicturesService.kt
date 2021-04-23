@@ -84,7 +84,7 @@ class PicturesService(
         val picture = getById(pictureId).share()
         val deletePicture = picture.flatMap { imageService.deleteByPath(it.pictureLocation) }
         val deleteThumbnail = picture.flatMap { imageService.deleteByPath(it.thumbnailLocation) }
-        val deleteFromDb = picture.flatMap(picturesRepository::delete)
+        val deleteFromDb = picture.flatMap { picturesRepository.deleteFully(it.id!!) }
 
         return deletePicture
             .then(deleteThumbnail)

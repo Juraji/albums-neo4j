@@ -14,6 +14,7 @@ const routes: Routes = [
     path: 'tags',
     loadChildren: () => import('./routes/tags/tags.module').then(m => m.TagsModule)
   },
+  { path: 'settings', loadChildren: () => import('./routes/settings/settings.module').then(m => m.SettingsModule) },
   {path: '**', redirectTo: 'folders'}
 ];
 

@@ -32,4 +32,7 @@ interface PicturesRepository : ReactiveNeo4jRepository<Picture, String> {
         exists = true
     )
     fun existsByNameInFolder(folderId: String, name: String): Mono<Boolean>
+
+    @Query("MATCH p=(:Picture {id: $ id})<-[:DESCRIBES]-(:PictureHash) DETACH DELETE p")
+    fun deleteFully(id: String): Mono<Void>
 }
