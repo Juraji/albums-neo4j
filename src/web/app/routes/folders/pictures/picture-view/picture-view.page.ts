@@ -6,7 +6,6 @@ import {filterEmpty, once, switchMapContinue} from '@utils/rx';
 import {selectFolderById} from '@ngrx/folders';
 import {deletePicture, loadPictureById, movePicture, selectPictureById} from '@ngrx/pictures';
 import {untilDestroyed} from '@utils/until-destroyed';
-import {combineLatest} from 'rxjs';
 import {Modals} from '@juraji/ng-bootstrap-modals';
 import {FolderSelectorModal} from '@components/folder-selector';
 
@@ -44,9 +43,9 @@ export class PictureViewPage implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    combineLatest([this.pictureId$, this.folderId$])
+    this.pictureId$
       .pipe(untilDestroyed(this))
-      .subscribe(([pictureId, folderId]) => this.store.dispatch(loadPictureById(pictureId, folderId)));
+      .subscribe(pictureId => this.store.dispatch(loadPictureById(pictureId)));
   }
 
   ngOnDestroy() {

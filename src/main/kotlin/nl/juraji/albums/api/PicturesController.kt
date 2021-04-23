@@ -1,15 +1,17 @@
 package nl.juraji.albums.api
 
+import nl.juraji.albums.api.dto.PictureContainerDto
 import nl.juraji.albums.domain.DuplicatesService
 import nl.juraji.albums.domain.FoldersService
 import nl.juraji.albums.domain.PicturesService
-import nl.juraji.albums.domain.folders.Folder
 import nl.juraji.albums.domain.pictures.Picture
 import org.springframework.core.io.Resource
 import org.springframework.http.CacheControl
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.util.function.component1
+import reactor.kotlin.core.util.function.component2
 import java.util.concurrent.TimeUnit
 
 @RestController
@@ -19,6 +21,13 @@ class PicturesController(
     private val foldersService: FoldersService,
     private val duplicatesService: DuplicatesService
 ) {
+
+    @GetMapping("/{pictureId}")
+    fun getPicture(
+        @PathVariable pictureId: String
+    ): Mono<PictureContainerDto> =
+        Mono.zip(picturesService.getById(pictureId), foldersService.getByPictureId(pictureId))
+            .map { (picture, folder) -> PictureContainerDto(picture, folder) }
 
     @GetMapping("/{pictureId}/download")
     fun downloadPicture(
@@ -41,11 +50,6 @@ class PicturesController(
                 .cacheControl(CacheControl.maxAge(IMAGE_CACHE_HOURS, TimeUnit.HOURS))
                 .body(it)
         }
-
-    @GetMapping("/{pictureId}/folder")
-    fun getPictureFolder(
-        @PathVariable pictureId: String
-    ): Mono<Folder> = foldersService.getByPictureId(pictureId)
 
     @PostMapping("/{pictureId}/move-to/{targetId}")
     fun movePicture(

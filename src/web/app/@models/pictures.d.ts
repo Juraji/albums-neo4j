@@ -16,3 +16,8 @@ interface DuplicatesView {
   similarity: number;
   trackingId$: string;
 }
+
+interface PictureContainerDto {
+  picture: Picture;
+  folder: Folder;
+}

@@ -2,20 +2,20 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {PicturesService} from '@services/pictures.service';
 import {Store} from '@ngrx/store';
-import {distinctUntilKeyChanged, map, mergeMap, pluck} from 'rxjs/operators';
+import {distinctUntilKeyChanged, map, mergeMap} from 'rxjs/operators';
 import {EffectMarker} from '@utils/decorators';
 import {FolderPicturesService} from '@services/folder-pictures.service';
 import {
   deletePicture,
   deletePictureSuccess,
   loadPictureById,
+  loadPictureByIdSuccess,
   loadPicturesByFolderId,
   loadPicturesByFolderIdSuccess,
   movePicture,
   movePictureSuccess
 } from './pictures.actions';
-import {iif, of} from 'rxjs';
-import {distinctOverTime, filterAsync, isNullOrUndefined, switchMapContinue} from '@utils/rx';
+import {filterAsync, isNullOrUndefined, switchMapContinue} from '@utils/rx';
 import {selectPictureById} from '@ngrx/pictures/pictures.reducer';
 
 
@@ -35,13 +35,8 @@ export class PicturesEffects {
     ofType(loadPictureById),
     filterAsync(({pictureId}) =>
       this.store.select(selectPictureById, {pictureId}).pipe(isNullOrUndefined())),
-    mergeMap(({pictureId, folderId}) => iif(
-      () => folderId === undefined,
-      this.picturesService.getPictureFolder(pictureId).pipe(pluck('id')),
-      of(folderId as string)
-    )),
-    distinctOverTime(300),
-    map(folderId => loadPicturesByFolderId(folderId))
+    mergeMap(({pictureId}) => this.picturesService.getPicture(pictureId)),
+    map(({picture, folder}) => loadPictureByIdSuccess(picture, folder))
   ));
 
   @EffectMarker

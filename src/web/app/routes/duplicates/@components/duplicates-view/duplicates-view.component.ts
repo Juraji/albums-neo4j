@@ -1,14 +1,21 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ReplaySubject} from 'rxjs';
 import {ObserveProperty} from '@utils/decorators';
-import {switchMap} from 'rxjs/operators';
+import {mergeMap, switchMap} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
-import {deletePicture, movePicture, selectFolderIdBiyPictureId, selectPictureById} from '@ngrx/pictures';
+import {
+  deletePicture,
+  loadPictureById,
+  movePicture,
+  selectFolderIdBiyPictureId,
+  selectPictureById
+} from '@ngrx/pictures';
 import {unlinkDuplicate} from '@ngrx/duplicates';
 import {FolderSelectorModal} from '@components/folder-selector';
 import {Modals} from '@juraji/ng-bootstrap-modals';
 import {selectFolderById} from '@ngrx/folders';
 import {filterEmpty} from '@utils/rx';
+import {untilDestroyed} from '@utils/until-destroyed';
 
 @Component({
   selector: 'app-duplicates-view',
@@ -16,7 +23,7 @@ import {filterEmpty} from '@utils/rx';
   styleUrls: ['./duplicates-view.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DuplicatesViewComponent {
+export class DuplicatesViewComponent implements OnInit, OnDestroy {
 
   @Input()
   duplicate: DuplicatesView | null = null;
@@ -50,6 +57,17 @@ export class DuplicatesViewComponent {
   ) {
   }
 
+  ngOnInit() {
+    this.duplicate$
+      .pipe(
+        untilDestroyed(this),
+        mergeMap(d => [d.sourceId, d.targetId])
+      )
+      .subscribe(id => this.store.dispatch(loadPictureById(id)));
+  }
+
+  ngOnDestroy() {
+  }
 
   onUnlinkDuplicate() {
     if (!!this.duplicate) {

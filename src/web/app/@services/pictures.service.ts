@@ -12,8 +12,8 @@ export class PicturesService {
   constructor(private readonly httpClient: HttpClient) {
   }
 
-  getPictureFolder(pictureId: string): Observable<Folder> {
-    return this.httpClient.get<Folder>(`${this.baseUri}/${pictureId}/folder`);
+  getPicture(pictureId: string): Observable<PictureContainerDto> {
+    return this.httpClient.get<PictureContainerDto>(`${this.baseUri}/${pictureId}`);
   }
 
   getThumbnailUri(pictureId: string): string {

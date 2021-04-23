@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType, ROOT_EFFECTS_INIT} from '@ngrx/effects';
 import {DuplicatesService} from '@services/duplicates.service';
 import {EffectMarker} from '@utils/decorators';
-import {map, mergeMap, share, switchMap} from 'rxjs/operators';
+import {map, share, switchMap} from 'rxjs/operators';
 import {
   duplicatesDetected,
   loadAllDuplicates,
@@ -13,7 +13,6 @@ import {
 import {PicturesService} from '@services/pictures.service';
 import {switchMapContinue} from '@utils/rx';
 import {Store} from '@ngrx/store';
-import {loadPictureById} from '@ngrx/pictures';
 import {Modals} from '@juraji/ng-bootstrap-modals';
 import {EMPTY} from 'rxjs';
 
@@ -37,13 +36,6 @@ export class DuplicatesEffects {
       return fetch;
     }),
     map(duplicatesDetected)
-  ));
-
-  @EffectMarker
-  loadDuplicatePictures$ = createEffect(() => this.actions$.pipe(
-    ofType(duplicatesDetected),
-    mergeMap(({duplicates}) => duplicates.flatMap(d => [d.sourceId, d.targetId]).unique()),
-    map(pid => loadPictureById(pid))
   ));
 
   @EffectMarker
