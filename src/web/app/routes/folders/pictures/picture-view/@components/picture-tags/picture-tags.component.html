@@ -3,6 +3,7 @@
     <h6 class="card-title text-ellipsis mb-0">Tags</h6>
   </div>
   <div class="card-body d-flex flex-wrap">
+    <span class="small text-muted" *ngIf="pictureTags$ | async | empty">No tags assigned</span>
     <div ngbDropdown *ngFor="let tag of pictureTags$ | async">
       <button class="btn mr-2 mb-2" appTag [tag]="tag" ngbDropdownToggle></button>
       <div ngbDropdownMenu>

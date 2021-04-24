@@ -4,6 +4,9 @@
   </div>
   <table class="table">
     <tbody>
+    <tr *ngIf="duplicates$ | async | empty">
+      <td class="small text-muted">No duplicates found</td>
+    </tr>
     <tr *ngFor="let duplicate of duplicates$ | async">
       <td class="align-middle">{{duplicate.similarity | percent}}</td>
       <td>

@@ -13,6 +13,7 @@ import {NgbDropdownModule} from '@ng-bootstrap/ng-bootstrap';
 import {PictureDuplicatesComponent} from './picture-view/@components/picture-duplicates/picture-duplicates.component';
 import {EditPictureModal} from './picture-view/@components/edit-picture/edit-picture.modal';
 import {ReactiveFormsModule} from '@angular/forms';
+import {UtilityPipesModule} from '@components/utility-pipes/utility-pipes.module';
 
 
 @NgModule({
@@ -31,7 +32,8 @@ import {ReactiveFormsModule} from '@angular/forms';
     FsPipesModule,
     PictureImageViewsModule,
     TagMgmtModule,
-    NgbDropdownModule
+    NgbDropdownModule,
+    UtilityPipesModule
   ]
 })
 export class PicturesModule {
