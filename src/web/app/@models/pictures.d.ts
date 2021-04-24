@@ -8,6 +8,7 @@ interface Picture {
   height: number;
   fileSize: number;
   addedOn: string;
+  lastModified: string;
 }
 
 interface DuplicatesView {

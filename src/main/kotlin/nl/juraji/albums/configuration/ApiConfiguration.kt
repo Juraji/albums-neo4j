@@ -6,6 +6,8 @@ import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
 import org.springframework.http.codec.ServerCodecConfigurer
 import org.springframework.http.codec.multipart.DefaultPartHttpMessageReader
 import org.springframework.http.codec.multipart.MultipartHttpMessageReader
@@ -49,8 +51,15 @@ class ApiConfiguration : WebFluxConfigurer {
         val configuration = CorsConfiguration()
         configuration.maxAge = appConfiguration.maxAge
         configuration.allowedOrigins = appConfiguration.allowedOrigins
-        configuration.allowedMethods = listOf("GET", "POST", "DELETE")
-        configuration.allowedHeaders = listOf("content-type")
+        configuration.allowedMethods = listOf(
+            HttpMethod.GET,
+            HttpMethod.POST,
+            HttpMethod.PUT,
+            HttpMethod.DELETE,
+        ).map(HttpMethod::name)
+        configuration.allowedHeaders = listOf(
+            HttpHeaders.CONTENT_TYPE
+        )
 
         val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", configuration)

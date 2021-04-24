@@ -13,6 +13,7 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.core.util.function.component1
 import reactor.kotlin.core.util.function.component2
 import java.util.concurrent.TimeUnit
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/pictures")
@@ -56,6 +57,12 @@ class PicturesController(
         @PathVariable pictureId: String,
         @PathVariable targetId: String
     ): Mono<Picture> = picturesService.movePicture(pictureId, targetId)
+
+    @PutMapping("/{pictureId}")
+    fun updatePicture(
+        @PathVariable pictureId: String,
+        @Valid @RequestBody picture: Picture
+    ): Mono<Picture> = picturesService.updatePicture(pictureId, picture)
 
     @DeleteMapping("/{pictureId}/duplicates/{targetId}")
     fun deleteDuplicateFromPicture(

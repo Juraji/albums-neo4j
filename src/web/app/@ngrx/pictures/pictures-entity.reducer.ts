@@ -4,7 +4,8 @@ import {
   addPictureSuccess,
   deletePicture,
   loadPictureByIdSuccess,
-  loadPicturesByFolderIdSuccess
+  loadPicturesByFolderIdSuccess,
+  updatePicture
 } from './pictures.actions';
 
 const picturesEntityAdapter = createEntityAdapter<Picture>();
@@ -16,5 +17,6 @@ export const picturesEntityReducer = createReducer(
   on(loadPictureByIdSuccess, (s, {picture}) => picturesEntityAdapter.upsertOne(picture, s)),
   on(loadPicturesByFolderIdSuccess, (s, {pictures}) => picturesEntityAdapter.upsertMany(pictures, s)),
   on(addPictureSuccess, (s, {picture}) => picturesEntityAdapter.upsertOne(picture, s)),
+  on(updatePicture, (s, {changes}) => picturesEntityAdapter.updateOne({id: changes.id, changes}, s)),
   on(deletePicture, (s, {pictureId}) => picturesEntityAdapter.removeOne(pictureId, s))
 );

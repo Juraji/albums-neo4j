@@ -25,6 +25,16 @@ export const addPictureSuccess = createAction(
   (picture: Picture, parentFolderId: string) => ({picture, parentFolderId})
 );
 
+export const updatePicture = createAction(
+  '[Pictures] Update picture',
+  (changes: Picture) => ({changes})
+);
+
+export const updatePictureSuccess = createAction(
+  '[Pictures] Update picture success',
+  (picture: Picture) => ({picture})
+);
+
 export const deletePicture = createAction(
   '[Pictures] Delete picture',
   (pictureId: string) => ({pictureId})

@@ -23,6 +23,7 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.core.util.function.component1
 import reactor.kotlin.core.util.function.component2
 import reactor.kotlin.extra.bool.not
+import java.time.LocalDateTime
 
 @Service
 class PicturesService(
@@ -35,8 +36,8 @@ class PicturesService(
 
     fun getFolderPictures(folderId: String): Flux<Picture> = picturesRepository.findAllByFolderId(folderId)
 
-    fun persistNewPicture(folderId: String, file: FilePart): Mono<Picture> {
-        return unpackFilePart(file)
+    fun persistNewPicture(folderId: String, file: FilePart): Mono<Picture> =
+        unpackFilePart(file)
             .validate { (_, fileType, filename) ->
                 isNotNull(fileType) { "Missing Content-Type header" }
                 isNotNull(filename) { "Missing Content-Disposition header" }
@@ -66,24 +67,42 @@ class PicturesService(
             .flatMap(picturesRepository::save)
             .flatMap { picturesRepository.addPictureToFolder(folderId, it.id!!) }
             .doOnNext { applicationEventPublisher.publishEvent(PictureAddedEvent(folderId, it)) }
-    }
 
-    fun getPictureResource(pictureId: String): Mono<Resource> = Mono
-        .just(pictureId)
-        .map { FileSystemResource(imageService.getFullImagePath(it)) }
+    fun updatePicture(pictureId: String, update: Picture): Mono<Picture> =
+        picturesRepository.findById(pictureId)
+            .validateAsync { existing ->
+                synchronous {
+                    isTrue(update.id == existing.id) { "Picture id in body does not match picture id in parameters" }
+                }
 
-    fun getThumbnailResource(pictureId: String): Mono<Resource> = Mono
-        .just(pictureId)
-        .map { FileSystemResource(imageService.getThumbnailPath(it)) }
-
-    fun movePicture(pictureId: String, targetFolderId: String): Mono<Picture> = getById(pictureId)
-        .validateAsync { picture ->
-            isTrue(foldersRepository.existsById(targetFolderId)) { "No folder with id $targetFolderId exists" }
-            isFalse(picturesRepository.existsByNameInFolder(targetFolderId, picture.name)) {
-                "A file with name ${picture.name} already exists in folder with id $targetFolderId"
+                isFalse(
+                    foldersRepository.findByPictureId(pictureId).flatMap {
+                        picturesRepository.existsByNameInFolder(it.id!!, update.name)
+                    }) { "A picture with name ${update.name} already exists in the same folder" }
             }
-        }
-        .flatMap { picturesRepository.addPictureToFolder(targetFolderId, it.id!!) }
+            .map {
+                it.copy(
+                    name = update.name,
+                    lastModified = LocalDateTime.now()
+                )
+            }
+            .flatMap(picturesRepository::save)
+
+    fun getPictureResource(pictureId: String): Mono<Resource> =
+        Mono.just(pictureId).map { FileSystemResource(imageService.getFullImagePath(it)) }
+
+    fun getThumbnailResource(pictureId: String): Mono<Resource> =
+        Mono.just(pictureId).map { FileSystemResource(imageService.getThumbnailPath(it)) }
+
+    fun movePicture(pictureId: String, targetFolderId: String): Mono<Picture> =
+        getById(pictureId)
+            .validateAsync { picture ->
+                isTrue(foldersRepository.existsById(targetFolderId)) { "No folder with id $targetFolderId exists" }
+                isFalse(picturesRepository.existsByNameInFolder(targetFolderId, picture.name)) {
+                    "A file with name ${picture.name} already exists in folder with id $targetFolderId"
+                }
+            }
+            .flatMap { picturesRepository.addPictureToFolder(targetFolderId, it.id!!) }
 
     fun deletePicture(pictureId: String): Mono<Void> =
         picturesRepository

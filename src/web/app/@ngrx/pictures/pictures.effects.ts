@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {PicturesService} from '@services/pictures.service';
 import {Store} from '@ngrx/store';
-import {distinctUntilKeyChanged, map, mergeMap} from 'rxjs/operators';
+import {distinctUntilKeyChanged, map, mergeMap, switchMap} from 'rxjs/operators';
 import {EffectMarker} from '@utils/decorators';
 import {FolderPicturesService} from '@services/folder-pictures.service';
 import {
@@ -13,7 +13,9 @@ import {
   loadPicturesByFolderId,
   loadPicturesByFolderIdSuccess,
   movePicture,
-  movePictureSuccess
+  movePictureSuccess,
+  updatePicture,
+  updatePictureSuccess
 } from './pictures.actions';
 import {filterAsync, isNullOrUndefined, switchMapContinue} from '@utils/rx';
 import {selectPictureById} from '@ngrx/pictures/pictures.reducer';
@@ -44,6 +46,13 @@ export class PicturesEffects {
     ofType(movePicture),
     switchMapContinue(({pictureId, targetFolderId}) => this.picturesService.movePicture(pictureId, targetFolderId)),
     map(([{pictureId, targetFolderId}]) => movePictureSuccess(pictureId, targetFolderId))
+  ));
+
+  @EffectMarker
+  updatePicture$ = createEffect(() => this.actions$.pipe(
+    ofType(updatePicture),
+    switchMap(({changes}) => this.picturesService.updatePicture(changes)),
+    map(updatePictureSuccess)
   ));
 
   @EffectMarker

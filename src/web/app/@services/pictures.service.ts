@@ -32,6 +32,10 @@ export class PicturesService {
     return this.httpClient.post<Picture>(`${this.baseUri}/${pictureId}/move-to/${targetFolderId}`, null);
   }
 
+  updatePicture(update: Picture): Observable<Picture> {
+    return this.httpClient.put<Picture>(`${this.baseUri}/${update.id}`, update);
+  }
+
   deletePicture(pictureId: string): Observable<void> {
     return this.httpClient.delete<void>(`${this.baseUri}/${pictureId}`);
   }

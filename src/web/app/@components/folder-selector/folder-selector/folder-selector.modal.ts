@@ -1,4 +1,4 @@
-import {Component, Inject} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Inject} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {MODAL_DATA, ModalRef} from '@juraji/ng-bootstrap-modals';
 import {selectAllFolders} from '@ngrx/folders';
@@ -8,7 +8,8 @@ import {Validators} from '@angular/forms';
 
 @Component({
   templateUrl: './folder-selector.modal.html',
-  styleUrls: ['./folder-selector.modal.scss']
+  styleUrls: ['./folder-selector.modal.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FolderSelectorModal {
 

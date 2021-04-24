@@ -1,26 +1,22 @@
 import {Pipe, PipeTransform} from '@angular/core';
 
-@Pipe({
-  name: 'fileSize'
-})
+const STEP_SIZE = 1024;
+const STEP_NAMES: ReadonlyArray<string> = ['bytes', 'KB', 'MB', 'GB', 'TB'];
+
+@Pipe({name: 'fileSize'})
 export class FileSizePipe implements PipeTransform {
-  private static readonly dictionary: ReadonlyArray<string> = ['bytes', 'KB', 'MB', 'GB', 'TB'];
-  private static readonly step = 1024;
-
-  transform(bytes: number, fractionDigits = 1): unknown {
-    if (!bytes) {
-      return null;
-    }
-    let i: number;
-    for (i = 0; i < FileSizePipe.dictionary.length; i++) {
-      if (bytes < FileSizePipe.step) {
-        break;
-      }
-
-      bytes = bytes / FileSizePipe.step;
+  transform(bytes?: number, fractionDigits = 1): string {
+    if (typeof bytes !== 'number') {
+      return `0 ${STEP_NAMES[0]}`;
     }
 
-    return `${bytes.toFixed(fractionDigits)} ${FileSizePipe.dictionary[i]}`;
+    let i = 0;
+    while (i < STEP_NAMES.length && bytes >= STEP_SIZE) {
+      bytes = bytes / STEP_SIZE;
+      i++;
+    }
+
+    return `${bytes.toFixed(fractionDigits)} ${STEP_NAMES[i]}`;
   }
 
 }
