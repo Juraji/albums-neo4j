@@ -1,3 +1,6 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+
 $tile-size: 12.5rem;
 $folder-tile-label-offset: 4rem;
 
@@ -30,10 +33,20 @@ $folder-tile-label-offset: 4rem;
   }
 
   .picture-tile {
+    position: relative;
+
     img {
       width: $tile-size;
       height: $tile-size;
       object-fit: contain;
+    }
+
+    .picture-tile-label {
+      position: absolute;
+      bottom: 1px;
+      left: 1px;
+      width: calc(#{$tile-size} - 2px);
+      background-color: fade-out($black, .5);
     }
   }
 }

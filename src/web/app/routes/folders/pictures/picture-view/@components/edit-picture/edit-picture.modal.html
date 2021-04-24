@@ -11,12 +11,12 @@
   <div class="modal-body">
     <div class="form-group">
       <label for="picture-name">Name</label>
-      <input id="picture-name" class="form-control" formControlName="name">
+      <input id="picture-name" class="form-control" formControlName="name" modalAutoFocus>
       <div class="form-text small text-muted">By default the file extension is added to the name, but this is not mandatory.</div>
     </div>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-outline-danger" modalDismiss>Cancel</button>
-    <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Select</button>
+    <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Save</button>
   </div>
 </form>

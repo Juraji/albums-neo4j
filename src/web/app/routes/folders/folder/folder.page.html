@@ -15,6 +15,8 @@
        *ngFor="let picture of pagedPictures$ | async"
        [routerLink]="['/folders', (folderId$ | async), 'pictures', picture.id]">
     <img appPictureThumbnail [pictureId]="picture.id">
+    <span class="rounded-bottom text-ellipsis px-1 text-white picture-tile-label"
+          [title]="picture.name">{{picture.name}}</span>
   </div>
 </div>
 

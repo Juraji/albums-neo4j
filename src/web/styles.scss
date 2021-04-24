@@ -6,6 +6,10 @@
 @import "~@fortawesome/fontawesome-free/scss/fontawesome";
 @import "~@fortawesome/fontawesome-free/scss/solid";
 
+body{
+  background-color: #f2f2f2;
+}
+
 // Compatibility between ng forms and bootstrap validations
 .form-control.ng-touched {
   &.ng-invalid {

@@ -2,13 +2,16 @@ import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/co
 import {Store} from '@ngrx/store';
 import {ActivatedRoute, Router} from '@angular/router';
 import {map, switchMap, withLatestFrom} from 'rxjs/operators';
-import {filterEmpty, once, switchMapContinue} from '@utils/rx';
+import {filterEmpty, not, once, switchMapContinue} from '@utils/rx';
 import {selectFolderById} from '@ngrx/folders';
 import {deletePicture, loadPictureById, movePicture, selectPictureById, updatePicture} from '@ngrx/pictures';
 import {untilDestroyed} from '@utils/until-destroyed';
 import {Modals} from '@juraji/ng-bootstrap-modals';
 import {FolderSelectorModal} from '@components/folder-selector';
 import {EditPictureModal} from './@components/edit-picture/edit-picture.modal';
+import {selectSetting, updateSetting} from '@ngrx/settings';
+
+const MAXIMIZE_SETTING = 'picture-view--maximize-image';
 
 @Component({
   templateUrl: './picture-view.page.html',
@@ -34,6 +37,9 @@ export class PictureViewPage implements OnInit, OnDestroy {
       switchMap(pictureId => this.store.select(selectPictureById, {pictureId})),
       filterEmpty()
     );
+
+  public readonly maximize$ = this.store
+    .select(selectSetting(MAXIMIZE_SETTING, false));
 
   constructor(
     private readonly store: Store<AppState>,
@@ -87,5 +93,11 @@ export class PictureViewPage implements OnInit, OnDestroy {
         this.folderId$.pipe(once())
           .subscribe(fid => this.router.navigate(['/folders', fid]));
       });
+  }
+
+  onMaximize() {
+    this.maximize$
+      .pipe(once(), not())
+      .subscribe(state => this.store.dispatch(updateSetting(MAXIMIZE_SETTING, state)));
   }
 }

@@ -6,8 +6,14 @@
     .picture-img {
       max-width: 100%;
 
-      @media (min-width: map-get($grid-breakpoints, 'lg')) {
-        max-height: calc(100vh - 5rem);
+      &.maximized {
+        width: 100%;
+      }
+
+      &:not(.maximized) {
+        @media (min-width: map-get($grid-breakpoints, 'lg')) {
+          max-height: calc(100vh - 5rem);
+        }
       }
     }
   }

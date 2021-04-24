@@ -6,6 +6,19 @@
     </button>
   </li>
   <li class="nav-item">
+    <ng-container [ngSwitch]="maximize$ | async">
+      <button *ngSwitchCase="true" class="btn btn-primary ml-2" title="Fit picture in view"
+              (click)="onMaximize()">
+        <span class="fa fa-compress"></span>
+      </button>
+      <button *ngSwitchCase="false" class="btn btn-secondary ml-2" title="Maximize picture"
+              (click)="onMaximize()">
+        <span class="fa fa-expand"></span>
+      </button>
+    </ng-container>
+
+  </li>
+  <li class="nav-item">
     <button class="btn btn-primary ml-2" title="Edit picture details"
             (click)="onEditPicture()">
       <span class="fa fa-edit"></span>
@@ -35,7 +48,8 @@
       <app-picture-duplicates [picture]="picture$ | async"></app-picture-duplicates>
     </div>
     <div class="col-lg-9 image-container">
-      <img class="d-block mx-auto" appPictureImg [pictureId]="(picture$ | async)?.id || null"/>
+      <img class="d-block mx-auto shadow-lg" [class.maximized]="maximize$ | async" appPictureImg
+           [pictureId]="(picture$ | async)?.id || null"/>
     </div>
   </div>
 </div>

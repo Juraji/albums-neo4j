@@ -1,6 +1,6 @@
 <div class="card shadow" *ngIf="!!folder && !!picture">
   <div class="card-header">
-    <h4 class="card-title text-ellipsis mb-0">{{picture.name}}</h4>
+    <h4 class="card-title text-ellipsis mb-0" [title]="picture.name">{{picture.name}}</h4>
   </div>
   <div class="card-body">
     <table class="table table-sm table-borderless">
