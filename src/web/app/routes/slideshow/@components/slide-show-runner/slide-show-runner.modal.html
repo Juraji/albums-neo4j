@@ -1,0 +1,30 @@
+<div class="modal-header bg-dark text-white">
+  <h4 class="modal-title">Slideshow</h4>
+  <span class="fa fa-angle-double-right text-muted ms-2 mt-2" *ngIf="request.autoPlay" title="Auto-play enabled"></span>
+  <span class="fa fa-random text-muted ms-2 mt-2" *ngIf="request.random" title="Randomized"></span>
+  <button type="button" class="btn-close" aria-label="Close" modalDismiss></button>
+</div>
+<div class="modal-body bg-dark overflow-hidden">
+  <div class="slide-wrapper" *ngIf="currentPicture$ | async as picture" @imageChange>
+    <img
+      appPictureImg
+      class="border-0 rounded-0"
+      [pictureId]="picture.id"
+    />
+  </div>
+</div>
+<div class="modal-footer bg-dark d-flex justify-content-between">
+  <h4 class="text-white">{{(currentPicture$ | async)?.name}}</h4>
+  <div class="btn-group">
+    <button class="btn btn-primary btn-sm" (click)="onGoIndexDelta(-1)">
+      <span class="fa fa-chevron-left"></span>
+    </button>
+    <button class="btn btn-primary btn-sm" (click)="onPausePlay()">
+      <span class="fa fa-play" *ngIf="(playing$ | async) === false"></span>
+      <span class="fa fa-pause" *ngIf="playing$ | async"></span>
+    </button>
+    <button class="btn btn-primary btn-sm" (click)="onGoIndexDelta(1)">
+      <span class="fa fa-chevron-right"></span>
+    </button>
+  </div>
+</div>

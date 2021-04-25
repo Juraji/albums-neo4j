@@ -44,4 +44,9 @@ interface Array<T> {
    * Uses an internal Set to remove duplicated values from this array.
    */
   unique(this: Array<T>, identity?: (item: T) => any): Array<T>;
+
+  /**
+   * Returns a (Fisher-Yates) randomized copy of this array.
+   */
+  randomize(this: Array<T>): Array<T>;
 }

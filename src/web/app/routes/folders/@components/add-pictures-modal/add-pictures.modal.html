@@ -1,9 +1,7 @@
 <form [formGroup]="form" (submit)="onSubmit()" modalForm>
   <div class="modal-header">
     <h4 class="modal-title">Add pictures to "{{parentFolder.name}}"</h4>
-    <button type="button" class="close" aria-label="Close" modalDismiss>
-      <span aria-hidden="true">&times;</span>
-    </button>
+    <button type="button" class="btn-close" aria-label="Close" modalDismiss></button>
   </div>
   <div class="modal-body">
     <div class="selection-indicator mb-4" *ngIf="selectedFiles$ | async as selectedFiles">

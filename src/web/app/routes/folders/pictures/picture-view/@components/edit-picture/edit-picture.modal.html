@@ -1,12 +1,10 @@
-<form [formGroup]="form" (submit)="onSubmit()" class="modal-" modalForm>
+<form [formGroup]="form" (submit)="onSubmit()" modalForm>
   <div class="modal-header">
     <h4 class="modal-title">
       Edit picture details<br />
       <small>{{picture.name}}</small>
     </h4>
-    <button type="button" class="close" aria-label="Close" modalDismiss>
-      <span aria-hidden="true">&times;</span>
-    </button>
+    <button type="button" class="btn-close" aria-label="Close" modalDismiss></button>
   </div>
   <div class="modal-body">
     <div class="form-group">

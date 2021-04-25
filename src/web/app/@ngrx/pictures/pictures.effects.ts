@@ -17,7 +17,7 @@ import {
   updatePicture,
   updatePictureSuccess
 } from './pictures.actions';
-import {filterAsync, isNullOrUndefined, switchMapContinue} from '@utils/rx';
+import {filterWhen, isNullOrUndefined, switchMapContinue} from '@utils/rx';
 import {selectPictureById} from '@ngrx/pictures/pictures.reducer';
 
 
@@ -35,7 +35,7 @@ export class PicturesEffects {
   @EffectMarker
   loadPictureById$ = createEffect(() => this.actions$.pipe(
     ofType(loadPictureById),
-    filterAsync(({pictureId}) =>
+    filterWhen(({pictureId}) =>
       this.store.select(selectPictureById, {pictureId}).pipe(isNullOrUndefined())),
     mergeMap(({pictureId}) => this.picturesService.getPicture(pictureId)),
     map(({picture, folder}) => loadPictureByIdSuccess(picture, folder))

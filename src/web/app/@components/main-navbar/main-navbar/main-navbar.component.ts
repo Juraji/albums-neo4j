@@ -44,6 +44,10 @@ export class MainNavbarComponent implements OnInit {
     {
       label: of('Settings'),
       url: '/settings'
+    },
+    {
+      label: of('Slideshow'),
+      url: '/slideshow'
     }
   ];
 

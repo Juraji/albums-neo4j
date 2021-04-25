@@ -1,9 +1,7 @@
 <form [formGroup]="form" (submit)="onSubmit()" modalForm>
   <div class="modal-header">
     <h4 class="modal-title">Add folder</h4>
-    <button type="button" class="close" aria-label="Close" modalDismiss>
-      <span aria-hidden="true">&times;</span>
-    </button>
+    <button type="button" class="btn-close" aria-label="Close" modalDismiss></button>
   </div>
   <div class="modal-body">
     <input formControlName="name" class="form-control" placeholder="Name" modalAutoFocus>

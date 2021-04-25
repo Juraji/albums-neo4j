@@ -28,7 +28,7 @@
     "@ngrx/schematics": "11.x.x",
     "@ngrx/store": "11.x.x",
     "@ngrx/store-devtools": "11.x.x",
-    "bootstrap": "4.x.x",
+    "bootstrap": "^5.0.0-beta3",
     "ngx-color": "^6.2.0",
     "ngx-forms-typed": "^1.0.8",
     "ngx-infinite-scroll": "10.x.x",

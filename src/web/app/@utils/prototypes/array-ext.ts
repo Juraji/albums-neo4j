@@ -111,4 +111,25 @@ export default function () {
       }
     },
   });
+
+  Object.defineProperty(Array.prototype, 'randomize', {
+    configurable: false,
+    enumerable: false,
+    writable: false,
+    value: function <T>(this: Array<T>) {
+      const copy = this.slice();
+      let m = this.length
+      let t: T;
+      let i: number;
+
+      while (m) {
+        i = Math.floor(Math.random() * m--);
+        t = copy[m];
+        copy[m] = copy[i];
+        copy[i] = t
+      }
+
+      return copy;
+    },
+  });
 }

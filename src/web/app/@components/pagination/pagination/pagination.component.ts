@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {map, shareReplay, withLatestFrom} from 'rxjs/operators';
-import {filterAsync, once} from '@utils/rx';
+import {filterWhen, once} from '@utils/rx';
 
 @Component({
   selector: 'app-pagination',
@@ -61,13 +61,13 @@ export class PaginationComponent implements OnChanges {
 
   onPrevious() {
     this.currentPage$
-      .pipe(once(), filterAsync(() => this.canPrevious$))
+      .pipe(once(), filterWhen(() => this.canPrevious$))
       .subscribe(p => this.onPageSelect(p - 1));
   }
 
   onNext() {
     this.currentPage$
-      .pipe(once(), filterAsync(() => this.canNext$))
+      .pipe(once(), filterWhen(() => this.canNext$))
       .subscribe(p => this.onPageSelect(p + 1));
   }
 }

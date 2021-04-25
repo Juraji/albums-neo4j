@@ -1,0 +1,46 @@
+<app-main-navbar></app-main-navbar>
+
+<div class="container clear-navbar">
+  <form [formGroup]="slideshowForm" (submit)="onStartSlideShow()">
+    <div class="card shadow">
+      <div class="card-header">
+        <h4 class="card-title">Start slideshow</h4>
+      </div>
+      <div class="card-body row">
+        <div class="col col-sm-6">
+          <div class="form-group mb-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="slide-show-randomize" formControlName="random">
+              <label class="form-check-label" for="slide-show-randomize">Randomize</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="slide-show-auto-play" formControlName="autoPlay">
+              <label class="form-check-label" for="slide-show-auto-play">Auto play</label>
+            </div>
+          </div>
+          <div class="form-group mb-3">
+            <label class="form-check-label" for="slide-show-interval">Auto play interval</label>
+            <input class="form-control" type="number" id="slide-show-interval" formControlName="interval">
+            <span class="form-text small text-muted">In seconds!</span>
+          </div>
+        </div>
+        <div class="col col-sm-6">
+          <div class="form-group mb-3">
+            <label for="slide-show-select-folders">Select folders...</label>
+            <select class="form-select custom-select" multiple size="10"
+                    id="slide-show-select-folders" formControlName="folders">
+              <option *ngFor="let f of availableFolders$ | async" [value]="f.id">{{f.name}}</option>
+            </select>
+            <div class="d-flex justify-content-between">
+              <span class="form-text small text-muted">{{slideshowForm.value.folders.length}} folders selected.</span>
+              <button type="button" class="btn btn-primary btn-sm mt-1" (click)="onSelectAllFolders()">Select all</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <button type="submit" class="btn btn-primary" [disabled]="slideshowForm.invalid">Start slideshow</button>
+      </div>
+    </div>
+  </form>
+</div>

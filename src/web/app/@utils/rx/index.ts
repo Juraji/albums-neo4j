@@ -1,5 +1,5 @@
 export * from './distinct';
-export * from './filter-async';
+export * from './filter-when';
 export * from './filter-empty';
 export * from './not';
 export * from './once';

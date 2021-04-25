@@ -4,10 +4,7 @@
       <h4 class="modal-title" *ngSwitchCase="true">Edit tag</h4>
       <h4 class="modal-title" *ngSwitchCase="false">Create new tag</h4>
     </ng-container>
-
-    <button type="button" class="close" aria-label="Close" (click)="onDismiss()">
-      <span aria-hidden="true">&times;</span>
-    </button>
+    <button type="button" class="btn-close" aria-label="Close" modalDismiss></button>
   </div>
   <div class="modal-body">
     <div class="form-group mb-3">

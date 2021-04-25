@@ -57,20 +57,20 @@
       </div>
     </div>
     <div class="card-footer">
-      <a class="btn btn-outline-primary mr-2" title="Go to folder" [routerLink]="['/folders', asFolder(folder).id]">
+      <a class="btn btn-outline-primary me-2" title="Go to folder" [routerLink]="['/folders', asFolder(folder).id]">
         <span class="fa fa-folder-open"></span>
       </a>
-      <a class="btn btn-outline-primary mr-2" title="Go to picture"
+      <a class="btn btn-outline-primary me-2" title="Go to picture"
          [routerLink]="['/folders', asFolder(folder).id ,'pictures', asPicture(picture).id]">
         <span class="fa fa-search"></span>
       </a>
-      <button class="btn btn-outline-primary mr-2" title="Unlink duplicates" (click)="onUnlinkDuplicate()">
+      <button class="btn btn-outline-primary me-2" title="Unlink duplicates" (click)="onUnlinkDuplicate()">
         <span class="fa fa-unlink"></span>
       </button>
-      <button class="btn btn-outline-danger mr-2" title="Delete picture" (click)="onDeletePicture(picture)">
+      <button class="btn btn-outline-danger me-2" title="Delete picture" (click)="onDeletePicture(picture)">
         <span class="fa fa-trash"></span>
       </button>
-      <button class="btn btn-outline-primary mr-2" title="Move picture" (click)="onMovePicture(folder, picture)">
+      <button class="btn btn-outline-primary me-2" title="Move picture" (click)="onMovePicture(folder, picture)">
         <span class="fa fa-external-link-alt"></span>
       </button>
     </div>

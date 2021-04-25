@@ -1,13 +1,13 @@
 <div class="duplicates-reel d-flex fixed-bottom bg-light px-3 py-1 overflow-auto">
-  <div class="duplicates-reel-item mr-3 p-1 cursor-pointer d-flex"
+  <div class="duplicates-reel-item me-3 p-1 cursor-pointer d-flex"
        *ngFor="let duplicate of duplicates$ | async"
        [class.selected]="(selectedDuplicate$ | async) === duplicate"
        (click)="onSelectDuplicate(duplicate)">
     <img appPictureThumbnail [pictureId]="duplicate.sourceId" class="duplicate-reel-source">
-    <span class="fa-stack ml-n3 mt-2 align-top">
+    <span class="fa-stack ms-n ms-n3 mt-2 align-top">
       <i class="fa fa-circle fa-stack-2x text-primary"></i>
       <i class="fa fa-angle-double-right fa-stack-1x fa-inverse"></i>
     </span>
-    <img appPictureThumbnail [pictureId]="duplicate.targetId" class="ml-n3 duplicate-reel-target">
+    <img appPictureThumbnail [pictureId]="duplicate.targetId" class="ms-n3 duplicate-reel-target">
   </div>
 </div>

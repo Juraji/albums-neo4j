@@ -1231,9 +1231,9 @@
     schema-utils "^2.7.0"
 
 "@juraji/ng-bootstrap-modals@1.x.x":
-  version "1.2.2"
-  resolved "https://npm.pkg.github.com/download/@juraji/ng-bootstrap-modals/1.2.2/79f6a4808fef4b58fa4af0d64009fb03d2046de9b766357ff84d829961e7a276#606ee9464af541ec93a3dab5052b1d388110116b"
-  integrity sha512-s7Ez2PQ72/oTPAiPdIJ64NGEofHaBXogoRqirDBfKDMgwSlVQlsQWmwy0mpleO+FjhaWKDmPc0ZFkvh2Uu/c9Q==
+  version "1.3.2"
+  resolved "https://npm.pkg.github.com/download/@juraji/ng-bootstrap-modals/1.3.2/9f92cbe70a849e6f6abd48d2672a94726a3ea851f4111748ed837059dee18441#f612aa0d843776f09f1c32b6e5a819e95210f2ea"
+  integrity sha512-OQ2Y+E9iVt0yiPPsH0NKZ995ZjHaYc+HAOp8d94tlKEOfsbBKhPTe16C5J0G0wF/HC1nCgz26ZxiJzYAhyiQPQ==
   dependencies:
     tslib "2.x.x"
 
@@ -2356,10 +2356,10 @@ boolbase@^1.0.0, boolbase@~1.0.0:
   resolved "https://registry.yarnpkg.com/boolbase/-/boolbase-1.0.0.tgz#68dff5fbe60c51eb37725ea9e3ed310dcc1e776e"
   integrity sha1-aN/1++YMUes3cl6p4+0xDcwed24=
 
-bootstrap@4.x.x:
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-4.6.0.tgz#97b9f29ac98f98dfa43bf7468262d84392552fd7"
-  integrity sha512-Io55IuQY3kydzHtbGvQya3H+KorS/M9rSNyfCGCg9WZ4pyT/lCxIlpJgG1GXW/PswzC84Tr2fBYi+7+jFVQQBw==
+bootstrap@^5.0.0-beta3:
+  version "5.0.0-beta3"
+  resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-5.0.0-beta3.tgz#c959f61fbd03667a1b158f763856994859d7a465"
+  integrity sha512-0urccjfIOzhrb9qJysN8XW/DRw6rg3zH7qLeKIp4Zyl8+Ens4JWB0NC0cB5AhnSFPd2tftRggjwCMxablo6Tpg==
 
 brace-expansion@^1.1.7:
   version "1.1.11"
