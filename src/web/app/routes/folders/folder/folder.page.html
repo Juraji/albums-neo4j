@@ -1,7 +1,9 @@
 <app-main-navbar></app-main-navbar>
 <nav class="navbar navbar-light bg-light fixed-top shadow folder-details">
-  <app-folder-breadcrumbs></app-folder-breadcrumbs>
-  <app-folder-details-pane [folder]="folder$ | async"></app-folder-details-pane>
+  <div class="container-fluid">
+    <app-folder-breadcrumbs></app-folder-breadcrumbs>
+    <app-folder-details-pane [folder]="folder$ | async"></app-folder-details-pane>
+  </div>
 </nav>
 
 <div class="container-fluid d-flex flex-wrap folder-contents">

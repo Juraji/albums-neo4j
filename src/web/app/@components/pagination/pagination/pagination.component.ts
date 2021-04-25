@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {Observable, ReplaySubject} from 'rxjs';
 import {map, shareReplay, withLatestFrom} from 'rxjs/operators';
 import {filterWhen, once} from '@utils/rx';
 
@@ -9,8 +9,8 @@ import {filterWhen, once} from '@utils/rx';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaginationComponent implements OnChanges {
-  readonly pages$ = new Subject<number[]>();
-  readonly currentPage$ = new BehaviorSubject(0);
+  readonly pages$ = new ReplaySubject<number[]>();
+  readonly currentPage$ = new ReplaySubject<number>(1);
 
   readonly canPrevious$ = this.currentPage$
     .pipe(map(p => p > 1), shareReplay(1));
@@ -41,6 +41,7 @@ export class PaginationComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    console.log(changes);
     const pageSize = changes.hasOwnProperty('pageSize')
       ? changes.pageSize.currentValue
       : this.pageSize || 0;

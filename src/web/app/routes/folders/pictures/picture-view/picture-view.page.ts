@@ -8,7 +8,7 @@ import {deletePicture, loadPictureById, movePicture, selectPictureById, updatePi
 import {untilDestroyed} from '@utils/until-destroyed';
 import {Modals} from '@juraji/ng-bootstrap-modals';
 import {FolderSelectorModal} from '@components/folder-selector';
-import {EditPictureModal} from './@components/edit-picture/edit-picture.modal';
+import {EditPictureModal} from '../@components/edit-picture/edit-picture.modal';
 import {selectSetting, updateSetting} from '@ngrx/settings';
 
 const MAXIMIZE_SETTING = 'picture-view--maximize-image';
