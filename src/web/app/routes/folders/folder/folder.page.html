@@ -23,7 +23,9 @@
 </div>
 
 <nav class="navbar navbar-light bg-light fixed-bottom folder-pagination" *ngIf="pictures$ | async as pictures">
-  <app-pagination [collectionSize]="pictures.length" [pageSize]="pageSizeRef.selectedSize$ | async"
-                  (range)="onPageUpdate($event)"></app-pagination>
-  <app-page-size-selector [collectionSize]="pictures.length" #pageSizeRef></app-page-size-selector>
+  <div class="container-fluid">
+    <app-pagination [collectionSize]="pictures.length" [pageSize]="pageSizeRef.selectedSize$ | async"
+                    (range)="onPageUpdate($event)"></app-pagination>
+    <app-page-size-selector [collectionSize]="pictures.length" #pageSizeRef></app-page-size-selector>
+  </div>
 </nav>

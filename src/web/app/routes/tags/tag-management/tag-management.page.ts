@@ -1,12 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {createTag, deleteTag, selectAllTags, updateTag} from '@ngrx/tags';
-import {Modals} from "@juraji/ng-bootstrap-modals";
-import {EditTagModal} from "@components/tag-mgmt";
+import {Modals} from '@juraji/ng-bootstrap-modals';
+import {EditTagModal} from '@components/tag-mgmt';
 
 @Component({
   templateUrl: './tag-management.page.html',
-  styleUrls: ['./tag-management.page.scss']
 })
 export class TagManagementPage {
 

@@ -11,10 +11,13 @@
     <tbody>
     <tr *ngFor="let tag of availableTags$ | async">
       <td class="tag-preview">
-        <span appTag [tag]="tag"></span>
+        <span appTag [tag]="tag" fontSize="1.25rem"></span>
       </td>
       <td class="tag-controls">
-        <div class="btn-group">
+        <div class="btn-group float-end">
+          <button class="btn btn-outline-primary" [routerLink]="['/tags', tag.id, 'pictures']">
+            <span class="fa fa-search"></span>
+          </button>
           <button class="btn btn-outline-primary" (click)="onEditTag(tag)">
             <span class="fa fa-edit"></span>
           </button>

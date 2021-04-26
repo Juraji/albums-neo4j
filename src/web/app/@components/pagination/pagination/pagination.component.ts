@@ -41,7 +41,6 @@ export class PaginationComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log(changes);
     const pageSize = changes.hasOwnProperty('pageSize')
       ? changes.pageSize.currentValue
       : this.pageSize || 0;

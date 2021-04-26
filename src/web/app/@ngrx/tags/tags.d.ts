@@ -7,3 +7,7 @@ interface PictureTags {
   pictureId: string;
   tagIds: string[];
 }
+
+interface ByTagId {
+  tagId: string;
+}
