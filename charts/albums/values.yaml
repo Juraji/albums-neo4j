@@ -12,12 +12,15 @@ frontend:
 
 neo4j:
   resources:
-    cpu: 500m
+    cpu: 750m
     memory: 1Gi
   credentials:
     dbName: "neo4j"
     username: "neo4j"
     password: "secret"
+  config:
+    dbmsMemoryPagecacheSize: 500M
+    dbmsMemoryHeapMaxSize: 500M
 
 hostVolumePaths:
 #  thumbnails: "F:\\Pictures\\Albums\\Thumbnails"

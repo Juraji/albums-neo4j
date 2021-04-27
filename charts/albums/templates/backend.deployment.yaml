@@ -23,9 +23,9 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
-          env:
-            - name: "JAVA_TOOL_OPTIONS"
-              value: "-Xms64m -XX:MaxRAMPercentage=80.0"
+          args:
+            - "-Xms512m"
+            - "-XX:MaxRAMPercentage=80.0"
           envFrom:
             - configMapRef:
                 name: backend-configmap

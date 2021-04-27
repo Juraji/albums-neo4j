@@ -32,9 +32,9 @@ spec:
             - name: "NEO4J_AUTH"
               value: "{{ .Values.neo4j.credentials.username }}/{{ .Values.neo4j.credentials.password }}"
             - name: "NEO4J_dbms_memory_pagecache_size"
-              value: "512M"
+              value: {{ .Values.neo4j.config.dbmsMemoryPagecacheSize }}
             - name: "NEO4J_dbms_memory_heap_max__size"
-              value: "512M"
+              value: {{ .Values.neo4j.config.dbmsMemoryHeapMaxSize }}
           resources:
             requests:
               cpu: {{ .Values.neo4j.resources.cpu }}
