@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: albums-frontend
   labels:
-    app: albums-frontend
+    app: {{ .Chart.Name }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}

@@ -1,5 +1,6 @@
 package nl.juraji.albums.domain
 
+import com.sksamuel.scrimage.ImageParseException
 import nl.juraji.albums.domain.events.FolderDeletedEvent
 import nl.juraji.albums.domain.events.PictureAddedEvent
 import nl.juraji.albums.domain.events.PictureDeletedEvent
@@ -9,6 +10,7 @@ import nl.juraji.albums.domain.pictures.FileType
 import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.domain.pictures.PicturesRepository
 import nl.juraji.albums.util.kotlin.LoggerCompanion
+import nl.juraji.reactor.validations.ValidationException
 import nl.juraji.reactor.validations.validate
 import nl.juraji.reactor.validations.validateAsync
 import org.springframework.context.ApplicationEventPublisher
@@ -66,6 +68,7 @@ class PicturesService(
             }
             .flatMap(picturesRepository::save)
             .flatMap { picturesRepository.addPictureToFolder(folderId, it.id!!) }
+            .onErrorMap(ImageParseException::class.java) { ValidationException(it.localizedMessage) }
             .doOnNext { applicationEventPublisher.publishEvent(PictureAddedEvent(folderId, it)) }
 
     fun updatePicture(pictureId: String, update: Picture): Mono<Picture> =

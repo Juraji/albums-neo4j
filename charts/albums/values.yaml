@@ -1,7 +1,9 @@
 backend:
+  autoScale:
+    maxReplicas: 4
   resources:
-    cpu: 6
-    memory: 2Gi
+    cpu: 1000m
+    memory: 1Gi
 
 frontend:
   resources:

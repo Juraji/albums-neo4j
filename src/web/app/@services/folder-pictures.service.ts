@@ -3,7 +3,7 @@ import {environment} from '@environment';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {HTTP_X_DISPLAY_PROGRESS_HEADER} from '@services/http/http-progress.interceptor';
-import {bufferCount, finalize, map, mergeMap, tap} from 'rxjs/operators';
+import {bufferCount, catchError, finalize, map, mergeMap, tap} from 'rxjs/operators';
 import {Modals} from '@juraji/ng-bootstrap-modals';
 
 @Injectable({
@@ -37,9 +37,20 @@ export class FolderPicturesService {
       progress$.pipe(map(current => (current / total) * 100))
     );
 
+    const uploadFormData = (file: File) => {
+      const fd = new FormData();
+      fd.append('files[]', file, file.name);
+
+      return this.httpClient
+        .post<Picture[]>(postUri, fd)
+        .pipe(catchError(e => {
+          console.error(e);
+          return of([]);
+        }));
+    };
+
     return of(...files).pipe(
-      map(FolderPicturesService.fileAsFormData),
-      mergeMap(fd => this.httpClient.post<Picture[]>(postUri, fd), 5),
+      mergeMap(uploadFormData, environment.maxConcurrentUpload),
       tap(() => progress$.next(progress$.value + 1)),
       bufferCount(total),
       map(res => res.flatMap(x => x)),
@@ -48,11 +59,5 @@ export class FolderPicturesService {
         shadeRef.dismiss();
       })
     );
-  }
-
-  private static fileAsFormData(file: File): FormData {
-    const fd = new FormData();
-    fd.append('files[]', file, file.name);
-    return fd;
   }
 }

@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit, Output} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
+import {environment} from '@environment';
 
 const DEFAULT_SIZE_OPTS = [50, 100, 200];
 
@@ -10,7 +11,7 @@ const DEFAULT_SIZE_OPTS = [50, 100, 200];
 })
 export class PageSizeSelectorComponent implements OnInit {
 
-  readonly selectedSize$ = new BehaviorSubject(50);
+  readonly selectedSize$ = new BehaviorSubject(environment.defaultPageSize);
 
   @Input()
   sizeOptions: number[] | null = DEFAULT_SIZE_OPTS;

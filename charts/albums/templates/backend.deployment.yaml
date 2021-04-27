@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: albums-backend
   labels:
-    app: albums-backend
+    app: {{ .Chart.Name }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
@@ -34,7 +34,6 @@ spec:
             httpGet:
               path: /api/actuator/health
               port: 8080
-            initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 30
             successThreshold: 1

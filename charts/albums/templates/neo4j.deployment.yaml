@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: albums-neo4j-db
   labels:
-    app: albums-neo4j-db
+    app: {{ .Chart.Name }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
