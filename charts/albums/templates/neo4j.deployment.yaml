@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: albums-neo4j-db
+  labels:
+    app: albums-neo4j-db
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: albums-neo4j-db
+  template:
+    metadata:
+      name: albums-neo4j-db
+      labels:
+        app: albums-neo4j-db
+    spec:
+      containers:
+        - name: albums-neo4j-db
+          image: "neo4j:latest"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 7687
+          env:
+            - name: "NEO4J_ACCEPT_LICENSE_AGREEMENT"
+              value: "yes"
+            - name: "NEO4J_AUTH"
+              value: "{{ .Values.neo4j.username }}/{{ .Values.neo4j.password }}"
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+          volumeMounts:
+            - mountPath: "/data"
+              name: neo4j-data
+      volumes:
+        - name: neo4j-data
+          hostPath:
+            path: {{ .Values.hostVolumePaths.neo4jData }}
+            type: DirectoryOrCreate

@@ -1,0 +1,12 @@
+neo4j:
+  dbName: "neo4j"
+  username: "neo4j"
+  password: "secret"
+
+hostVolumePaths:
+#  thumbnails: "F:\\Pictures\\Albums\\Thumbnails"
+  thumbnails: "/run/desktop/mnt/host/f/Pictures/Albums/Thumbnails"
+#  pictures: "F:\\Pictures\\Albums\\Pictures"
+  pictures: "/run/desktop/mnt/host/f/Pictures/Albums/Pictures"
+#  neo4jData: "F:\\Pictures\\Albums\\DbData"
+  neo4jData: "/run/desktop/mnt/host/f/Pictures/Albums/DbData"

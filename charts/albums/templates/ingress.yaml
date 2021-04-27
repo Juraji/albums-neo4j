@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: albums
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  rules:
+    - host: albums.local
+      http:
+        paths:
+          - path: "/.*"
+            pathType: Prefix
+            backend:
+              service:
+                name: albums-frontend
+                port:
+                  name: http
+          - path: "/api/.*"
+            pathType: Prefix
+            backend:
+              service:
+                name: albums-backend
+                port:
+                  name: http

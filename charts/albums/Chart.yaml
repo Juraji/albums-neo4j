@@ -1,0 +1,4 @@
+apiVersion: v2
+name: albums
+version: 1.0.0
+icon: "https://raw.githubusercontent.com/Juraji/albums-neo4j/master/src/web/assets/album-1.2s-256px.svg"
