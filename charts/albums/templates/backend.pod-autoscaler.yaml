@@ -1,4 +1,4 @@
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
   name: albums-backend-hpa
@@ -12,6 +12,12 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: albums-backend
-  maxReplicas: {{ .Values.backend.autoScale.maxReplicas }}
   minReplicas: 1
-  targetCPUUtilizationPercentage: 50
+  maxReplicas: {{ .Values.backend.autoScale.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50

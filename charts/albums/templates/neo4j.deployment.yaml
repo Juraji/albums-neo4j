@@ -12,6 +12,8 @@ spec:
   selector:
     matchLabels:
       app: albums-neo4j-db
+  strategy:
+    type: Recreate
   template:
     metadata:
       name: albums-neo4j-db
@@ -29,8 +31,15 @@ spec:
               value: "yes"
             - name: "NEO4J_AUTH"
               value: "{{ .Values.neo4j.credentials.username }}/{{ .Values.neo4j.credentials.password }}"
+            - name: "NEO4J_dbms_memory_pagecache_size"
+              value: "512M"
+            - name: "NEO4J_dbms_memory_heap_max__size"
+              value: "512M"
           resources:
             requests:
+              cpu: {{ .Values.neo4j.resources.cpu }}
+              memory: {{ .Values.neo4j.resources.memory }}
+            limits:
               cpu: {{ .Values.neo4j.resources.cpu }}
               memory: {{ .Values.neo4j.resources.memory }}
           readinessProbe:

@@ -28,6 +28,9 @@ spec:
             requests:
               cpu: {{ .Values.frontend.resources.cpu }}
               memory: {{ .Values.frontend.resources.memory }}
+            limits:
+              cpu: {{ .Values.frontend.resources.cpu }}
+              memory: {{ .Values.frontend.resources.memory }}
           readinessProbe:
             httpGet:
               path: /
