@@ -7,8 +7,8 @@ backend:
 
 frontend:
   resources:
-    cpu: 250m
-    memory: 250Mi
+    cpu: 10m
+    memory: 50Mi
 
 neo4j:
   resources:
