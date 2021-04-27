@@ -28,7 +28,7 @@ spec:
             - name: "NEO4J_ACCEPT_LICENSE_AGREEMENT"
               value: "yes"
             - name: "NEO4J_AUTH"
-              value: "{{ .Values.neo4j.username }}/{{ .Values.neo4j.password }}"
+              value: "{{ .Values.neo4j.credentials.username }}/{{ .Values.neo4j.credentials.password }}"
           resources:
             requests:
               cpu: {{ .Values.neo4j.resources.cpu }}
@@ -36,16 +36,15 @@ spec:
           readinessProbe:
             httpGet:
               path: /
-              port: 80
-            initialDelaySeconds: {{ .Values.neo4j.probes.bootUpGracePeriod }}
-            periodSeconds: 20
-            timeoutSeconds: 20
+              port: 7474
+            periodSeconds: 10
+            timeoutSeconds: 30
             successThreshold: 1
             failureThreshold: 10
           livenessProbe:
             httpGet:
               path: /
-              port: 80
+              port: 7474
             periodSeconds: 30
             timeoutSeconds: 20
           volumeMounts:

@@ -32,9 +32,8 @@ spec:
             httpGet:
               path: /
               port: 80
-            initialDelaySeconds: {{ .Values.frontend.probes.bootUpGracePeriod }}
-            periodSeconds: 20
-            timeoutSeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 30
             successThreshold: 1
             failureThreshold: 10
           livenessProbe:
