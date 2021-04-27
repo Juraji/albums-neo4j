@@ -1,7 +1,27 @@
+backend:
+  resources:
+    cpu: 6
+    memory: 2Gi
+  probes:
+    bootUpGracePeriod: 30
+
+frontend:
+  resources:
+    cpu: 250m
+    memory: 250Mi
+  probes:
+    bootUpGracePeriod: 0
+
 neo4j:
-  dbName: "neo4j"
-  username: "neo4j"
-  password: "secret"
+  probes:
+    bootUpGracePeriod: 0
+  resources:
+    cpu: 500m
+    memory: 500Mi
+  credentials:
+    dbName: "neo4j"
+    username: "neo4j"
+    password: "secret"
 
 hostVolumePaths:
 #  thumbnails: "F:\\Pictures\\Albums\\Thumbnails"

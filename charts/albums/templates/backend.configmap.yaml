@@ -4,9 +4,9 @@ metadata:
   name: backend-configmap
 data:
   NEO4J_DB_URI: "neo4j://albums-neo4j-db:7687"
-  NEO4J_DB_NAME: "{{ .Values.neo4j.dbName }}"
-  NEO4J_DB_USERNAME: "{{ .Values.neo4j.username }}"
-  NEO4J_DB_PASSWORD: "{{ .Values.neo4j.password }}"
+  NEO4J_DB_NAME: "{{ .Values.neo4j.credentials.dbName }}"
+  NEO4J_DB_USERNAME: "{{ .Values.neo4j.credentials.username }}"
+  NEO4J_DB_PASSWORD: "{{ .Values.neo4j.credentials.password }}"
   HASH_SAMPLE_SIZE: "100"
   SIMILARITY_THRESHOLD: "0.82"
   THUMNAIL_SIZE: "250"

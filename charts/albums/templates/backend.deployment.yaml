@@ -28,13 +28,13 @@ spec:
                 name: backend-configmap
           resources:
             requests:
-              cpu: 6000m
-              memory: 2Gi
+              cpu: {{ .Values.backend.resources.cpu }}
+              memory: {{ .Values.backend.resources.memory }}
           readinessProbe:
             httpGet:
               path: /api/actuator/health
               port: 8080
-            initialDelaySeconds: 90
+            initialDelaySeconds: {{ .Values.backend.probes.bootUpGracePeriod }}
             periodSeconds: 20
             timeoutSeconds: 20
             successThreshold: 1
@@ -43,7 +43,7 @@ spec:
             httpGet:
               path: /api/actuator/health
               port: 8080
-            initialDelaySeconds: 90
+            initialDelaySeconds: {{ .Values.backend.probes.bootUpGracePeriod }}
             periodSeconds: 60
             timeoutSeconds: 45
           volumeMounts:
