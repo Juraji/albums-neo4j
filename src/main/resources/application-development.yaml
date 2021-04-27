@@ -9,6 +9,11 @@ spring:
       allowed-origins:
         - "http://localhost:4200"
 
+org:
+  neo4j:
+    migrations:
+      database: "neo4j"
+
 image-service:
   thumbnails-directory: "./data/thumbnails"
   full-image-directory: "./data/pictures"

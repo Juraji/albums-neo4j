@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {from, Observable, ReplaySubject} from 'rxjs';
 import {ObserveProperty} from '@utils/decorators';
-import {map, mergeMap, switchMap, withLatestFrom} from 'rxjs/operators';
+import {map, mergeMap, share, switchMap, withLatestFrom} from 'rxjs/operators';
 import {ROOT_FOLDER_ID} from '../../root-folder';
 import {AddFolderModal} from '../add-folder-modal/add-folder.modal';
 import {createFolder, deleteFolder, moveFolder} from '@ngrx/folders';
@@ -12,6 +12,7 @@ import {AddPicturesModal} from '../add-pictures-modal/add-pictures.modal';
 import {addPictureSuccess} from '@ngrx/pictures';
 import {once, switchMapContinue} from '@utils/rx';
 import {FolderSelectorModal} from '@components/folder-selector';
+import {runDuplicateScan} from '@ngrx/duplicates';
 
 @Component({
   selector: 'app-folder-details-pane',
@@ -74,12 +75,29 @@ export class FolderControlsComponent implements OnInit {
   }
 
   onAddPictures() {
-    this.folder$
+    const uploadResult = this.folder$
       .pipe(
         once(),
         switchMapContinue(data => this.modals.open<Picture[]>(AddPicturesModal, {data}).onResolved),
-        mergeMap(([folder, pictures]) => from(pictures).pipe(map(picture => ({parentId: folder.id, picture})))),
+        share()
+      );
+
+    uploadResult
+      .pipe(
+        mergeMap(([folder, pictures]) =>
+          from(pictures).pipe(map(picture => ({folder, picture})))),
       )
-      .subscribe(({parentId, picture}) => this.store.dispatch(addPictureSuccess(picture, parentId)));
+      .subscribe(({folder, picture}) =>
+        this.store.dispatch(addPictureSuccess(picture, folder.id)));
+
+    uploadResult
+      .pipe(
+        switchMap(() => this.modals
+          .confirm('Upload complete, do you want to scan for duplicates').onResolved)
+      )
+      .subscribe(() => {
+        this.store.dispatch(runDuplicateScan());
+        this.router.navigate(['/duplicates']);
+      });
   }
 }
