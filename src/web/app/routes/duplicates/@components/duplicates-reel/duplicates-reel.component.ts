@@ -17,6 +17,9 @@ export class DuplicatesReelComponent implements OnInit, OnDestroy {
 
   readonly duplicates$ = this.store.select(selectAllDuplicates);
 
+  readonly duplicatesSlice$ = this.duplicates$.pipe(map(it => it.slice(0, 10)));
+  readonly hasMore$ = this.duplicates$.pipe(map(it => it.length > 10));
+
   @Output()
   readonly selectedDuplicate$ = new ReplaySubject<DuplicatesView>(1);
 

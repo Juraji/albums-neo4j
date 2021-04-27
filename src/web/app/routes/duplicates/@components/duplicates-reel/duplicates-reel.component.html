@@ -1,6 +1,6 @@
 <div class="duplicates-reel d-flex fixed-bottom bg-light px-3 py-1 overflow-auto">
   <div class="duplicates-reel-item me-3 p-1 cursor-pointer d-flex"
-       *ngFor="let duplicate of duplicates$ | async"
+       *ngFor="let duplicate of duplicatesSlice$ | async"
        [class.selected]="(selectedDuplicate$ | async) === duplicate"
        (click)="onSelectDuplicate(duplicate)">
     <img appPictureThumbnail [pictureId]="duplicate.sourceId" class="duplicate-reel-source">
@@ -10,4 +10,5 @@
     </span>
     <img appPictureThumbnail [pictureId]="duplicate.targetId" class="ms-n3 duplicate-reel-target">
   </div>
+  <div *ngIf="hasMore$ | async" class="py-3">More...</div>
 </div>
