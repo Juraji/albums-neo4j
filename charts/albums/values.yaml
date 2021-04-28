@@ -1,9 +1,9 @@
 backend:
   autoScale:
-    maxReplicas: 8
+    maxReplicas: 6
   resources:
     cpu: 1000m
-    memory: 1250Mi
+    memory: 2Gi
 
 frontend:
   resources:
@@ -12,15 +12,15 @@ frontend:
 
 neo4j:
   resources:
-    cpu: 750m
-    memory: 1Gi
+    cpu: 1000m
+    memory: 2Gi
   credentials:
     dbName: "neo4j"
     username: "neo4j"
     password: "secret"
   config:
-    dbmsMemoryPagecacheSize: 500M
-    dbmsMemoryHeapMaxSize: 500M
+    dbmsMemoryPagecacheSize: 750M
+    dbmsMemoryHeapMaxSize: 750M
 
 hostVolumePaths:
 #  thumbnails: "F:\\Pictures\\Albums\\Thumbnails"

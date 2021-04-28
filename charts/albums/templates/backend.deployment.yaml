@@ -17,15 +17,21 @@ spec:
       labels:
         app: albums-backend
     spec:
+      initContainers:
+        - name: wait-for-neo4j
+          image: groundnuty/k8s-wait-for
+          args:
+            - "pod"
+            - "-lapp=albums-neo4j-db"
       containers:
         - name: albums-backend
           image: "albums-backend:latest"
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
-          args:
-            - "-Xms512m"
-            - "-XX:MaxRAMPercentage=80.0"
+          env:
+            - name: JAVA_TOOL_OPTIONS
+              value: "-Xms512m -XX:MaxRAMPercentage=75.0"
           envFrom:
             - configMapRef:
                 name: backend-configmap

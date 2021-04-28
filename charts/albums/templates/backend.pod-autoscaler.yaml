@@ -12,7 +12,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: albums-backend
-  minReplicas: 1
+  minReplicas: 2
   maxReplicas: {{ .Values.backend.autoScale.maxReplicas }}
   metrics:
     - type: Resource
