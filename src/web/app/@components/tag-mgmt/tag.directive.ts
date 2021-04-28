@@ -7,17 +7,17 @@ export class TagDirective implements OnInit, OnChanges {
   private static readonly staticClassList = ['badge', 'tag-badge'];
 
   @Input()
-  tag: Tag | null = null;
+  tag: BindingType<Tag>;
 
   @Input()
   @HostBinding('style.fontSize')
-  fontSize: string | null = null;
+  fontSize: BindingType<string>;
 
   @HostBinding('style.backgroundColor')
-  backgroundColor = '';
+  backgroundColor: BindingType<string>;
 
   @HostBinding('style.color')
-  color = '';
+  color: BindingType<string>;
 
   constructor(
     private readonly elementRef: ElementRef,

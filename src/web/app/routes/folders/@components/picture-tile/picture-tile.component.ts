@@ -8,10 +8,10 @@ import {Component, Input, OnInit} from '@angular/core';
 export class PictureTileComponent implements OnInit {
 
   @Input()
-  picture: InputVal<Picture>;
+  picture: BindingType<Picture>;
 
   @Input()
-  folder: InputVal<Folder>;
+  folder: BindingType<Folder>;
 
   constructor() {
   }

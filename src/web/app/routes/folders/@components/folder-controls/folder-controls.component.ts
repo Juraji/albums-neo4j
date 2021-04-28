@@ -22,7 +22,7 @@ import {runDuplicateScan} from '@ngrx/duplicates';
 export class FolderControlsComponent implements OnInit {
 
   @Input()
-  public folder: Folder | undefined | null;
+  public folder: BindingType<Folder>;
 
   @ObserveProperty('folder')
   public readonly folder$: Observable<Folder> = new ReplaySubject(1);

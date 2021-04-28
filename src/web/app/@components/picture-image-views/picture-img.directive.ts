@@ -16,8 +16,8 @@ const CLASSNAMES = ['rounded', 'border', 'picture-img'];
 
 @Directive({selector: 'img[appPictureImg]'})
 export class PictureImgDirective implements OnInit, OnChanges {
-  @Input() pictureId: string | null = null;
-  @HostBinding('src') hostSrc: string | null = null;
+  @Input() pictureId: BindingType<string>;
+  @HostBinding('src') hostSrc: BindingType<string> = '#';
 
   constructor(
     private readonly picturesService: PicturesService,

@@ -13,7 +13,7 @@ import {switchMap} from 'rxjs/operators';
 export class PictureDuplicatesComponent {
 
   @Input()
-  picture: Picture | null = null;
+  picture: BindingType<Picture>;
 
   @ObserveProperty('picture')
   readonly picture$ = new ReplaySubject<Picture>();

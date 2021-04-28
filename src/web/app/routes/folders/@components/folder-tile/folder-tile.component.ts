@@ -8,7 +8,7 @@ import {Component, Input, OnInit} from '@angular/core';
 export class FolderTileComponent implements OnInit {
 
   @Input()
-  folder: Folder | null = null;
+  folder: BindingType<Folder>;
 
   constructor() {
   }

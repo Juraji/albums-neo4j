@@ -26,7 +26,7 @@ import {untilDestroyed} from '@utils/until-destroyed';
 export class DuplicatesViewComponent implements OnInit, OnDestroy {
 
   @Input()
-  duplicate: DuplicatesView | null = null;
+  duplicate: BindingType<DuplicatesView>;
 
   @ObserveProperty('duplicate')
   readonly duplicate$ = new ReplaySubject<DuplicatesView>(1);

@@ -9,8 +9,8 @@ import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 export class PictureDetailsComponent {
 
   @Input()
-  public folder: Folder | null = null;
+  public folder: BindingType<Folder>;
 
   @Input()
-  public picture: Picture | null = null;
+  public picture: BindingType<Picture>;
 }

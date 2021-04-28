@@ -15,7 +15,7 @@ import {untilDestroyed} from '@utils/until-destroyed';
 export class PictureTagsComponent implements OnInit, OnDestroy {
 
   @Input()
-  picture: Picture | null = null;
+  picture: BindingType<Picture>;
 
   @ObserveProperty('picture')
   readonly picture$ = new ReplaySubject<Picture>();

@@ -18,10 +18,10 @@ export class PaginationComponent implements OnChanges {
     .pipe(withLatestFrom(this.pages$), map(([p, ps]) => p < ps.length), shareReplay(1));
 
   @Input()
-  pageSize: number | null = null;
+  pageSize: BindingType<number>;
 
   @Input()
-  collectionSize: number | null = null;
+  collectionSize: BindingType<number>;
 
   @Output()
   readonly currentPage: Observable<number> = this.currentPage$;

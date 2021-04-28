@@ -1,1 +1,1 @@
-type InputVal<T> = T | null | undefined;
+type BindingType<T> = T | null | undefined;

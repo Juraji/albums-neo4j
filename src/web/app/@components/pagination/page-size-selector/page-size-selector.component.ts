@@ -2,8 +2,6 @@ import {ChangeDetectionStrategy, Component, Input, OnInit, Output} from '@angula
 import {BehaviorSubject, Observable} from 'rxjs';
 import {environment} from '@environment';
 
-const DEFAULT_SIZE_OPTS = [50, 100, 200];
-
 @Component({
   selector: 'app-page-size-selector',
   templateUrl: './page-size-selector.component.html',
@@ -14,10 +12,10 @@ export class PageSizeSelectorComponent implements OnInit {
   readonly selectedSize$ = new BehaviorSubject(environment.defaultPageSize);
 
   @Input()
-  sizeOptions: number[] | null = DEFAULT_SIZE_OPTS;
+  sizeOptions: BindingType<number[]> = environment.pageSizeOptions;
 
   @Input()
-  collectionSize: number | null = null;
+  collectionSize: BindingType<number>;
 
   @Output()
   readonly selectedSize: Observable<number> = this.selectedSize$;

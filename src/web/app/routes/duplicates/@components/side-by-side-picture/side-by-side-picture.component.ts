@@ -9,7 +9,7 @@ import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@
 export class SideBySidePictureComponent {
 
   @Input()
-  public picture: Picture | null = null;
+  public picture: BindingType<Picture>;
 
   @Output()
   readonly unlinkDuplicateClick = new EventEmitter<Picture>();

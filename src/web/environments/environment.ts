@@ -6,7 +6,8 @@ export const environment = {
   production: false,
   apiBaseUri: `http://localhost:8080/api`,
   defaultPageSize: 50,
-  maxConcurrentUpload: 8
+  maxConcurrentUpload: 8,
+  pageSizeOptions: [50, 100, 200, 500],
 };
 
 /*
