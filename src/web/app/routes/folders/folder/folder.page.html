@@ -7,19 +7,8 @@
 </nav>
 
 <div class="container-fluid d-flex flex-wrap folder-contents">
-  <div class="rounded border text-center m-1 cursor-pointer folder-tile"
-       *ngFor="let folder of childFolders$ | async"
-       [routerLink]="['/folders', folder.id]">
-    <span class="fa fa-folder-open folder-tile-icon"></span><br/>
-    <span class="folder-name">{{folder.name}}</span>
-  </div>
-  <div class="m-1 cursor-pointer picture-tile"
-       *ngFor="let picture of pagedPictures$ | async"
-       [routerLink]="['/folders', (folderId$ | async), 'pictures', picture.id]">
-    <img appPictureThumbnail [pictureId]="picture.id">
-    <span class="rounded-bottom text-ellipsis px-1 text-white picture-tile-label"
-          [title]="picture.name">{{picture.name}}</span>
-  </div>
+  <app-folder-tile *ngFor="let folder of childFolders$ | async" [folder]="folder"></app-folder-tile>
+  <app-picture-tile *ngFor="let picture of pagedPictures$ | async" [picture]="picture" [folder]="folder$ | async"></app-picture-tile>
 </div>
 
 <nav class="navbar navbar-light bg-light fixed-bottom folder-pagination" *ngIf="pictures$ | async as pictures">

@@ -1,0 +1,6 @@
+<div class="m-1 cursor-pointer picture-tile"
+     [routerLink]="['/folders', folder?.id, 'pictures', picture?.id]">
+  <img appPictureThumbnail [pictureId]="picture?.id || null">
+  <span class="rounded-bottom text-ellipsis px-1 text-white picture-tile-label"
+        [title]="picture?.name">{{picture?.name}}</span>
+</div>

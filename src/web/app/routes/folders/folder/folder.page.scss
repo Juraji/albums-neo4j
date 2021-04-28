@@ -1,9 +1,3 @@
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
-
-$tile-size: 12.5rem;
-$folder-tile-label-offset: 4rem;
-
 :host {
   .folder-details {
     top: 3.5rem;
@@ -12,41 +6,5 @@ $folder-tile-label-offset: 4rem;
   .folder-contents {
     margin-top: 7.5rem;
     margin-bottom: 3.75rem;
-  }
-
-  .folder-tile {
-    width: $tile-size;
-    height: $tile-size;
-    padding-top: $folder-tile-label-offset;
-
-    .folder-tile-icon {
-      font-size: 3rem;
-    }
-
-    .folder-name {
-      display: block;
-      overflow: hidden;
-      max-width: $tile-size;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
-  }
-
-  .picture-tile {
-    position: relative;
-
-    img {
-      width: $tile-size;
-      height: $tile-size;
-      object-fit: contain;
-    }
-
-    .picture-tile-label {
-      position: absolute;
-      bottom: 1px;
-      left: 1px;
-      width: calc(#{$tile-size} - 2px);
-      background-color: fade-out($black, .5);
-    }
   }
 }

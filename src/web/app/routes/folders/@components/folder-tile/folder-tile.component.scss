@@ -1,0 +1,22 @@
+$tile-size: 12.5rem;
+$folder-tile-label-offset: 4rem;
+
+:host {
+  .folder-tile {
+    width: $tile-size;
+    height: $tile-size;
+    padding-top: $folder-tile-label-offset;
+
+    .folder-tile-icon {
+      font-size: 3rem;
+    }
+
+    .folder-name {
+      display: block;
+      overflow: hidden;
+      max-width: $tile-size;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+}

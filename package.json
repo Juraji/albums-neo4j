@@ -11,6 +11,7 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "11.x.x",
+    "@angular/cdk": "^11.2.10",
     "@angular/common": "11.x.x",
     "@angular/compiler": "11.x.x",
     "@angular/core": "11.x.x",
@@ -30,6 +31,7 @@
     "@ngrx/store-devtools": "11.x.x",
     "bootstrap": "^5.0.0-beta3",
     "ngx-color": "^6.2.0",
+    "ngx-contextmenu": "^5.4.0",
     "ngx-forms-typed": "^1.0.8",
     "ngx-infinite-scroll": "10.x.x",
     "rxjs": "6.x.x",

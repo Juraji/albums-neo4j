@@ -14,6 +14,8 @@ import {PictureImageViewsModule} from '@components/picture-image-views';
 import {PaginationModule} from '@components/pagination/pagination.module';
 import {FolderSelectorModule} from '@components/folder-selector';
 import {FolderBreadcrumbsComponent} from './@components/folder-breadcrumbs/folder-breadcrumbs.component';
+import { FolderTileComponent } from './@components/folder-tile/folder-tile.component';
+import { PictureTileComponent } from './@components/picture-tile/picture-tile.component';
 
 
 @NgModule({
@@ -23,6 +25,8 @@ import {FolderBreadcrumbsComponent} from './@components/folder-breadcrumbs/folde
     FolderBreadcrumbsComponent,
     FolderControlsComponent,
     AddPicturesModal,
+    FolderTileComponent,
+    PictureTileComponent,
   ],
   imports: [
     CommonModule,
