@@ -14,10 +14,6 @@ $tile-size: 12.5rem;
     }
 
     .picture-tile-label {
-      position: absolute;
-      bottom: 1px;
-      left: 1px;
-      width: calc(#{$tile-size} - 2px);
       background-color: fade-out($black, .5);
     }
   }

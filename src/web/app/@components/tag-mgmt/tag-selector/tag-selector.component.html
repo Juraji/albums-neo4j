@@ -1,7 +1,5 @@
 <div ngbDropdown>
-  <button class="btn btn-primary" id="dropdownBasic1" ngbDropdownToggle>
-    <span class="fa fa-tags"></span>
-  </button>
+  <span ngbDropdownToggle class="cursor-pointer"><span class="fa fa-tags"></span> Add tag</span>
   <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
     <button *ngIf="tagsIsEmpty$ | async" disabled>No tags available</button>
     <button ngbDropdownItem *ngFor="let tag of tags$ | async" (click)="onTagSelected(tag)">

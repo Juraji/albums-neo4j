@@ -1,6 +1,44 @@
-<div class="m-1 cursor-pointer picture-tile"
-     [routerLink]="['/folders', folder?.id, 'pictures', picture?.id]">
+<div class="d-block m-1 picture-tile"
+     [contextMenu]="(hasSelectedPictures$ | async) ? pictureTileSelectionContextMenu: pictureTileSelfContextMenu">
   <img appPictureThumbnail [pictureId]="picture?.id || null">
-  <span class="rounded-bottom text-ellipsis px-1 text-white picture-tile-label"
-        [title]="picture?.name">{{picture?.name}}</span>
+  <a
+    class="position-absolute bottom-0 start-0 end-0 rounded-bottom text-ellipsis px-1 text-white text-decoration-none picture-tile-label"
+    [routerLink]="['/folders', folder?.id, 'pictures', picture?.id]"
+    [title]="picture?.name">{{picture?.name}}</a>
+  <input class="form-check-input position-absolute top-0 end-0 me-1" type="checkbox"
+         (change)="onSelectedToggle()"
+         [checked]="isSelected$ | async">
 </div>
+
+<context-menu #pictureTileSelfContextMenu>
+  <ng-template contextMenuItem [enabled]="false">
+    With {{picture?.name}}
+  </ng-template>
+  <ng-template contextMenuItem (execute)="onMoveSelf()">
+    <span class="fa fa-external-link-alt"></span> Move picture
+  </ng-template>
+  <ng-template contextMenuItem [passive]="true">
+    <app-tag-selector (tagSelected)="onAddTagSelf($event)"></app-tag-selector>
+  </ng-template>
+  <ng-template contextMenuItem (execute)="onDeleteSelf()">
+    <span class="fa fa-trash"></span> Delete picture
+  </ng-template>
+</context-menu>
+
+<context-menu #pictureTileSelectionContextMenu>
+  <ng-template contextMenuItem [enabled]="false">
+    With {{ selectedPicturesCount$ | async }} pictures...
+  </ng-template>
+  <ng-template contextMenuItem (execute)="onMoveSelection()">
+    <span class="fa fa-external-link-alt"></span> Move pictures
+  </ng-template>
+  <ng-template contextMenuItem [passive]="true">
+    <app-tag-selector (tagSelected)="onAddTagSelection($event)"></app-tag-selector>
+  </ng-template>
+  <ng-template contextMenuItem (execute)="onDeleteSelection()">
+    <span class="fa fa-trash"></span> Delete pictures
+  </ng-template>
+  <ng-template contextMenuItem (execute)="onClearSelection()">
+    <span class="fa fa-check-double"></span> Clear selection
+  </ng-template>
+</context-menu>

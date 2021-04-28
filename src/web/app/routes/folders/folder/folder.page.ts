@@ -12,7 +12,7 @@ import {untilDestroyed} from '@utils/until-destroyed';
 @Component({
   templateUrl: './folder.page.html',
   styleUrls: ['./folder.page.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FolderPage implements OnInit, OnDestroy {
   private pictureRange$ = new BehaviorSubject<PageRange>({start: 0, end: 0});

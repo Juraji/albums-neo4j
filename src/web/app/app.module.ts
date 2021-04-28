@@ -13,6 +13,7 @@ import {ModalsModule} from '@juraji/ng-bootstrap-modals';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {StoreRouterConnectingModule} from '@ngrx/router-store';
 import {httpInterceptorProviders} from '@services/http';
+import {ContextMenuModule} from 'ngx-contextmenu';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import {httpInterceptorProviders} from '@services/http';
     BrowserAnimationsModule,
     HttpClientModule,
     ModalsModule.forRoot(),
+    ContextMenuModule.forRoot({useBootstrap4: true}),
     StoreModule.forRoot(ROOT_REDUCER, {metaReducers: ROOT_META_REDUCERS}),
     StoreRouterConnectingModule.forRoot(),
     !environment.production ? StoreDevtoolsModule.instrument() : [],

@@ -50,3 +50,8 @@ body{
 .cursor-pointer {
   cursor: pointer;
 }
+
+.dropdown-item.passive {
+  // Silly bug in ng-contextmenu, where passive items get a different padding
+  padding: $dropdown-item-padding-y $dropdown-item-padding-x !important;
+}

@@ -17,7 +17,7 @@ export class TagDirective implements OnInit, OnChanges {
   backgroundColor: BindingType<string>;
 
   @HostBinding('style.color')
-  color: BindingType<string>;
+  color: BindingType<string> = '';
 
   constructor(
     private readonly elementRef: ElementRef,

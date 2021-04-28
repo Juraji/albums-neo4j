@@ -14,8 +14,12 @@ import {PictureImageViewsModule} from '@components/picture-image-views';
 import {PaginationModule} from '@components/pagination/pagination.module';
 import {FolderSelectorModule} from '@components/folder-selector';
 import {FolderBreadcrumbsComponent} from './@components/folder-breadcrumbs/folder-breadcrumbs.component';
-import { FolderTileComponent } from './@components/folder-tile/folder-tile.component';
-import { PictureTileComponent } from './@components/picture-tile/picture-tile.component';
+import {FolderTileComponent} from './@components/folder-tile/folder-tile.component';
+import {PictureTileComponent} from './@components/picture-tile/picture-tile.component';
+import {StoreModule} from '@ngrx/store';
+import {folderRouteReducer} from './@ngrx';
+import {ContextMenuModule} from 'ngx-contextmenu';
+import {TagMgmtModule} from '@components/tag-mgmt';
 
 
 @NgModule({
@@ -38,6 +42,9 @@ import { PictureTileComponent } from './@components/picture-tile/picture-tile.co
     PictureImageViewsModule,
     PaginationModule,
     FolderSelectorModule,
+    StoreModule.forFeature('foldersRoute', folderRouteReducer),
+    ContextMenuModule,
+    TagMgmtModule,
   ]
 })
 export class FoldersModule {
