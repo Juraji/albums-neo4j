@@ -26,6 +26,9 @@ class DuplicatesService(
     fun getAll(): Flux<DuplicatesView> =
         pictureDuplicatesRepository.findAll()
 
+    fun getUnlinkHistory(): Flux<DuplicatesView> =
+        pictureDuplicatesRepository.findAllUnlinked()
+
     fun removeDuplicate(pictureId: String, duplicateId: String): Mono<Void> =
         pictureDuplicatesRepository.removeAsDuplicate(pictureId, duplicateId)
 
@@ -34,7 +37,13 @@ class DuplicatesService(
             .collectList()
             .flatMapMany { sourceHashes -> mapHashCombinations(sourceHashes).toFlux() }
             .parallel()
-            .map { (source, target) -> DuplicatesView(source.picture.id!!, target.picture.id!!, compare(source, target)) }
+            .map { (source, target) ->
+                DuplicatesView(
+                    source.picture.id!!,
+                    target.picture.id!!,
+                    compare(source, target)
+                )
+            }
             .filter { it.similarity >= configuration.similarityThreshold }
             .flatMap { pictureDuplicatesRepository.save(it) }
             .doOnNext { applicationEventPublisher.publishEvent(DuplicatePictureDetectedEvent(it)) }

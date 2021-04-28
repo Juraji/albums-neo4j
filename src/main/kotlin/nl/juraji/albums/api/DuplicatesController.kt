@@ -17,6 +17,9 @@ class DuplicatesController(
     @GetMapping
     fun getAllDuplicates(): Flux<DuplicatesView> = duplicatesService.getAll()
 
+    @GetMapping("/unlink-history")
+    fun getUnlinkHistory(): Flux<DuplicatesView> = duplicatesService.getUnlinkHistory()
+
     @PostMapping("/run-scan")
     fun runDuplicateScan(): Flux<DuplicatesView> = duplicatesService.scanDuplicates()
 }

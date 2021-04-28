@@ -18,18 +18,18 @@ class PictureDuplicatesRepository(
             MATCH (source:Picture)-[rel:DUPLICATED_BY]->(target:Picture)
               WHERE NOT rel.unlinked
             RETURN target.id AS targetId, source.id AS sourceId, rel.similarity AS similarity, rel.unlinked AS unlinked
-        """
+        """.trimIndent()
         )
         .fetch().all()
         .map(duplicatesViewMapper::mapFrom)
 
-    fun findAllHistoric(): Flux<DuplicatesView> = neo4jClient
+    fun findAllUnlinked(): Flux<DuplicatesView> = neo4jClient
         .query(
             """
             MATCH (source:Picture)-[rel:DUPLICATED_BY]->(target:Picture)
               WHERE rel.unlinked
             RETURN target.id AS targetId, source.id AS sourceId, rel.similarity AS similarity, rel.unlinked AS unlinked
-        """
+        """.trimIndent()
         )
         .fetch().all()
         .map(duplicatesViewMapper::mapFrom)
@@ -43,7 +43,7 @@ class PictureDuplicatesRepository(
     
             MERGE (source)-[rel:DUPLICATED_BY {similarity: $ similarity, unlinked: false}]-(target)
             RETURN target.id AS targetId, source.id AS sourceId, rel.similarity AS similarity, rel.unlinked AS unlinked
-        """
+        """.trimIndent()
         )
         .bind(duplicatesView.sourceId).to("sourceId")
         .bind(duplicatesView.targetId).to("targetId")
