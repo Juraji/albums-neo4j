@@ -33,10 +33,12 @@ class DuplicatesService(
         pictureHashesRepository.findAll()
             .collectList()
             .flatMapMany { sourceHashes -> mapHashCombinations(sourceHashes).toFlux() }
+            .parallel()
             .map { (source, target) -> DuplicatesView(source.picture.id!!, target.picture.id!!, compare(source, target)) }
             .filter { it.similarity >= configuration.similarityThreshold }
             .flatMap { pictureDuplicatesRepository.save(it) }
             .doOnNext { applicationEventPublisher.publishEvent(DuplicatePictureDetectedEvent(it)) }
+            .sequential()
 
     /**
      * Hash objects are removed from the source list as they are added to the output pairs,

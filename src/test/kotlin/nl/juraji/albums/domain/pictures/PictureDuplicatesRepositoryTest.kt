@@ -25,18 +25,23 @@ internal class PictureDuplicatesRepositoryTest {
         val result = duplicatesRepository.findAll()
 
         StepVerifier.create(result)
-            .expectNextMatches { it.similarity == 0.87 && it.source.id == "picture1" && it.target.id == "picture2" }
-            .expectNextMatches { it.similarity == 0.93 && it.source.id == "picture3" && it.target.id == "picture4" }
+            .expectNextMatches { it.similarity == 0.87 && it.sourceId == "picture1" && it.targetId == "picture2" }
+            .expectNextMatches { it.similarity == 0.93 && it.sourceId == "picture3" && it.targetId == "picture4" }
             .verifyComplete()
     }
 
     @Test
     @Order(2)
-    fun `should set as duplicate`() {
-        val result = duplicatesRepository.setAsDuplicate("picture2", "picture3", 0.68)
+    fun `should save new duplicate`() {
+        val input = DuplicatesView(
+            sourceId = "picture2",
+            targetId = "picture3",
+            similarity = 0.68,
+        )
+        val result = duplicatesRepository.save(input)
 
         StepVerifier.create(result)
-            .expectNextMatches { it.similarity == 0.68 && it.target.id == "picture3" }
+            .expectNextMatches { it.similarity == 0.68 && it.targetId == "picture3" }
             .verifyComplete()
     }
 

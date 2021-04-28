@@ -4,4 +4,5 @@ data class DuplicatesView(
     val sourceId: String,
     val targetId: String,
     val similarity: Double,
+    val unlinked: Boolean = false,
 )
