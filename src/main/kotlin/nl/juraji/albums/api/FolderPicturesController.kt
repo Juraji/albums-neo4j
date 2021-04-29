@@ -28,9 +28,6 @@ class FolderPicturesController(
     ): Flux<Picture> {
         return if (imageUploadRateLimiter.tryConsume(1)) files
             .flatMap { picturesService.persistNewPicture(folderId, it) }
-            .switchIfEmpty {
-                imageUploadRateLimiter.addTokens(1)
-            }
         else throw RateLimitExceededException()
     }
 }

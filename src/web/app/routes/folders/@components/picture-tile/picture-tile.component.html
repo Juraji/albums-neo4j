@@ -1,13 +1,16 @@
 <div class="d-block m-1 picture-tile"
      [contextMenu]="(hasSelectedPictures$ | async) ? pictureTileSelectionContextMenu: pictureTileSelfContextMenu">
-  <img appPictureThumbnail [pictureId]="picture?.id || null">
+  <label>
+    <img appPictureThumbnail [pictureId]="picture?.id || null">
+    <input class="form-check-input position-absolute top-0 end-0 me-1" type="checkbox"
+           [id]="'picture-tile-' + picture?.id + '-select'"
+           (change)="onSelectedToggle()"
+           [checked]="isSelected$ | async">
+  </label>
   <a
     class="position-absolute bottom-0 start-0 end-0 rounded-bottom text-ellipsis px-1 text-white text-decoration-none picture-tile-label"
     [routerLink]="['/folders', folder?.id, 'pictures', picture?.id]"
     [title]="picture?.name">{{picture?.name}}</a>
-  <input class="form-check-input position-absolute top-0 end-0 me-1" type="checkbox"
-         (change)="onSelectedToggle()"
-         [checked]="isSelected$ | async">
 </div>
 
 <context-menu #pictureTileSelfContextMenu>
