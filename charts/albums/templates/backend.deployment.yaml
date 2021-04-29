@@ -31,7 +31,7 @@ spec:
             - containerPort: 8080
           env:
             - name: JAVA_TOOL_OPTIONS
-              value: "-Xms512m -XX:MaxRAMPercentage=75.0"
+              value: "{{- join " " .Values.backend.javaOptions }}"
           envFrom:
             - configMapRef:
                 name: backend-configmap

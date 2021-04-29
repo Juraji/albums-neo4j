@@ -1,9 +1,13 @@
 backend:
   autoScale:
+    minReplicas: 1
     maxReplicas: 6
   resources:
     cpu: 1000m
     memory: 2Gi
+  javaOptions:
+    - "-Xms512m"
+    - "-XX:MaxRAMPercentage=75.0"
 
 frontend:
   resources:
@@ -23,9 +27,9 @@ neo4j:
     dbmsMemoryHeapMaxSize: 750M
 
 hostVolumePaths:
-#  thumbnails: "F:\\Pictures\\Albums\\Thumbnails"
+  #  thumbnails: "F:\\Pictures\\Albums\\Thumbnails"
   thumbnails: "/run/desktop/mnt/host/f/Pictures/Albums/Thumbnails"
-#  pictures: "F:\\Pictures\\Albums\\Pictures"
+  #  pictures: "F:\\Pictures\\Albums\\Pictures"
   pictures: "/run/desktop/mnt/host/f/Pictures/Albums/Pictures"
-#  neo4jData: "F:\\Pictures\\Albums\\DbData"
+  #  neo4jData: "F:\\Pictures\\Albums\\DbData"
   neo4jData: "/run/desktop/mnt/host/f/Pictures/Albums/DbData"
