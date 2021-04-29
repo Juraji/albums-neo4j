@@ -9,7 +9,15 @@ spring:
       allowed-origins:
         - "http://localhost:4200"
 
+rate-limits:
+  image-upload:
+    limit: 10
+    refillTimeMs: 1000
+
 image-service:
+  hash-sample-size: 100
+  similarity-threshold: 0.82
+  thumbnail-size: 250
   thumbnails-directory: "./data/thumbnails"
   full-image-directory: "./data/pictures"
 

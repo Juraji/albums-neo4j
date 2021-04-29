@@ -7,9 +7,14 @@ spring:
   webflux:
     base-path: "/api"
 
+rate-limits:
+  image-upload:
+    limit: ${RATE_LIMIT_IMAGE_UPLOAD_LIMIT}
+    refillTimeMs: ${RATE_LIMIT_IMAGE_UPLOAD_REFILL_TIME_MS}
+
 image-service:
-  hash-sample-size: ${HASH_SAMPLE_SIZE:100}
-  similarity-threshold: ${SIMILARITY_THRESHOLD:0.82}
-  thumbnail-size: ${THUMNAIL_SIZE:250}
+  hash-sample-size: ${HASH_SAMPLE_SIZE}
+  similarity-threshold: ${SIMILARITY_THRESHOLD}
+  thumbnail-size: ${THUMNAIL_SIZE}
   thumbnails-directory: ${THUMBNAILS_DIRECTORY}
   full-image-directory: ${FULL_IMAGE_DIRECTORY}

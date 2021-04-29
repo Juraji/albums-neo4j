@@ -38,7 +38,7 @@ class ImageService(
         .map { it.asInputStream() }
         .map { ImmutableImage.loader().fromStream(it) }
 
-    fun loadResourceAsImage(resource: Resource) = Mono.just(resource)
+    fun loadResourceAsImage(resource: Resource): Mono<ImmutableImage> = Mono.just(resource)
         .map { ImmutableImage.loader().fromStream(it.inputStream) }
 
     fun getThumbnailPath(id: String): Path =

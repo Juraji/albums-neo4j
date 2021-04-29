@@ -27,6 +27,7 @@ repositories {
 dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.github.Juraji:reactor-validations:master-SNAPSHOT")
+    implementation("com.github.vladimir-bukhtoyarov:bucket4j-core:6.2.0")
     implementation("com.sksamuel.scrimage:scrimage-core:4.0.16")
     implementation("com.sksamuel.scrimage:scrimage-filters:4.0.16")
     implementation("com.sksamuel.scrimage:scrimage-formats-extra:4.0.16")

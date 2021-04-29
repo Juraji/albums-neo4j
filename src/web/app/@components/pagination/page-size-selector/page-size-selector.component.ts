@@ -9,10 +9,10 @@ import {environment} from '@environment';
 })
 export class PageSizeSelectorComponent implements OnInit {
 
-  readonly selectedSize$ = new BehaviorSubject(environment.defaultPageSize);
+  readonly selectedSize$ = new BehaviorSubject(environment.pagination.defaultPageSize);
 
   @Input()
-  sizeOptions: BindingType<number[]> = environment.pageSizeOptions;
+  sizeOptions: BindingType<number[]> = environment.pagination.pageSizeOptions;
 
   @Input()
   collectionSize: BindingType<number>;

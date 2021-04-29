@@ -29,6 +29,7 @@
     "@ngrx/schematics": "11.x.x",
     "@ngrx/store": "11.x.x",
     "@ngrx/store-devtools": "11.x.x",
+    "backoff-rxjs": "^6.5.7",
     "bootstrap": "^5.0.0-beta3",
     "ngx-color": "^6.2.0",
     "ngx-contextmenu": "^5.4.0",

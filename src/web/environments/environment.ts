@@ -5,9 +5,16 @@
 export const environment = {
   production: false,
   apiBaseUri: `http://localhost:8080/api`,
-  defaultPageSize: 50,
-  maxConcurrentUpload: 8,
-  pageSizeOptions: [50, 100, 200, 500],
+  pagination: {
+    defaultPageSize: 50,
+    pageSizeOptions: [50, 100, 200, 500],
+  },
+  uploads: {
+    maxConcurrent: 5,
+    retryWhenStatus: [429],
+    retryDelay: 800,
+    maxRetries: 50
+  }
 };
 
 /*

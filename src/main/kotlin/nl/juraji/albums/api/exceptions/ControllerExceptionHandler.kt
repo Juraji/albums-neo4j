@@ -47,6 +47,7 @@ class GlobalErrorWebExceptionHandler(
             is WebExchangeBindException -> handleWebExchangeBindException(error, requestId)
             is ValidationException -> handleValidationException(error, requestId)
             is ResponseStatusException -> handleResponseStatusException(error, requestId)
+            is RateLimitExceededException -> handleRateLimitExceededException(error, requestId)
             else -> handleOther(requestId)
         }
 
@@ -57,8 +58,7 @@ class GlobalErrorWebExceptionHandler(
 
     private fun handleWebExchangeBindException(error: WebExchangeBindException, requestId: String): ErrorDto {
         val errors = error.bindingResult.allErrors
-            .map { (it as FieldError).field to it.defaultMessage!! }
-            .toMap()
+            .associate { (it as FieldError).field to it.defaultMessage!! }
 
         return FieldValidationErrorDto(
             message = "Validatiefout",
@@ -73,6 +73,14 @@ class GlobalErrorWebExceptionHandler(
             message = error.localizedMessage,
             status = HttpStatus.BAD_REQUEST,
             requestId = requestId,
+        )
+    }
+
+    private fun handleRateLimitExceededException(error: RateLimitExceededException, requestId: String): ErrorDto {
+        return GenericErrorDto(
+            message = error.localizedMessage,
+            status = HttpStatus.TOO_MANY_REQUESTS,
+            requestId = requestId
         )
     }
 
