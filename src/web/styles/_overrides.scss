@@ -1,0 +1,44 @@
+// Compatibility between ng forms and bootstrap validations
+.form-control.ng-touched {
+  &.ng-invalid {
+    @extend .is-invalid;
+  }
+
+  &.ng-valid {
+    @extend .is-valid;
+  }
+}
+
+.clear-navbar {
+  margin-top: 4.5rem;
+}
+
+.d-hidden {
+  visibility: hidden;
+}
+
+//noinspection CssUnknownProperty
+.no-scrollbar {
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+
+  &::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
+}
+
+.text-ellipsis {
+  height: 1.5em;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.dropdown-item.passive {
+  // Silly bug in ng-contextmenu, where passive items get a different padding
+  padding: $dropdown-item-padding-y $dropdown-item-padding-x !important;
+}
