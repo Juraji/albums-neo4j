@@ -18,12 +18,12 @@ import reactor.core.publisher.Mono
 class FoldersService(
     private val foldersRepository: FoldersRepository,
     private val applicationEventPublisher: ApplicationEventPublisher
-): ReactiveEventListener() {
+) : ReactiveEventListener() {
     fun getTree(): Flux<FolderTreeView> = foldersRepository
         .findRoots()
         .flatMap { f -> this.createFolderTreeView(f, true) }
 
-    fun getByPictureId(pictureId: String): Mono<Folder> =foldersRepository.findByPictureId(pictureId)
+    fun getByPictureId(pictureId: String): Mono<Folder> = foldersRepository.findByPictureId(pictureId)
 
     private fun createFolderTreeView(folder: Folder, isRoot: Boolean = false): Mono<FolderTreeView> = foldersRepository
         .findChildren(folder.id!!)
@@ -40,7 +40,7 @@ class FoldersService(
 
     fun createFolder(folder: Folder, parentFolderId: String): Mono<Folder> = Mono.just(folder)
         .validateAsync {
-            unless(parentFolderId.isBlank()) {
+            unless(parentFolderId == ROOT_FOLDER_ID) {
                 isTrue(foldersRepository.existsById(parentFolderId)) { "Folder with id $parentFolderId does not exist, can not link as parent" }
             }
         }
@@ -64,13 +64,23 @@ class FoldersService(
     fun moveFolder(folderId: String, targetId: String): Mono<Folder> =
         validateAsync {
             isTrue(foldersRepository.existsById(folderId)) { "Folder with id $folderId does not exist" }
-            isTrue(foldersRepository.existsById(targetId)) { "Folder with id $folderId does not exist" }
+
+            unless(targetId == ROOT_FOLDER_ID) {
+                isTrue(foldersRepository.existsById(targetId)) { "Folder with id $folderId does not exist" }
+            }
         }
-            .flatMap { foldersRepository.setParent(folderId, targetId) }
+            .flatMap {
+                if (targetId == ROOT_FOLDER_ID) foldersRepository.unsetParent(folderId)
+                else foldersRepository.setParent(folderId, targetId)
+            }
 
     @Async
-    @EventListener(FolderCreatedEvent::class, condition = "#e.parentId != null")
+    @EventListener(FolderCreatedEvent::class, condition = "#e.parentId != 'ROOT'")
     fun onFolderCreatedWithParent(e: FolderCreatedEvent) = consumePublisher {
-        foldersRepository.setParent(e.folderId, e.parentId!!)
+        foldersRepository.setParent(e.folderId, e.parentId)
+    }
+
+    companion object {
+        const val ROOT_FOLDER_ID = "ROOT"
     }
 }

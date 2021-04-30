@@ -5,6 +5,7 @@ import {selectAllFolders} from '@ngrx/folders';
 import {map} from 'rxjs/operators';
 import {typedFormControl, typedFormGroup} from 'ngx-forms-typed';
 import {Validators} from '@angular/forms';
+import {ROOT_FOLDER} from '@services/folders.service';
 
 @Component({
   templateUrl: './folder-selector.modal.html',
@@ -12,6 +13,8 @@ import {Validators} from '@angular/forms';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FolderSelectorModal {
+
+  readonly rootFolderRepl = ROOT_FOLDER;
 
   public readonly availableFolders$ = this.store.select(selectAllFolders)
     .pipe(map(folders => folders.filter(f => f.id !== this.modalData.source.id)));

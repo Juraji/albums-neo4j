@@ -2,7 +2,6 @@ import {Component, Input, OnInit} from '@angular/core';
 import {from, Observable, ReplaySubject} from 'rxjs';
 import {ObserveProperty} from '@utils/decorators';
 import {map, mergeMap, share, switchMap, withLatestFrom} from 'rxjs/operators';
-import {ROOT_FOLDER_ID} from '../../root-folder';
 import {AddFolderModal} from '../add-folder-modal/add-folder.modal';
 import {createFolder, deleteFolder, moveFolder} from '@ngrx/folders';
 import {Store} from '@ngrx/store';
@@ -13,6 +12,7 @@ import {addPictureSuccess} from '@ngrx/pictures';
 import {once, switchMapContinue} from '@utils/rx';
 import {FolderSelectorModal} from '@components/folder-selector';
 import {runDuplicateScan} from '@ngrx/duplicates';
+import {ROOT_FOLDER_ID} from '@services/folders.service';
 
 @Component({
   selector: 'app-folder-details-pane',
@@ -53,7 +53,10 @@ export class FolderControlsComponent implements OnInit {
     this.folder$
       .pipe(
         once(),
-        switchMap(source => this.modals.open<FolderSelectorResult>(FolderSelectorModal, {data: {source}}).onResolved)
+        switchMap(source => this.modals.open<FolderSelectorResult>(
+          FolderSelectorModal,
+          {data: {source, enableRoot: true}}
+        ).onResolved)
       )
       .subscribe(({source, target}) =>
         this.store.dispatch(moveFolder(source.id, target.id)));

@@ -23,6 +23,9 @@ interface FoldersRepository : ReactiveNeo4jRepository<Folder, String> {
     )
     fun setParent(folderId: String, parentId: String): Mono<Folder>
 
+    @Query("MATCH (f:Folder {id: $ folderId})<-[rel:HAS_CHILD]-() DELETE rel RETURN f")
+    fun unsetParent(folderId: String): Mono<Folder>
+
     @Query("MATCH (f:Folder) WHERE NOT exists(()-[:HAS_CHILD]->(f)) RETURN f")
     fun findRoots(): Flux<Folder>
 

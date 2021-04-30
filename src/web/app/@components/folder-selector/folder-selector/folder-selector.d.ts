@@ -1,5 +1,6 @@
 interface FolderSelectorData {
   source: Folder;
+  enableRoot: boolean;
 }
 
 interface FolderSelectorResult {

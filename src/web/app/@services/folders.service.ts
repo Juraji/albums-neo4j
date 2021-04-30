@@ -3,6 +3,14 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '@environment';
 import {Observable} from 'rxjs';
 
+export const ROOT_FOLDER_ID = 'ROOT';
+export const ROOT_FOLDER: FolderTreeView = {
+  id: ROOT_FOLDER_ID,
+  name: 'Root',
+  children: [],
+  isRoot: true
+};
+
 @Injectable({
   providedIn: 'root'
 })

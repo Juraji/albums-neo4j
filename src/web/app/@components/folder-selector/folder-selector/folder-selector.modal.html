@@ -11,6 +11,8 @@
     <div class="form-group">
       <label for="target">Target folder</label>
       <select class="form-select custom-select w-100" aria-label="TargetFolder" formControlName="target" id="target">
+        <option *ngIf="modalData.enableRoot" [ngValue]="rootFolderRepl">Root</option>
+        <option disabled>&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;</option>
         <option *ngFor="let folder of availableFolders$ | async" [ngValue]="folder">{{folder.name}}</option>
       </select>
     </div>

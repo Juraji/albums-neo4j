@@ -13,6 +13,7 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
 import reactor.kotlin.core.util.function.component1
 import reactor.kotlin.core.util.function.component2
+import java.lang.IllegalArgumentException
 import java.util.*
 
 @Service
@@ -34,7 +35,7 @@ class PictureHashesService(
     @Async
     @EventListener(PictureAddedEvent::class)
     fun generateHashOnPictureAdded(e: PictureAddedEvent) = consumePublisher {
-        updatePictureHash(e.picture.id!!)
+        updatePictureHash(e.picture.id)
     }
 
     private fun getOrCreateForPicture(pictureId: String): Mono<PictureHash> = pictureHashesRepository

@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {FolderPage} from './folder/folder.page';
-import {ROOT_FOLDER} from './root-folder';
+import {ROOT_FOLDER_ID} from '@services/folders.service';
 
 const routes: Routes = [
   {
@@ -14,7 +14,7 @@ const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: ROOT_FOLDER.id
+    redirectTo: ROOT_FOLDER_ID
   }
 ];
 

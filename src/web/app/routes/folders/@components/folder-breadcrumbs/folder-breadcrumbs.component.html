@@ -1,5 +1,5 @@
 <ol class="breadcrumb bg-transparent p-0 mb-0">
-  <li class="breadcrumb-item"><a [routerLink]="['/folders', 'root']">Root</a></li>
+  <li class="breadcrumb-item"><a [routerLink]="['/folders', 'ROOT']">Root</a></li>
   <ng-container *ngFor="let crumb of crumbs$ | async; let last = last">
     <ng-container [ngSwitch]="last">
       <li *ngSwitchCase="true" class="breadcrumb-item active">{{crumb?.name}}</li>

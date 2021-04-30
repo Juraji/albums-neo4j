@@ -26,4 +26,4 @@ logging:
     nl.juraji: debug
 #    org.springframework.web: debug
 #    org.springframework.context.support: warn
-#    org.springframework.data.neo4j: debug
+    org.springframework.data.neo4j: debug

@@ -1,6 +1,7 @@
 package nl.juraji.albums.api
 
 import nl.juraji.albums.domain.FoldersService
+import nl.juraji.albums.domain.FoldersService.Companion.ROOT_FOLDER_ID
 import nl.juraji.albums.domain.folders.Folder
 import nl.juraji.albums.domain.folders.FolderTreeView
 import org.springframework.web.bind.annotation.*
@@ -19,7 +20,7 @@ class FoldersController(
 
     @PostMapping
     fun createFolder(
-        @RequestParam(name = "parentId", required = false, defaultValue = "") parentFolderId: String,
+        @RequestParam(name = "parentId", required = false, defaultValue = ROOT_FOLDER_ID) parentFolderId: String,
         @Valid @RequestBody folder: Folder,
     ): Mono<Folder> = foldersService.createFolder(folder, parentFolderId)
 

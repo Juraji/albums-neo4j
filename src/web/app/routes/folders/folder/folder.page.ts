@@ -5,9 +5,9 @@ import {filter, map, switchMap} from 'rxjs/operators';
 import {selectFolderById, selectFolderChildrenById, selectRootFolders} from '@ngrx/folders';
 import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
 import {filterEmpty, filterEmptyArray} from '@utils/rx';
-import {ROOT_FOLDER, ROOT_FOLDER_ID} from '../root-folder';
 import {loadPicturesByFolderId, selectPicturesByFolderId} from '@ngrx/pictures';
 import {untilDestroyed} from '@utils/until-destroyed';
+import {ROOT_FOLDER, ROOT_FOLDER_ID} from '@services/folders.service';
 
 @Component({
   templateUrl: './folder.page.html',
