@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType, ROOT_EFFECTS_INIT} from '@ngrx/effects';
 import {DuplicatesService} from '@services/duplicates.service';
 import {EffectMarker} from '@utils/decorators';
-import {map, share, switchMap} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {
   duplicatesDetected,
   loadAllDuplicates,
@@ -13,8 +13,6 @@ import {
 import {PicturesService} from '@services/pictures.service';
 import {switchMapContinue} from '@utils/rx';
 import {Store} from '@ngrx/store';
-import {Modals} from '@juraji/ng-bootstrap-modals';
-import {EMPTY} from 'rxjs';
 
 @Injectable()
 export class DuplicatesEffects {
@@ -29,12 +27,7 @@ export class DuplicatesEffects {
   @EffectMarker
   runDuplicateScan$ = createEffect(() => this.actions$.pipe(
     ofType(runDuplicateScan),
-    switchMap(() => {
-      const fetch = this.duplicatesService.runScan().pipe(share());
-      const shade = this.modals.shade('Scanning duplicates...', EMPTY);
-      fetch.subscribe({complete: () => shade.dismiss()});
-      return fetch;
-    }),
+    switchMap(() => this.duplicatesService.runScan()),
     map(duplicatesDetected)
   ));
 
@@ -51,7 +44,6 @@ export class DuplicatesEffects {
     private readonly actions$: Actions,
     private readonly duplicatesService: DuplicatesService,
     private readonly picturesService: PicturesService,
-    private readonly modals: Modals,
   ) {
   }
 }

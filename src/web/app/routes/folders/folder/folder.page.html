@@ -1,14 +1,38 @@
-<app-main-navbar></app-main-navbar>
+<app-main-navbar>
+  <li class="nav-item">
+    <button class="btn btn-primary ms-2" (click)="onAddFolder()" title="Add folder">
+      <span class="fa fa-folder-plus"></span>
+    </button>
+  </li>
+  <ng-container *ngIf="isNotRootFolder$ | async">
+    <li class="nav-item">
+      <button class="btn btn-primary ms-2" title="Add pictures" (click)="onAddPictures()">
+        <span class="fa fa-images"></span>
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="btn btn-primary ms-2" title="Move folder" (click)="onMoveFolder()">
+        <span class="fa fa-external-link-alt"></span>&nbsp;
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="btn btn-danger ms-2" title="Delete folder" (click)="onDeleteFolder()">
+        <span class="fa fa-folder-minus"></span>
+      </button>
+    </li>
+  </ng-container>
+</app-main-navbar>
+
 <nav class="navbar navbar-light bg-light fixed-top shadow folder-details">
   <div class="container-fluid">
     <app-folder-breadcrumbs></app-folder-breadcrumbs>
-    <app-folder-details-pane [folder]="folder$ | async"></app-folder-details-pane>
   </div>
 </nav>
 
 <div class="container-fluid d-flex flex-wrap folder-contents">
   <app-folder-tile *ngFor="let folder of childFolders$ | async" [folder]="folder"></app-folder-tile>
-  <app-picture-tile *ngFor="let picture of pagedPictures$ | async" [picture]="picture" [folder]="folder$ | async"></app-picture-tile>
+  <app-picture-tile *ngFor="let picture of pagedPictures$ | async" [picture]="picture"
+                    [folder]="folder$ | async"></app-picture-tile>
 </div>
 
 <nav class="navbar navbar-light bg-light fixed-bottom folder-pagination" *ngIf="pictures$ | async as pictures">

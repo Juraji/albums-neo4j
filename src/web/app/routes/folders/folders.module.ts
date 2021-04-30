@@ -8,7 +8,6 @@ import {UtilityPipesModule} from '@components/utility-pipes/utility-pipes.module
 import {AddFolderModal} from './@components/add-folder-modal/add-folder.modal';
 import {ModalsModule} from '@juraji/ng-bootstrap-modals';
 import {ReactiveFormsModule} from '@angular/forms';
-import {FolderControlsComponent} from './@components/folder-controls/folder-controls.component';
 import {AddPicturesModal} from './@components/add-pictures-modal/add-pictures.modal';
 import {PictureImageViewsModule} from '@components/picture-image-views';
 import {PaginationModule} from '@components/pagination/pagination.module';
@@ -27,7 +26,6 @@ import {TagMgmtModule} from '@components/tag-mgmt';
     FolderPage,
     AddFolderModal,
     FolderBreadcrumbsComponent,
-    FolderControlsComponent,
     AddPicturesModal,
     FolderTileComponent,
     PictureTileComponent,

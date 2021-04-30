@@ -5,6 +5,7 @@ $tile-size: 12.5rem;
 :host {
   .picture-tile {
     position: relative;
+    cursor: pointer;
 
     img {
       width: $tile-size;
