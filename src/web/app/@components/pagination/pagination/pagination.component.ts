@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
-import {Observable, ReplaySubject} from 'rxjs';
+import {combineLatest, Observable, ReplaySubject} from 'rxjs';
 import {map, shareReplay, withLatestFrom} from 'rxjs/operators';
 import {filterWhen, once} from '@utils/rx';
 
@@ -16,6 +16,12 @@ export class PaginationComponent implements OnChanges {
     .pipe(map(p => p > 1), shareReplay(1));
   readonly canNext$ = this.currentPage$
     .pipe(withLatestFrom(this.pages$), map(([p, ps]) => p < ps.length), shareReplay(1));
+
+  readonly displayPages$: Observable<number[]> = combineLatest([this.pages$, this.currentPage$])
+    .pipe(map(([pages, currPage]) => pages.slice(
+      Math.max(0, Math.min(currPage - 6, pages.length - 11)),
+      Math.min(Math.max(11, currPage + 5), pages.length)))
+    );
 
   @Input()
   pageSize: BindingType<number>;

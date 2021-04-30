@@ -1,4 +1,4 @@
-<select class="form-control" aria-label="Page size selection"
+<select class="form-control form-control-sm" aria-label="Page size selection"
         [value]="selectedSize | async" (change)="onSizeSelect($event)">
   <option *ngFor="let opt of sizeOptions" [value]="opt">{{opt}} of {{collectionSize}}</option>
 </select>
