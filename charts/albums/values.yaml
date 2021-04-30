@@ -1,3 +1,7 @@
+hostnames:
+  app: app.albums.lo
+  neo4j: neo4j.albums.lo
+
 backend:
   autoScale:
     minReplicas: 1

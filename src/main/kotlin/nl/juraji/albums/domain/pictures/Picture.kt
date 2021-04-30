@@ -1,16 +1,14 @@
 package nl.juraji.albums.domain.pictures
 
-import org.springframework.data.neo4j.core.schema.GeneratedValue
 import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
-import org.springframework.data.neo4j.core.support.UUIDStringGenerator
 import java.time.LocalDateTime
 import javax.validation.constraints.NotBlank
 
 @Node
 data class Picture(
-    @Id @GeneratedValue(UUIDStringGenerator::class)
-    val id: String? = null,
+    @Id
+    val id: String,
     @field:NotBlank
     val name: String,
     val type: FileType,

@@ -14,7 +14,7 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   rules:
-    - host: app.albums.lo
+    - host: {{ .Values.hostnames.app }}
       http:
         paths:
           - path: "/.*"
@@ -31,7 +31,7 @@ spec:
                 name: albums-backend
                 port:
                   name: http
-    - host: neo4j.albums.lo
+    - host: {{ .Values.hostnames.neo4j }}
       http:
         paths:
           - path: "/"

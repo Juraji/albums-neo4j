@@ -6,6 +6,9 @@ spring:
       password: ${NEO4J_DB_PASSWORD}
   webflux:
     base-path: "/api"
+    cors:
+      allowed-origins:
+        - ${PUBLIC_ORIGIN}
 
 rate-limits:
   image-upload:

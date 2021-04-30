@@ -26,6 +26,7 @@ import reactor.kotlin.core.util.function.component1
 import reactor.kotlin.core.util.function.component2
 import reactor.kotlin.extra.bool.not
 import java.time.LocalDateTime
+import java.util.*
 
 @Service
 class PicturesService(
@@ -46,28 +47,10 @@ class PicturesService(
                 isFalse(FileType.UNKNOWN == fileType) { "Unsupported Content-Type" }
             }
             .filterWhen { (_, _, filename) -> picturesRepository.existsByNameInFolder(folderId, filename).not() }
-            .doOnNext { (_, fileType, filename) -> logger.info("Incoming file: $filename (as $fileType)") }
-            .flatMap { (file, fileType, filename) ->
-                Mono.zip(
-                    picturesRepository.save(Picture(name = filename, type = fileType)),
-                    Mono.just(file),
-                )
-            }
-            .flatMap { (picture, file) ->
-                val image = imageService.loadPartAsImage(file).share()
-                val savedFullImage = image.flatMap { imageService.saveFullImage(it, picture.id!!, picture.type) }
-                val savedThumbnail = image.flatMap { imageService.saveThumbnail(it, picture.id!!) }
-
-                Mono.zip(image, savedFullImage, savedThumbnail).map { (image, savedPicture) ->
-                    picture.copy(
-                        fileSize = savedPicture.filesSize,
-                        width = image.width,
-                        height = image.height,
-                    )
-                }
-            }
+            .doOnNext { (_, fileType, filename) -> logger.debug("Incoming file: $filename (as $fileType)") }
+            .flatMap { (file, fileType, filename) -> this.processIncomingPicture(file, fileType, filename) }
             .flatMap(picturesRepository::save)
-            .flatMap { picturesRepository.addPictureToFolder(folderId, it.id!!) }
+            .flatMap { picturesRepository.addPictureToFolder(folderId, it.id) }
             .onErrorMap(ImageParseException::class.java) { ValidationException(it.localizedMessage) }
             .doOnNext { applicationEventPublisher.publishEvent(PictureAddedEvent(folderId, it)) }
 
@@ -78,17 +61,14 @@ class PicturesService(
                     isTrue(update.id == existing.id) { "Picture id in body does not match picture id in parameters" }
                 }
 
-                isFalse(
-                    foldersRepository.findByPictureId(pictureId).flatMap {
-                        picturesRepository.existsByNameInFolder(it.id!!, update.name)
-                    }) { "A picture with name ${update.name} already exists in the same folder" }
+                unless(existing.name == update.name) {
+                    isFalse(
+                        foldersRepository.findByPictureId(pictureId).flatMap {
+                            picturesRepository.existsByNameInFolder(it.id!!, update.name)
+                        }) { "A picture with name ${update.name} already exists in the same folder" }
+                }
             }
-            .map {
-                it.copy(
-                    name = update.name,
-                    lastModified = LocalDateTime.now()
-                )
-            }
+            .map { it.copy(name = update.name, lastModified = LocalDateTime.now()) }
             .flatMap(picturesRepository::save)
 
     fun getPictureResource(pictureId: String): Mono<Resource> =
@@ -105,7 +85,7 @@ class PicturesService(
                     "A file with name ${picture.name} already exists in folder with id $targetFolderId"
                 }
             }
-            .flatMap { picturesRepository.addPictureToFolder(targetFolderId, it.id!!) }
+            .flatMap { picturesRepository.addPictureToFolder(targetFolderId, it.id) }
 
     fun deletePicture(pictureId: String): Mono<Void> =
         picturesRepository
@@ -117,13 +97,32 @@ class PicturesService(
     fun onFolderDeleted(e: FolderDeletedEvent) = consumePublisher {
         picturesRepository
             .findOrphaned()
-            .flatMap { deletePicture(it.id!!) }
+            .flatMap { deletePicture(it.id) }
     }
 
     @Async
     @EventListener(PictureDeletedEvent::class)
     fun onPictureDeleted(e: PictureDeletedEvent) = consumePublisher {
         imageService.deleteThumbnailAndFullImageById(e.pictureId)
+    }
+
+    private fun processIncomingPicture(file: FilePart, fileType: FileType, filename: String): Mono<Picture> {
+        val generatedId = UUID.randomUUID().toString()
+        val image = imageService.loadPartAsImage(file).share()
+
+        val savedFullImage = image.flatMap { imageService.saveFullImage(it, generatedId, fileType) }
+        val savedThumbnail = image.flatMap { imageService.saveThumbnail(it, generatedId) }
+
+        return Mono.zip(image, savedFullImage, savedThumbnail).map { (image, savedPicture) ->
+            Picture(
+                id = generatedId,
+                name = filename,
+                type = fileType,
+                fileSize = savedPicture.filesSize,
+                width = image.width,
+                height = image.height,
+            )
+        }
     }
 
     private fun unpackFilePart(file: FilePart): Mono<Triple<FilePart, FileType, String>> = Mono.just(
