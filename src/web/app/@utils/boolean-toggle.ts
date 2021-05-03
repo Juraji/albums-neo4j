@@ -11,4 +11,8 @@ export class BooleanToggle extends BehaviorSubject<boolean> {
     this.next(!this.value);
     return next;
   }
+
+  setTo(state: boolean) {
+    this.next(state);
+  }
 }

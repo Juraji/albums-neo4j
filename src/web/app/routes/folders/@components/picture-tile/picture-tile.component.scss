@@ -6,6 +6,7 @@ $tile-size: 12.5rem;
   .picture-tile {
     position: relative;
     cursor: pointer;
+    background: #ffffff;
 
     img {
       width: $tile-size;

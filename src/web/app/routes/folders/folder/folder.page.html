@@ -29,10 +29,13 @@
   </div>
 </nav>
 
-<div class="container-fluid d-flex flex-wrap folder-contents">
-  <app-folder-tile *ngFor="let folder of childFolders$ | async" [folder]="folder"></app-folder-tile>
-  <app-picture-tile *ngFor="let picture of pagedPictures$ | async" [picture]="picture"
-                    [folder]="folder$ | async"></app-picture-tile>
+<div class="container-fluid folder-contents">
+  <app-folder-header [folder]="folder$ | async"></app-folder-header>
+  <div class="d-flex flex-wrap">
+    <app-folder-tile *ngFor="let folder of childFolders$ | async" [folder]="folder"></app-folder-tile>
+    <app-picture-tile *ngFor="let picture of pagedPictures$ | async" [picture]="picture"
+                      [folder]="folder$ | async"></app-picture-tile>
+  </div>
 </div>
 
 <nav class="navbar navbar-light bg-light fixed-bottom folder-pagination" *ngIf="pictures$ | async as pictures">

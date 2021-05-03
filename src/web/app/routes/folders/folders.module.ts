@@ -19,6 +19,7 @@ import {StoreModule} from '@ngrx/store';
 import {folderRouteReducer} from './@ngrx';
 import {ContextMenuModule} from 'ngx-contextmenu';
 import {TagMgmtModule} from '@components/tag-mgmt';
+import { FolderHeaderComponent } from './@components/folder-header/folder-header.component';
 
 
 @NgModule({
@@ -29,6 +30,7 @@ import {TagMgmtModule} from '@components/tag-mgmt';
     AddPicturesModal,
     FolderTileComponent,
     PictureTileComponent,
+    FolderHeaderComponent,
   ],
   imports: [
     CommonModule,
