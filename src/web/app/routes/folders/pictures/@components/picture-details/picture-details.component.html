@@ -1,7 +1,7 @@
 <div class="card shadow" *ngIf="!!folder && !!picture">
   <div class="card-header d-flex align-items-baseline" *ngIf="!editing$.value; else editNameTpl">
     <h4 class="card-title text-ellipsis mb-0" [title]="picture.name">{{picture.name}}</h4>
-    <span class="fa fa-edit ms-2" role="button" (click)="editing$.toggle()"></span>
+    <span class="fa fa-edit ms-2 text-muted" title="Rename picture" role="button" (click)="editing$.toggle()"></span>
   </div>
   <ng-template #editNameTpl>
     <form [formGroup]="form" (submit)="onSubmit()">

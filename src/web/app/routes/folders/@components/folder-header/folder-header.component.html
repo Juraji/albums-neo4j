@@ -1,12 +1,14 @@
 <div class="static-name d-flex align-items-baseline" *ngIf="!editing$.value; else editFolderNameTpl">
   <h1>{{folder?.name}}</h1>
-  <span class="fa fa-edit ms-2" role="button" (click)="this.editing$.toggle()"></span>
+  <span *ngIf="!isRoot" class="fa fa-edit ms-2 text-muted" title="Rename folder" role="button"
+        (click)="this.editing$.toggle()"></span>
 </div>
 <ng-template #editFolderNameTpl>
   <form [formGroup]="form" (submit)="onSubmit()">
     <div class="input-group">
       <input type="text" class="form-control form-control-lg" formControlName="name" placeholder="Folder name">
-      <button class="btn btn-primary" type="submit" [disabled]="form.invalid || form.pristine"><span class="fa fa-save"></span></button>
+      <button class="btn btn-primary" type="submit" [disabled]="form.invalid || form.pristine"><span
+        class="fa fa-save"></span></button>
       <button class="btn btn-danger" type="button" (click)="onCancel()"><span class="fa fa-times"></span></button>
     </div>
   </form>

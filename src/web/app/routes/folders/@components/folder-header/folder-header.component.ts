@@ -16,6 +16,9 @@ export class FolderHeaderComponent implements OnChanges {
   @Input()
   folder: BindingType<Folder>;
 
+  @Input()
+  isRoot: BindingType<boolean>;
+
   readonly editing$ = new BooleanToggle();
   readonly form = typedFormGroup<Pick<Folder, 'name'>>({
     name: typedFormControl<string>('', Validators.required)
@@ -27,7 +30,7 @@ export class FolderHeaderComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if(changes.hasOwnProperty('folder') && !!this.folder) {
+    if (changes.hasOwnProperty('folder') && !!this.folder) {
       this.onCancel();
       this.form.reset(this.folder);
     }
