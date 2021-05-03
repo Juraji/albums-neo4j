@@ -1,7 +1,18 @@
 <div class="card shadow" *ngIf="!!folder && !!picture">
-  <div class="card-header">
+  <div class="card-header d-flex align-items-baseline" *ngIf="!editing$.value; else editNameTpl">
     <h4 class="card-title text-ellipsis mb-0" [title]="picture.name">{{picture.name}}</h4>
+    <span class="fa fa-edit ms-2" role="button" (click)="editing$.toggle()"></span>
   </div>
+  <ng-template #editNameTpl>
+    <form [formGroup]="form" (submit)="onSubmit()">
+      <div class="input-group">
+        <input type="text" class="form-control form-control-lg" formControlName="name" placeholder="Folder name">
+        <button class="btn btn-primary" type="submit" [disabled]="form.invalid || form.pristine"><span
+          class="fa fa-save"></span></button>
+        <button class="btn btn-danger" type="button" (click)="onCancel()"><span class="fa fa-times"></span></button>
+      </div>
+    </form>
+  </ng-template>
   <div class="card-body">
     <table class="table table-sm table-borderless">
       <tbody>

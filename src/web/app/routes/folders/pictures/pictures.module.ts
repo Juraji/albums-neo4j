@@ -11,7 +11,6 @@ import {PictureTagsComponent} from './@components/picture-tags/picture-tags.comp
 import {TagMgmtModule} from '@components/tag-mgmt';
 import {NgbDropdownModule} from '@ng-bootstrap/ng-bootstrap';
 import {PictureDuplicatesComponent} from './@components/picture-duplicates/picture-duplicates.component';
-import {EditPictureModal} from './@components/edit-picture/edit-picture.modal';
 import {ReactiveFormsModule} from '@angular/forms';
 import {UtilityPipesModule} from '@components/utility-pipes/utility-pipes.module';
 
@@ -22,7 +21,6 @@ import {UtilityPipesModule} from '@components/utility-pipes/utility-pipes.module
     PictureDetailsComponent,
     PictureTagsComponent,
     PictureDuplicatesComponent,
-    EditPictureModal,
   ],
   imports: [
     CommonModule,

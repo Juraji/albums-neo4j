@@ -4,11 +4,10 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {filterEmpty, not, once, switchMapContinue} from '@utils/rx';
 import {selectFolderById} from '@ngrx/folders';
-import {deletePicture, loadPictureById, movePicture, selectPictureById, updatePicture} from '@ngrx/pictures';
+import {deletePicture, loadPictureById, movePicture, selectPictureById} from '@ngrx/pictures';
 import {untilDestroyed} from '@utils/until-destroyed';
 import {Modals} from '@juraji/ng-bootstrap-modals';
 import {FolderSelectorModal} from '@components/folder-selector';
-import {EditPictureModal} from '../@components/edit-picture/edit-picture.modal';
 import {selectSetting, updateSetting} from '@ngrx/settings';
 
 const MAXIMIZE_SETTING = 'picture-view--maximize-image';
@@ -56,16 +55,6 @@ export class PictureViewPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-  }
-
-  onEditPicture() {
-    this.picture$
-      .pipe(once(),
-        switchMap(data => this.modals.open<Picture>(EditPictureModal, {data}).onResolved),
-        switchMapContinue(c => this.modals
-          .confirm(`Are you sure you want to rename this picture to "${c.name}"?`).onResolved)
-      )
-      .subscribe(([changes]) => this.store.dispatch(updatePicture(changes)));
   }
 
   onMovePicture() {

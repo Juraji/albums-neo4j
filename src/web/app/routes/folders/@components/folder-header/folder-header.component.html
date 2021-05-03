@@ -1,6 +1,6 @@
-<div class="static-name d-flex align-items-baseline" *ngIf="!editing.value; else editFolderNameTpl">
+<div class="static-name d-flex align-items-baseline" *ngIf="!editing$.value; else editFolderNameTpl">
   <h1>{{folder?.name}}</h1>
-  <span class="fa fa-edit ms-2" role="button" (click)="this.editing.toggle()"></span>
+  <span class="fa fa-edit ms-2" role="button" (click)="this.editing$.toggle()"></span>
 </div>
 <ng-template #editFolderNameTpl>
   <form [formGroup]="form" (submit)="onSubmit()">

@@ -16,7 +16,7 @@ export class FolderHeaderComponent implements OnChanges {
   @Input()
   folder: BindingType<Folder>;
 
-  readonly editing = new BooleanToggle();
+  readonly editing$ = new BooleanToggle();
   readonly form = typedFormGroup<Pick<Folder, 'name'>>({
     name: typedFormControl<string>('', Validators.required)
   });
@@ -38,11 +38,11 @@ export class FolderHeaderComponent implements OnChanges {
       const update = this.folder.copy(this.form.value);
       this.store.dispatch(updateFolder(update));
 
-      this.editing.setTo(false);
+      this.editing$.setTo(false);
     }
   }
 
   onCancel() {
-    this.editing.setTo(false);
+    this.editing$.setTo(false);
   }
 }
