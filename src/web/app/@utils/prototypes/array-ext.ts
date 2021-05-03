@@ -99,9 +99,9 @@ export default function () {
     configurable: false,
     enumerable: false,
     writable: false,
-    value: function <T>(this: Array<T>, identity?: (item: T) => any) {
+    value: function <T, K>(this: Array<T>, identity?: (item: T) => K) {
       if (!!identity) {
-        const seen = new Set<any>();
+        const seen = new Set<K>();
         return this.filter((v) => {
           const id = identity(v);
           return seen.has(id) ? false : !!seen.add(id)
