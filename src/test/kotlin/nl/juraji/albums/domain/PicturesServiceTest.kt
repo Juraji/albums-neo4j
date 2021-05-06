@@ -1,6 +1,5 @@
 package nl.juraji.albums.domain
 
-import com.marcellogalhardo.fixture.next
 import com.marcellogalhardo.fixture.nextListOf
 import com.sksamuel.scrimage.ImmutableImage
 import io.mockk.every
@@ -76,6 +75,7 @@ internal class PicturesServiceTest {
         val testImage = ImmutableImage.create(100, 150)
 
         val expectedToSave = Picture(
+            id = "",
             name = "image.jpg",
             fileSize = 64000,
             width = 100,
@@ -108,13 +108,13 @@ internal class PicturesServiceTest {
 
         verify {
             imageService.loadPartAsImage(filePart)
-            imageService.saveFullImage(testImage, expectedAfterSave.id!!, FileType.JPEG)
-            imageService.saveThumbnail(testImage, expectedAfterSave.id!!)
+            imageService.saveFullImage(testImage, expectedAfterSave.id, FileType.JPEG)
+            imageService.saveThumbnail(testImage, expectedAfterSave.id)
             picturesRepository.existsByNameInFolder(folderId, "image.jpg")
             picturesRepository.save(match {
-                samePropertyValuesAs(expectedToSave, "addedOn").matches(it)
+                samePropertyValuesAs(expectedToSave, "id", "addedOn").matches(it)
             })
-            picturesRepository.addPictureToFolder(folderId, expectedAfterSave.id!!)
+            picturesRepository.addPictureToFolder(folderId, expectedAfterSave.id)
             applicationEventPublisher.publishEvent(PictureAddedEvent(folderId, expectedAfterSave))
         }
     }

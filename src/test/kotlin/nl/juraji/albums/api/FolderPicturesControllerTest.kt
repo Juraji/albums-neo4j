@@ -10,7 +10,6 @@ import nl.juraji.albums.domain.PicturesService
 import nl.juraji.albums.domain.pictures.Picture
 import nl.juraji.albums.util.returnsFluxOf
 import nl.juraji.albums.util.returnsManyMonoOf
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
@@ -41,12 +40,6 @@ internal class FolderPicturesControllerTest {
     fun getFolderPictures() {
         val folderId = fixture.nextString()
         val pictures = fixture.nextListOf<Picture>()
-        val expected = pictures.map {
-            it.copy(
-                pictureLocation = "",
-                thumbnailLocation = "",
-            )
-        }
 
         every { picturesService.getFolderPictures(any()) } returnsFluxOf pictures
 
@@ -56,7 +49,7 @@ internal class FolderPicturesControllerTest {
             .exchange()
             .expectStatus().isOk
             .expectBodyList<Picture>()
-            .isEqualTo<WebTestClient.ListBodySpec<Picture>>(expected)
+            .isEqualTo<WebTestClient.ListBodySpec<Picture>>(pictures)
 
         verify { picturesService.getFolderPictures(folderId) }
     }
@@ -64,12 +57,7 @@ internal class FolderPicturesControllerTest {
     @Test
     fun `should upload picture`() {
         val folderId = fixture.nextString()
-        val expected = fixture.nextListOf<Picture>(3).map {
-            it.copy(
-                pictureLocation = "",
-                thumbnailLocation = "",
-            )
-        }
+        val expected = fixture.nextListOf<Picture>(3)
 
         val body = MultipartBodyBuilder().apply {
             part("files[]", object : ByteArrayResource(generateData()) {

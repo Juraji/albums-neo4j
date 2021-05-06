@@ -34,12 +34,6 @@ internal class DuplicatesControllerTest {
     @Test
     fun getAllDuplicates() {
         val expected = fixture.nextListOf<DuplicatesView>()
-            .map {
-                it.copy(
-                    source = it.source.copy(thumbnailLocation = "", pictureLocation = ""),
-                    target = it.target.copy(thumbnailLocation = "", pictureLocation = "")
-                )
-            }
 
         every { duplicatesService.getAll() } returnsFluxOf expected
 

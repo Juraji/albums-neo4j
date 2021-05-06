@@ -3,8 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "2.4.4"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    kotlin("jvm") version "1.4.32"
-    kotlin("plugin.spring") version "1.4.32"
+    kotlin("jvm") version "1.5.0"
+    kotlin("plugin.spring") version "1.5.0"
     id("com.google.cloud.tools.jib") version "3.0.0"
 }
 
@@ -13,11 +13,6 @@ buildscript {
         classpath("com.google.cloud.tools:jib-spring-boot-extension-gradle:0.1.0")
     }
 }
-
-val group = "nl.juraji"
-val version = "3.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_14
-java.targetCompatibility = JavaVersion.VERSION_14
 
 repositories {
     mavenCentral()
@@ -61,7 +56,6 @@ tasks.withType<KotlinCompile> {
             "-Xopt-in=kotlin.io.path.ExperimentalPathApi"
         )
         jvmTarget = java.targetCompatibility.majorVersion
-        useIR = true
     }
 }
 

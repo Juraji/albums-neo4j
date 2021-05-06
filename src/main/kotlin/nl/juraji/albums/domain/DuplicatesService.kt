@@ -39,8 +39,8 @@ class DuplicatesService(
             .parallel()
             .map { (source, target) ->
                 DuplicatesView(
-                    source.picture.id!!,
-                    target.picture.id!!,
+                    source.picture.id,
+                    target.picture.id,
                     compare(source, target)
                 )
             }
