@@ -29,6 +29,13 @@ export class FoldersService {
     return this.httpClient.post<Folder>(this.baseUri, folder, {params});
   }
 
+  createFolderP(path: string, parentId?: string): Observable<Folder> {
+    const params = !!parentId ? new HttpParams().append('parentId', parentId) : new HttpParams();
+    const payload: CreateFolderPDto = {path};
+
+    return this.httpClient.post<Folder>(`${this.baseUri}/batch`, payload, {params});
+  }
+
   updateFolder(folder: Folder): Observable<Folder> {
     return this.httpClient.put<Folder>(`${this.baseUri}/${folder.id}`, folder);
   }

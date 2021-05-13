@@ -32,6 +32,12 @@ interface FoldersRepository : ReactiveNeo4jRepository<Folder, String> {
     @Query("MATCH (:Folder {id: $ folderId})-[:HAS_CHILD]->(f:Folder) RETURN f")
     fun findChildren(folderId: String): Flux<Folder>
 
+    @Query("MATCH (f:Folder {name: $ name}) WHERE NOT exists(()-[:HAS_CHILD]->(f)) RETURN f")
+    fun findRootByName(name: String): Mono<Folder>
+
+    @Query("MATCH (:Folder {id: $ parentFolderId})-[:HAS_CHILD]->(f:Folder {name: $ name}) RETURN f")
+    fun findByNameAndParentId(name: String, parentFolderId: String): Mono<Folder>
+
     @Query("MATCH (f:Folder)-[:HAS_PICTURE]->(:Picture {id: $ pictureId}) RETURN f")
     fun findByPictureId(pictureId: String): Mono<Folder>
 

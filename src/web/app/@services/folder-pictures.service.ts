@@ -3,7 +3,7 @@ import {environment} from '@environment';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {HTTP_X_DISPLAY_PROGRESS_HEADER} from '@services/http/http-progress.interceptor';
-import {bufferCount, catchError, finalize, map, mapTo, mergeMap, tap} from 'rxjs/operators';
+import {bufferCount, catchError, concatMap, finalize, map, mapTo, mergeMap, tap} from 'rxjs/operators';
 import {Modals} from '@juraji/ng-bootstrap-modals';
 import {retryBackoff} from 'backoff-rxjs';
 
@@ -29,12 +29,20 @@ export class FolderPicturesService {
     );
   }
 
-  uploadPictures(folderId: string, files: File[]): Observable<Picture[]> {
-    const postUri = `${this.baseUri}/${folderId}/pictures`;
+  uploadPictures(folder: Folder, files: File[]): Observable<Picture[]> {
+    if (files.length === 0) {
+      return of<Picture[]>([]);
+    }
+
+    const postUri = `${this.baseUri}/${folder.id}/pictures`;
     const total = files.length;
+
     const progress$ = new BehaviorSubject<number>(0);
+    const progressTitle$ = progress$
+      .pipe(map(c => `Uploaded ${c} of ${total} pictures to ${folder.name}...`));
+
     const shadeRef = this.modals.shade(
-      `Uploading ${total} pictures...`,
+      progressTitle$,
       progress$.pipe(map(current => (current / total) * 100))
     );
 
@@ -53,7 +61,8 @@ export class FolderPicturesService {
         );
     };
 
-    return of(...files).pipe(
+    return of(files).pipe(
+      concatMap(f => f),
       mergeMap(uploadFormData, environment.uploads.maxConcurrent),
       catchError(e => this.modals
         .confirm(`An image failed to upload: ${e.message}.`, 'Ok')

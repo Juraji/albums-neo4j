@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {ActivatedRoute, Router} from '@angular/router';
-import {filter, finalize, last, map, mergeMap, share, switchMap} from 'rxjs/operators';
+import {filter, finalize, map, mergeMap, switchMap} from 'rxjs/operators';
 import {
   createFolder,
   deleteFolder,
@@ -10,9 +10,9 @@ import {
   selectFolderChildrenById,
   selectRootFolders
 } from '@ngrx/folders';
-import {BehaviorSubject, combineLatest, from, Observable, of} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
 import {filterEmpty, filterEmptyArray, once, switchMapContinue} from '@utils/rx';
-import {addPictureSuccess, loadPicturesByFolderId, selectPicturesByFolderId} from '@ngrx/pictures';
+import {loadPicturesByFolderId, selectPicturesByFolderId} from '@ngrx/pictures';
 import {untilDestroyed} from '@utils/until-destroyed';
 import {ROOT_FOLDER, ROOT_FOLDER_ID} from '@services/folders.service';
 import {AddFolderModal} from '../@components/add-folder-modal/add-folder.modal';
@@ -101,20 +101,12 @@ export class FolderPage implements OnInit, OnDestroy {
   onAddPictures() {
     this.addPicturesDisplayed = true;
 
-    const pictures$ = this.folder$
+    this.folder$
       .pipe(
         once(),
         filterEmpty(),
-        switchMapContinue(data => this.modals.open<Picture[]>(AddPicturesModal, {data}).onResolved),
-        mergeMap(([folder, pictures]) =>
-          from(pictures).pipe(map(picture => ({folder, picture})))),
+        switchMapContinue(data => this.modals.open(AddPicturesModal, {data}).onResolved),
         finalize(() => this.addPicturesDisplayed = false),
-        share(),
-      );
-
-    pictures$
-      .pipe(
-        last(),
         mergeMap(() => this.modals
           .confirm('Upload complete, do you want to scan for duplicates').onResolved)
       )
@@ -125,9 +117,6 @@ export class FolderPage implements OnInit, OnDestroy {
         },
         error: () => null
       });
-
-    pictures$.subscribe(({folder, picture}) =>
-      this.store.dispatch(addPictureSuccess(picture, folder.id)));
   }
 
   onMoveFolder() {

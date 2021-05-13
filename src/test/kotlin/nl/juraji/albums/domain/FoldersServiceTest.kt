@@ -6,6 +6,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.justRun
 import io.mockk.verify
 import nl.juraji.albums.configuration.TestFixtureConfiguration
 import nl.juraji.albums.domain.folders.Folder
@@ -15,8 +16,10 @@ import nl.juraji.albums.util.*
 import nl.juraji.reactor.validations.ValidationException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.context.ApplicationEventPublisher
 import reactor.kotlin.test.expectError
 import reactor.test.StepVerifier
+import java.nio.file.Paths
 
 @ExtendWith(MockKExtension::class)
 internal class FoldersServiceTest {
@@ -24,6 +27,9 @@ internal class FoldersServiceTest {
 
     @MockK
     private lateinit var foldersRepository: FoldersRepository
+
+    @MockK
+    private lateinit var applicationEventPublisher: ApplicationEventPublisher
 
     @InjectMockKs
     private lateinit var foldersService: FoldersService
@@ -75,6 +81,7 @@ internal class FoldersServiceTest {
         val expected = folder.copy(id = null)
 
         every { foldersRepository.save(any()) } returnsMonoOf folder
+        justRun { applicationEventPublisher.publishEvent(any()) }
 
         val result = foldersService.createFolder(folder, "")
 
@@ -86,6 +93,11 @@ internal class FoldersServiceTest {
     }
 
     @Test
+    internal fun `should create folders (recursively)`() {
+        print(Paths.get("test/folder/path").first())
+    }
+
+    @Test
     fun `should create folder with parent id`() {
         val folder = fixture.next<Folder>()
         val parentId = fixture.nextString()
@@ -94,6 +106,7 @@ internal class FoldersServiceTest {
         every { foldersRepository.existsById(any<String>()) } returnsMonoOf true
         every { foldersRepository.save(any()) } returnsMonoOf folder
         every { foldersRepository.setParent(any(), any()) } returnsMonoOf folder
+        justRun { applicationEventPublisher.publishEvent(any()) }
 
         val result = foldersService.createFolder(folder, parentId)
 

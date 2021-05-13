@@ -1,25 +1,37 @@
-<form [formGroup]="form" (submit)="onSubmit()" modalForm>
+<form (submit)="onSubmit($event)" modalForm>
   <div class="modal-header">
     <h4 class="modal-title">Add pictures to "{{parentFolder.name}}"</h4>
     <button type="button" class="btn-close" aria-label="Close" modalDismiss></button>
   </div>
   <div class="modal-body">
-    <div class="selection-indicator mb-4" *ngIf="selectedFiles$ | async as selectedFiles">
+    <div class="selection-indicator mb-4"
+         *ngFor="let dir of selectedDirectories$ | async; let dirIdx = index">
       <table class="table table-sm table-striped">
+        <thead>
+        <tr>
+          <th>{{dir.name}} <span class="text-muted">({{dir.fullPath}})</span></th>
+          <th>
+            <button type="button" class="btn btn-outline-danger btn-sm float-end"
+                    (click)="onRemoveDirectory(dirIdx)">
+              <span class="fa fa-trash"></span>
+            </button>
+          </th>
+        </tr>
+        </thead>
         <tbody>
-        <tr *ngFor="let file of selectedFiles | slice:0:10; let i = index">
-          <td>{{i + 1}}</td>
+        <tr *ngFor="let file of dir.files | slice:0:10; let fileIdx = index">
           <td>{{file.name}}</td>
           <td>
-            <button type="button" class="btn btn-outline-danger btn-sm" (click)="onRemoveFile(i)">
+            <button type="button" class="btn btn-outline-danger btn-sm float-end"
+                    (click)="onRemoveFile(dirIdx, fileIdx)">
               <span class="fa fa-trash"></span>
             </button>
           </td>
         </tr>
         </tbody>
-        <tfoot *ngIf="selectedFiles.length > 10">
+        <tfoot *ngIf="dir.files.length > 10">
         <tr>
-          <td colspan="2">and {{selectedFiles.length - 10}} more...</td>
+          <td colspan="2">and {{dir.files.length - 10}} more...</td>
         </tr>
         </tfoot>
       </table>
@@ -38,6 +50,6 @@
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-outline-danger" modalDismiss>Cancel</button>
-    <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Upload...</button>
+    <button type="submit" class="btn btn-primary" [disabled]="selectedDirectories$ | async | empty">Upload...</button>
   </div>
 </form>

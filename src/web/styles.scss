@@ -1,12 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 $enable-negative-margins: true;
 
-/* Importing Bootstrap SCSS file. */
-@import 'styles/variables';
-
 // import-bootstrap-stack
 // Configuration
 @import "~bootstrap/scss/functions";
+@import 'styles/variables';
 @import "~bootstrap/scss/mixins";
 @import "~bootstrap/scss/utilities";
 

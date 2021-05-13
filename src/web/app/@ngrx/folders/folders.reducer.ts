@@ -70,3 +70,23 @@ export const selectTreePathByFolderId = createSelector(
       .filter(it => it !== undefined);
   }
 );
+
+export const selectChildBySubPath = createSelector(
+  selectTreeMappingEntities,
+  (treeMappings: Dictionary<FolderTreeMapping>, {startAtFolderId, path}: FolderBySubPath) => {
+    const pathNames = typeof path === 'string' ? path.substring(1).split('/') : path;
+
+    let root: FolderTreeMapping | undefined = treeMappings[startAtFolderId];
+
+    for (const pathName of pathNames) {
+      if (root === undefined) {
+        break;
+      }
+
+      root = root.children.map(cid => treeMappings[cid]).find(c => c?.name === pathName);
+    }
+
+    return root;
+  }
+);
+

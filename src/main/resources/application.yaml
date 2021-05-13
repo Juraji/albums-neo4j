@@ -10,6 +10,10 @@ spring:
       allowed-origins:
         - ${PUBLIC_ORIGIN}
 
+server:
+  http2:
+    enabled: true
+
 rate-limits:
   image-upload:
     limit: ${RATE_LIMIT_IMAGE_UPLOAD_LIMIT}

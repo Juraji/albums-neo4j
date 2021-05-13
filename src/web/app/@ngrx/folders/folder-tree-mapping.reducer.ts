@@ -16,6 +16,7 @@ export const folderTreeMappingReducer = createReducer(
 
     const folders: FolderTreeMapping[] = flatten(tree).map(ftv => ({
       folderId: ftv.id,
+      name: ftv.name,
       isRoot: ftv.isRoot,
       children: ftv.children.map(f => f.id)
     }));
@@ -35,6 +36,7 @@ export const folderTreeMappingReducer = createReducer(
 
     mutation = folderTreeMappingAdapter.addOne({
       folderId: folder.id,
+      name: folder.name,
       isRoot: !parentId,
       children: []
     }, mutation);

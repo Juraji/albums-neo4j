@@ -10,6 +10,7 @@ import nl.juraji.albums.domain.pictures.FileType
 import nl.juraji.albums.util.deferTo
 import nl.juraji.albums.util.toPath
 import org.springframework.core.io.Resource
+import org.springframework.core.io.buffer.DataBuffer
 import org.springframework.core.io.buffer.DataBufferUtils
 import org.springframework.http.codec.multipart.Part
 import org.springframework.stereotype.Service
@@ -35,7 +36,7 @@ class ImageService(
         )
 
     fun loadPartAsImage(file: Part): Mono<ImmutableImage> = with(file) { DataBufferUtils.join(content()) }
-        .map { it.asInputStream() }
+        .map(DataBuffer::asInputStream)
         .map { ImmutableImage.loader().fromStream(it) }
 
     fun loadResourceAsImage(resource: Resource): Mono<ImmutableImage> = Mono.just(resource)

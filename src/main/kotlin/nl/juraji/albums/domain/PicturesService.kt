@@ -20,6 +20,7 @@ import org.springframework.core.io.Resource
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.util.function.component1
@@ -39,6 +40,7 @@ class PicturesService(
 
     fun getFolderPictures(folderId: String): Flux<Picture> = picturesRepository.findAllByFolderId(folderId)
 
+    @Transactional
     fun persistNewPicture(folderId: String, file: FilePart): Mono<Picture> =
         unpackFilePart(file)
             .validate { (_, fileType, filename) ->
@@ -49,7 +51,7 @@ class PicturesService(
             .filterWhen { (_, _, filename) -> picturesRepository.existsByNameInFolder(folderId, filename).not() }
             .doOnNext { (_, fileType, filename) -> logger.debug("Incoming file: $filename (as $fileType)") }
             .flatMap { (file, fileType, filename) -> this.processIncomingPicture(file, fileType, filename) }
-            .flatMap(picturesRepository::save)
+            .flatMap { picturesRepository.save(it) }
             .flatMap { picturesRepository.addPictureToFolder(folderId, it.id) }
             .onErrorMap(ImageParseException::class.java) { ValidationException(it.localizedMessage) }
             .doOnNext { applicationEventPublisher.publishEvent(PictureAddedEvent(folderId, it)) }

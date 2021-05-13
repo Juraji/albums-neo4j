@@ -7,3 +7,7 @@ interface FolderTreeView extends Folder {
   children: FolderTreeView[];
   isRoot: boolean;
 }
+
+interface CreateFolderPDto {
+  path: string;
+}

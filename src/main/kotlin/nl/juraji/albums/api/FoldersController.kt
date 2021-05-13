@@ -1,5 +1,6 @@
 package nl.juraji.albums.api
 
+import nl.juraji.albums.api.dto.CreateFolderPDto
 import nl.juraji.albums.domain.FoldersService
 import nl.juraji.albums.domain.FoldersService.Companion.ROOT_FOLDER_ID
 import nl.juraji.albums.domain.folders.Folder
@@ -23,6 +24,12 @@ class FoldersController(
         @RequestParam(name = "parentId", required = false, defaultValue = ROOT_FOLDER_ID) parentFolderId: String,
         @Valid @RequestBody folder: Folder,
     ): Mono<Folder> = foldersService.createFolder(folder, parentFolderId)
+
+    @PostMapping("/batch")
+    fun createFoldersInBatch(
+        @RequestParam(name = "parentId", required = false, defaultValue = ROOT_FOLDER_ID) parentFolderId: String,
+        @Valid @RequestBody batch: CreateFolderPDto,
+    ): Mono<Folder> = foldersService.createFolderP(batch.path, parentFolderId)
 
     @PutMapping("/{folderId}")
     fun updateFolder(
