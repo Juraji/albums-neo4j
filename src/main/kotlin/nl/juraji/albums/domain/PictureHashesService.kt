@@ -11,10 +11,6 @@ import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
-import reactor.kotlin.core.util.function.component1
-import reactor.kotlin.core.util.function.component2
-import java.lang.IllegalArgumentException
-import java.util.*
 
 @Service
 class PictureHashesService(
@@ -28,8 +24,16 @@ class PictureHashesService(
         .getPictureResource(pictureId)
         .flatMap(imageService::loadResourceAsImage)
         .flatMap(imageService::generateHash)
-        .zipWith(getOrCreateForPicture(pictureId))
-        .flatMap { (generatedData, pictureHash) -> pictureHashesRepository.save(pictureHash.copy(data = generatedData)) }
+        .flatMap { hash ->
+            pictureHashesRepository
+                .findByPictureId(pictureId)
+                .map { it.copy(data = hash) }
+                .switchIfEmpty {
+                    picturesService.getById(pictureId)
+                        .map { p -> PictureHash(data = hash, picture = p) }
+                }
+        }
+        .flatMap { pictureHashesRepository.save(it) }
         .doOnNext { applicationEventPublisher.publishEvent(PictureHashGeneratedEvent(pictureId)) }
 
     @Async
@@ -37,12 +41,4 @@ class PictureHashesService(
     fun generateHashOnPictureAdded(e: PictureAddedEvent) = consumePublisher {
         updatePictureHash(e.picture.id)
     }
-
-    private fun getOrCreateForPicture(pictureId: String): Mono<PictureHash> = pictureHashesRepository
-        .findByPictureId(pictureId)
-        .switchIfEmpty {
-            picturesService.getById(pictureId)
-                .map { PictureHash(data = BitSet(), picture = it) }
-                .flatMap(pictureHashesRepository::save)
-        }
 }
