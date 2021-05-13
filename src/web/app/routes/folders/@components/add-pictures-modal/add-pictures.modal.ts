@@ -6,7 +6,7 @@ import {DirectoryEntry, WebkitEntryService} from './webkit-entry.service';
 import {BehaviorSubject} from 'rxjs';
 import {once} from '@utils/rx';
 import {Store} from '@ngrx/store';
-import {FoldersService} from '@services/folders.service';
+import {FoldersService, ROOT_FOLDER_ID} from '@services/folders.service';
 import {loadFoldersTree} from '@ngrx/folders';
 import {addPictureSuccess} from '@ngrx/pictures';
 
@@ -69,6 +69,13 @@ export class AddPicturesModal {
         withLatestFrom(this.selectedDirectories$),
         map(([newEntries, existingEntries]) =>
           this.webkitEntryService.mergeEntrySets(newEntries, existingEntries)),
+        map(entries => {
+          if (this.parentFolder.id === ROOT_FOLDER_ID) {
+            return entries.filter(e => e.fullPath !== '/');
+          } else {
+            return entries;
+          }
+        })
       )
       .subscribe(entries => this.selectedDirectories$.next(entries));
   }
@@ -77,14 +84,16 @@ export class AddPicturesModal {
     event.preventDefault();
     event.stopPropagation();
 
-    const files = Array.from((event.target as HTMLInputElement).files || []);
-    this.webkitEntryService.asRootDir(files)
-      .pipe(
-        withLatestFrom(this.selectedDirectories$),
-        map(([newEntry, existingEntries]) =>
-          this.webkitEntryService.mergeEntrySets([newEntry], existingEntries)),
-      )
-      .subscribe(entries => this.selectedDirectories$.next(entries));
+    if (this.parentFolder.id !== ROOT_FOLDER_ID) {
+      const files = Array.from((event.target as HTMLInputElement).files || []);
+      this.webkitEntryService.asRootDir(files)
+        .pipe(
+          withLatestFrom(this.selectedDirectories$),
+          map(([newEntry, existingEntries]) =>
+            this.webkitEntryService.mergeEntrySets([newEntry], existingEntries)),
+        )
+        .subscribe(entries => this.selectedDirectories$.next(entries));
+    }
   }
 
   onRemoveDirectory(dirIdx: number) {
