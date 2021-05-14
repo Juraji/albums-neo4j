@@ -25,7 +25,7 @@ class ApiConfiguration : WebFluxConfigurer {
 
     override fun configureHttpMessageCodecs(configurer: ServerCodecConfigurer) {
         val partReader = DefaultPartHttpMessageReader()
-        partReader.setMaxHeadersSize(DataSize.ofMegabytes(8).toBytes().toInt()) // 9 KiB, default is 8 KiB
+        partReader.setMaxHeadersSize(DataSize.ofMegabytes(8).toBytes().toInt()) // 8 MiB, default is 8 KiB
 
         partReader.isEnableLoggingRequestDetails = true
 

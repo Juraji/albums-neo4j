@@ -9,6 +9,8 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.justRun
 import io.mockk.verify
 import nl.juraji.albums.configuration.TestFixtureConfiguration
+import nl.juraji.albums.domain.FoldersService.Companion.ROOT_FOLDER_ID
+import nl.juraji.albums.domain.events.FolderCreatedEvent
 import nl.juraji.albums.domain.folders.Folder
 import nl.juraji.albums.domain.folders.FolderTreeView
 import nl.juraji.albums.domain.folders.FoldersRepository
@@ -81,9 +83,9 @@ internal class FoldersServiceTest {
         val expected = folder.copy(id = null)
 
         every { foldersRepository.save(any()) } returnsMonoOf folder
-        justRun { applicationEventPublisher.publishEvent(any()) }
+        justRun { applicationEventPublisher.publishEvent(any<FolderCreatedEvent>()) }
 
-        val result = foldersService.createFolder(folder, "")
+        val result = foldersService.createFolder(folder, ROOT_FOLDER_ID)
 
         StepVerifier.create(result)
             .expectNext(folder)
@@ -106,7 +108,7 @@ internal class FoldersServiceTest {
         every { foldersRepository.existsById(any<String>()) } returnsMonoOf true
         every { foldersRepository.save(any()) } returnsMonoOf folder
         every { foldersRepository.setParent(any(), any()) } returnsMonoOf folder
-        justRun { applicationEventPublisher.publishEvent(any()) }
+        justRun { applicationEventPublisher.publishEvent(any<FolderCreatedEvent>()) }
 
         val result = foldersService.createFolder(folder, parentId)
 
@@ -118,6 +120,13 @@ internal class FoldersServiceTest {
             foldersRepository.existsById(parentId)
             foldersRepository.save(expected)
             foldersRepository.setParent(folder.id!!, parentId)
+            applicationEventPublisher.publishEvent(
+                FolderCreatedEvent(
+                    folderId = folder.id!!,
+                    name = folder.name,
+                    parentId = parentId
+                )
+            )
         }
     }
 

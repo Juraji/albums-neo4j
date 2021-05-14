@@ -85,7 +85,7 @@ class FoldersService(
     fun updateFolder(folderId: String, update: Folder): Mono<Folder> = foldersRepository
         .findById(folderId)
         .map { it.copy(name = update.name) }
-        .flatMap(foldersRepository::save)
+        .flatMap { foldersRepository.save(it) }
 
     fun deleteFolder(folderId: String, recursive: Boolean): Mono<Void> = Mono.just(folderId)
         .validateAsync {
@@ -93,7 +93,7 @@ class FoldersService(
                 isTrue(foldersRepository.isEmptyById(it)) { "Folder is not empty, set recursive=true to ignore this message" }
             }
         }
-        .flatMap(foldersRepository::deleteRecursivelyById)
+        .flatMap { foldersRepository.deleteRecursivelyById(it) }
         .doFinally { applicationEventPublisher.publishEvent(FolderDeletedEvent(folderId)) }
 
     fun moveFolder(folderId: String, targetId: String): Mono<Folder> =
@@ -108,12 +108,6 @@ class FoldersService(
                 if (targetId == ROOT_FOLDER_ID) foldersRepository.unsetParent(folderId)
                 else foldersRepository.setParent(folderId, targetId)
             }
-
-//    @Async
-//    @EventListener(FolderCreatedEvent::class, condition = "#e.parentId != 'ROOT'")
-//    fun onFolderCreatedWithParent(e: FolderCreatedEvent) = consumePublisher {
-//        foldersRepository.setParent(e.folderId, e.parentId)
-//    }
 
     companion object {
         const val ROOT_FOLDER_ID = "ROOT"
