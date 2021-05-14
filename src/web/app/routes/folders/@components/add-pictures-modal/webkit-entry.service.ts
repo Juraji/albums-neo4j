@@ -44,6 +44,7 @@ export class WebkitEntryService {
   private getRootFiles(dataTransferItems: DataTransferItem[]): Observable<DirectoryEntry> {
     return from(dataTransferItems)
       .pipe(
+        filter(it => it.type !== ''),
         map(it => it.getAsFile()),
         filterEmpty(),
         toArray(),
@@ -79,7 +80,8 @@ export class WebkitEntryService {
       if (e.isDirectory) {
         children = children.concat(await this.flatMapDirectory(e as FileSystemDirectoryEntry));
       } else {
-        const file = await new Promise<File>((f, r) => (e as FileSystemFileEntry).file(f, r));
+        const file = await new Promise<File>((f, r) => (e as FileSystemFileEntry).file(f, r))
+          .then(f => new File([f.slice()], f.name, {type: f.mime(), lastModified: f.lastModified}));
         currentEntry = currentEntry.copy({files: currentEntry.files.concat(file)});
       }
     }

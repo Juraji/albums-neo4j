@@ -79,7 +79,11 @@ export class FolderPage implements OnInit, OnDestroy {
 
   @HostListener('window:dragover', ['$event'])
   onDragEnter(e: DragEvent) {
-    if (e.dataTransfer?.types[0] === 'Files' && !this.addPicturesDisplayed) {
+    if (
+      !!e.dataTransfer &&
+      e.dataTransfer.types.includes('Files') &&
+      !this.addPicturesDisplayed
+    ) {
       this.onAddPictures();
     }
   }
