@@ -1,8 +1,8 @@
 package nl.juraji.albums.api
 
 import nl.juraji.albums.domain.events.AlbumEvent
-import nl.juraji.albums.util.ServerSentEventFlux
-import nl.juraji.albums.util.toServerSentEvents
+import nl.juraji.albums.util.kotlin.ServerSentEventFlux
+import nl.juraji.albums.util.kotlin.toServerSentEvents
 import org.springframework.context.event.EventListener
 import org.springframework.http.MediaType
 import org.springframework.scheduling.annotation.Async

@@ -6,7 +6,7 @@ import nl.juraji.albums.domain.events.ReactiveEventListener
 import nl.juraji.albums.domain.folders.Folder
 import nl.juraji.albums.domain.folders.FolderTreeView
 import nl.juraji.albums.domain.folders.FoldersRepository
-import nl.juraji.albums.util.toPath
+import nl.juraji.albums.util.kotlin.toPath
 import nl.juraji.reactor.validations.validateAsync
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service

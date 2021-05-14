@@ -1,4 +1,4 @@
-package nl.juraji.albums.util
+package nl.juraji.albums.util.kotlin
 
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono

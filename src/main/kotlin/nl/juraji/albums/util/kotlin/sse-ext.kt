@@ -1,4 +1,4 @@
-package nl.juraji.albums.util
+package nl.juraji.albums.util.kotlin
 
 import org.springframework.http.codec.ServerSentEvent
 import reactor.core.publisher.Flux

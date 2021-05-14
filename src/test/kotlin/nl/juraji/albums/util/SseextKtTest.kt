@@ -1,5 +1,6 @@
 package nl.juraji.albums.util
 
+import nl.juraji.albums.util.kotlin.toServerSentEvents
 import org.junit.jupiter.api.Test
 import org.springframework.http.codec.ServerSentEvent
 import reactor.core.publisher.Flux

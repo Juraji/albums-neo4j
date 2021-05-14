@@ -1,4 +1,4 @@
-package nl.juraji.albums.util
+package nl.juraji.albums.util.kotlin
 
 import java.nio.file.Path
 

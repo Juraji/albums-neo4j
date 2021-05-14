@@ -7,8 +7,8 @@ import com.sksamuel.scrimage.filter.GrayscaleFilter
 import com.sksamuel.scrimage.nio.*
 import nl.juraji.albums.configuration.ImageServiceConfiguration
 import nl.juraji.albums.domain.pictures.FileType
-import nl.juraji.albums.util.deferTo
-import nl.juraji.albums.util.toPath
+import nl.juraji.albums.util.kotlin.deferTo
+import nl.juraji.albums.util.kotlin.toPath
 import org.springframework.core.io.Resource
 import org.springframework.core.io.buffer.DataBuffer
 import org.springframework.core.io.buffer.DataBufferUtils
