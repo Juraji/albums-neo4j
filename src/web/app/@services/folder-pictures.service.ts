@@ -56,6 +56,8 @@ export class FolderPicturesService {
           retryBackoff({
             initialInterval: environment.uploads.retryDelay,
             maxRetries: environment.uploads.maxRetries,
+            maxInterval: environment.uploads.maxRetryDelay,
+            resetOnSuccess: true,
             shouldRetry: e => environment.uploads.retryWhenStatus.includes(e.status)
           })
         );

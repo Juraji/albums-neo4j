@@ -8,7 +8,8 @@ export const environment = {
   uploads: {
     maxConcurrent: 6,
     retryWhenStatus: [429, 502, 503, 504],
-    retryDelay: 800,
+    retryDelay: 50,
+    maxRetryDelay: 1000,
     maxRetries: 50
   }
 };

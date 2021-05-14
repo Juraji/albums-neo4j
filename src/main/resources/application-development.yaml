@@ -11,8 +11,7 @@ spring:
 
 rate-limits:
   image-upload:
-    limit: 10
-    refillTimeMs: 1000
+    max-concurrent: 10
 
 image-service:
   hash-sample-size: 100

@@ -12,7 +12,8 @@ export const environment = {
   uploads: {
     maxConcurrent: 5,
     retryWhenStatus: [429],
-    retryDelay: 800,
+    retryDelay: 50,
+    maxRetryDelay: 1000,
     maxRetries: 50
   }
 };

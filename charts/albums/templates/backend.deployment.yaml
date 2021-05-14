@@ -46,6 +46,7 @@ spec:
             httpGet:
               path: /api/actuator/health
               port: 8080
+            initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 30
             successThreshold: 1
@@ -54,8 +55,11 @@ spec:
             httpGet:
               path: /api/actuator/health
               port: 8080
-            periodSeconds: 10
+            initialDelaySeconds: 30
+            periodSeconds: 5
             timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 2
           volumeMounts:
             - mountPath: "/data/thumbnails"
               name: thumbnail-data

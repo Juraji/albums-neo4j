@@ -16,8 +16,7 @@ server:
 
 rate-limits:
   image-upload:
-    limit: ${RATE_LIMIT_IMAGE_UPLOAD_LIMIT}
-    refillTimeMs: ${RATE_LIMIT_IMAGE_UPLOAD_REFILL_TIME_MS}
+    max-concurrent: ${RATE_LIMIT_IMAGE_UPLOAD_MAX_CONCURRENT}
 
 image-service:
   hash-sample-size: ${HASH_SAMPLE_SIZE}
