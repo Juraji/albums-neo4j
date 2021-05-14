@@ -59,16 +59,16 @@ export class FolderPicturesService {
             maxInterval: environment.uploads.maxRetryDelay,
             resetOnSuccess: true,
             shouldRetry: e => environment.uploads.retryWhenStatus.includes(e.status)
-          })
+          }),
+          catchError(e => this.modals
+            .confirm(`An image failed to upload!<br>${folder.name}/${file.name}<br/>Message: ${e.message}.`, 'Ok')
+            .onComplete.pipe(mapTo([]))),
         );
     };
 
     return of(files).pipe(
       concatMap(f => f),
       mergeMap(uploadFormData, environment.uploads.maxConcurrent),
-      catchError(e => this.modals
-        .confirm(`An image failed to upload: ${e.message}.`, 'Ok')
-        .onComplete.pipe(mapTo([]))),
       tap(() => progress$.next(progress$.value + 1)),
       bufferCount(total),
       map(res => res.flatMap(x => x)),
